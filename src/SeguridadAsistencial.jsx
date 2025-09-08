@@ -8,10 +8,8 @@ export default function SeguridadAsistencial() {
     <div className="app">
       <img src={logo} alt="Logo UC Christus" className="logo" />
       <p>Por favor indíquenos de qué área es su consulta</p>
-      <Link className="bot botones_azules" to="/seguridad_asistencial">
-        INFORMACIÓN SOBRE SEGURIDAD ASISTENCIAL Y CUIDADOS CLINICOS
-        </Link>
         <section className="botones">
+          <div className="bot botones_azules titulo-estatica"> INFORMACIÓN SOBRE SEGURIDAD ASISTENCIAL Y CUIDADOS CLINICOS </div>
           <Link className="bot botones_blancos" to="/seguridad_asistencial">
             CUIDADOS A CONSIDERAR DURANTE LA ESTADÍA
           </Link>

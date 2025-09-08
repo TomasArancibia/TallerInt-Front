@@ -47,14 +47,13 @@ p {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== VARIANTES DE BOTONES ===== */
 .botones_azules {
   background: #0f74c8;
   color: #fff;
 }
 .botones_azules:hover {
-  background: #0056b3; /* azul más oscuro */
-  color: #fff;         /* mantener texto blanco */
+  background: #0056b3;
+  color: #fff;  
   border-color: #004080;
 }
 
@@ -88,7 +87,6 @@ p {
   border-color: #999;
 }
 
-/* ===== ESTILO DE LA PREGUNTA ===== */
 .pregunta {
   width: 90%;
   height: 50px;
@@ -127,4 +125,10 @@ p {
 
 .pregunta button:hover {
   filter: brightness(1.05);
+}
+
+.titulo-estatica {
+  cursor: default;     
+  pointer-events: none; 
+  text-decoration: none; 
 }

@@ -3,33 +3,33 @@ import "./homepage.css";
 import logo from "./assets/logo-ucchristus.png";
 import { Link } from "react-router-dom";
 
-export default function ProcesosClinicos() {
+export default function Limpieza() {
   return (
     <div className="app">
       <img src={logo} alt="Logo UC Christus" className="logo" />
       <p>Por favor indíquenos de qué área es su consulta</p>
       <section className="botones">
-          <div className="bot botones_azules titulo-estatica"> INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE </div>
+          <div className="bot botones_azules titulo-estatica"> LIMPIEZA DE HABITACIÓN, BAÑO O BOX </div>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿QUIÉN ME ENTREGARÁ DIÁGNOSTICO DE TRATAMIENTO MÉDICO?
+            PONER TEXTO
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿HORARIOS DE INFORMACIÓN POR PARTE DE MÉDICO TRATANTE
+            PONER TEXTO
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿QUÉ ES DOCUMENTACIÓN CLÍNICA? (FICHA CLÍNICA, EPICRISIS, PROTOCOLOS OPERATORIOS, RECETAS MÉDICAS)
+            PONER TEXTO
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿DONDE CONSIGO RESULTADO DE EXÁMENES?
+            PONER TEXTO
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿DONDE AGENDO UNA CITA POR HOSPITALIZACIÓN?
+            PONER TEXTO
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿QUÉ CUIDADOS DEBO TENER DURANTE MI ALTA?
+            PONER TEXTO
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            PREGUNTAS FRECUENTES AL ALTA
+            PONER TEXTO
           </Link>
           <Link className="bot botones_azules" to="/">
             Volver

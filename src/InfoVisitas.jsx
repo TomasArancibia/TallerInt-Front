@@ -7,14 +7,34 @@ export default function InfoVisitas() {
   return (
     <div className="app">
       <img src={logo} alt="Logo UC Christus" className="logo" />
-      <p>INFORMACIÓN SOBRE ACOMPAÑANTES Y VISITAS</p>
-      <Link className="bot botones_azules" to="/info_visitas">
-        INFORMACIÓN SOBRE ACOMPAÑANTES Y VISITAS
-      </Link>
-        <br />
-        <Link className="bot botones_azules" to="/">
-          volver
-        </Link>
+      <p>Por favor indíquenos de qué área es su consulta</p>
+      <section className="botones">
+          <div className="bot botones_azules titulo-estatica"> INFORMACIÓN SOBRE ACOMPAÑANTES Y VISITAS </div>
+          <Link className="bot botones_blancos" to="/procesosclinicos">
+            PONER TEXTO
+          </Link>
+          <Link className="bot botones_blancos" to="/procesosclinicos">
+            PONER TEXTO
+          </Link>
+          <Link className="bot botones_blancos" to="/procesosclinicos">
+            PONER TEXTO
+          </Link>
+          <Link className="bot botones_blancos" to="/procesosclinicos">
+            PONER TEXTO
+          </Link>
+          <Link className="bot botones_blancos" to="/procesosclinicos">
+            PONER TEXTO
+          </Link>
+          <Link className="bot botones_blancos" to="/procesosclinicos">
+            PONER TEXTO
+          </Link>
+          <Link className="bot botones_blancos" to="/procesosclinicos">
+            PONER TEXTO
+          </Link>
+          <Link className="bot botones_azules" to="/">
+            Volver
+          </Link>
+        </section>
     </div>
   );
 }

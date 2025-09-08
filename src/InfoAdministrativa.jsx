@@ -8,10 +8,8 @@ export default function InfoAdministrativa() {
     <div className="app">
       <img src={logo} alt="Logo UC Christus" className="logo" />
       <p>Por favor indíquenos de qué área es su consulta</p>
-      <Link className="bot botones_azules" to="/info_administrativa">
-        INFORMACIÓN ADMINISTRATIVA A PACIENTES
-        </Link>
         <section className="botones">
+        <div className="bot botones_azules titulo-estatica"> INFORMACIÓN ADMINISTRATIVA A PACIENTES </div>
           <Link className="bot botones_blancos" to="/info_administrativa">
             COSTO DE PRESTACIONES
           </Link>
