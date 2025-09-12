@@ -11,25 +11,22 @@ export default function ProcesosClinicos() {
       <section className="botones">
           <div className="bot botones_azules titulo-estatica"> INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE </div>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿QUIÉN ME ENTREGARÁ DIÁGNOSTICO DE TRATAMIENTO MÉDICO?
+            RESULTADOS DE EXÁMENES (LABORATORIO E IMÁGENES)
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿HORARIOS DE INFORMACIÓN POR PARTE DE MÉDICO TRATANTE
+            DOCUMENTACIÓN CLINICA (FICHA CLÍNICA, EPICRISIS, PROTOCOLOS OPERATORIOS, ETC)
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿QUÉ ES DOCUMENTACIÓN CLÍNICA? (FICHA CLÍNICA, EPICRISIS, PROTOCOLOS OPERATORIOS, RECETAS MÉDICAS)
+            INFORMACIÓN SOBRE DIÁGNOSTICO O DE TRATAMIENTO MÉDICO
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿DONDE CONSIGO RESULTADO DE EXÁMENES?
+            ¿DONDE AGENDO UNA CITA POST HOSPITALIZACIÓN?
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿DONDE AGENDO UNA CITA POR HOSPITALIZACIÓN?
+            HORARIO VISITAS Y BANCO SANGRE
           </Link>
           <Link className="bot botones_blancos" to="/procesosclinicos">
-            ¿QUÉ CUIDADOS DEBO TENER DURANTE MI ALTA?
-          </Link>
-          <Link className="bot botones_blancos" to="/procesosclinicos">
-            PREGUNTAS FRECUENTES AL ALTA
+            PROCESOS DE ALTA
           </Link>
           <Link className="bot botones_azules" to="/">
             Volver

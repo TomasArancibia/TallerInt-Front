@@ -10,17 +10,19 @@ export default function Homepage() {
       <p>Por favor indíquenos de qué área es su consulta</p>
 
       <section className="botones">
+        <h2 className="titulo_seccion">Informaciones</h2>
         <Link className="bot botones_azules" to="/procesosclinicos">
           INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE
         </Link>
-        <Link className="bot botones_azules" to="/seguridad_asistencial">
-          INFORMACIÓN SOBRE SEGURIDAD ASISTENCIAL Y CUIDADOS CLÍNICOS
-        </Link>
         <Link className="bot botones_azules" to="/info_administrativa">
-          INFORMACIÓN ADMINISTRATIVA Y COSTOS DE PRESTACIONES
+          INFORMACIÓN ADMINISTRATIVA, PAGOS Y BENEFICIOS SOCIALES
         </Link>
         <Link className="bot botones_azules" to="/info_visitas">
-          INFORMACIÓN SOBRE ACOMPAÑANTES Y VISITAS
+          ACOMPAÑANTES, VISITAS Y SERVICIOS DISPONIBLES
+        </Link>
+        <h2 className="titulo_seccion">Solicitudes</h2>
+        <Link className="bot botones_morados" to="/mantencion">
+          SOLICITUDES DE MANTENCIÓN - COMODIDAD
         </Link>
         <Link className="bot botones_morados" to="/nutricion_y_alimentacion">
           NUTRICIÓN Y ALIMENTACIÓN A PACIENTES
@@ -28,21 +30,9 @@ export default function Homepage() {
         <Link className="bot botones_morados" to="/limpieza">
           LIMPIEZA DE HABITACIÓN, BAÑO O BOX
         </Link>
-        <Link className="bot botones_morados" to="/mantencion">
-          SOLICITUDES DE MANTENCIÓN - COMODIDAD
+        <Link className="bot botones_morados" to="/acompañamiento_espiritual">
+          ASISTENCIA SOCIAL Y/O ESPIRITUAL
         </Link>
-        <Link className="bot botones_celestes" to="/beneficios_sociales">
-          BENEFICIOS SOCIALES
-        </Link>
-        <Link className="bot botones_celestes" to="/acompañamiento_espiritual">
-          SERVICIO DE ACOMPAÑAMIENTO ESPIRITUAL (Independiente de su credo o
-          visión de vida)
-        </Link>
-
-        <Link className="bot botones_celestes" to="/seguros_convenios">
-          SEGUROS UC CHRISTUS Y CONVENIOS COMERCIALES
-        </Link>
-
         <form className="pregunta" action="respuesta.html" method="get">
           <input
             id="q"
