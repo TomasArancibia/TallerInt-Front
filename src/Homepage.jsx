@@ -1,6 +1,7 @@
 import React from "react";
 import "./homepage.css";
 import logo from "./assets/logo-ucchristus.png";
+import { Link } from "react-router-dom";
 
 export default function Homepage() {
   return (
@@ -9,39 +10,38 @@ export default function Homepage() {
       <p>Por favor indíquenos de qué área es su consulta</p>
 
       <section className="botones">
-        <a className="bot botones_azules" href="procesosclinicos.html">
+        <Link className="bot botones_azules" to="/procesosclinicos">
           INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE
-        </a>
-        <a className="bot botones_azules" href="seguridad_y_asistencia.html">
+        </Link>
+        <Link className="bot botones_azules" to="/seguridad_asistencial">
           INFORMACIÓN SOBRE SEGURIDAD ASISTENCIAL Y CUIDADOS CLÍNICOS
-        </a>
-        <a className="bot botones_azules" href="info_administrativa.html">
+        </Link>
+        <Link className="bot botones_azules" to="/info_administrativa">
           INFORMACIÓN ADMINISTRATIVA Y COSTOS DE PRESTACIONES
-        </a>
-        <a className="bot botones_azules" href="acompañantes_y_visitas.html">
+        </Link>
+        <Link className="bot botones_azules" to="/info_visitas">
           INFORMACIÓN SOBRE ACOMPAÑANTES Y VISITAS
-        </a>
-
-        <a className="bot botones_morados" href="nutricion_y_alimentacion.html">
+        </Link>
+        <Link className="bot botones_morados" to="/nutricion_y_alimentacion">
           NUTRICIÓN Y ALIMENTACIÓN A PACIENTES
-        </a>
-        <a className="bot botones_morados" href="limpieza.html">
+        </Link>
+        <Link className="bot botones_morados" to="/limpieza">
           LIMPIEZA DE HABITACIÓN, BAÑO O BOX
-        </a>
-        <a className="bot botones_morados" href="mantencion_comodidad.html">
+        </Link>
+        <Link className="bot botones_morados" to="/mantencion">
           SOLICITUDES DE MANTENCIÓN - COMODIDAD
-        </a>
-
-        <a className="bot botones_celestes" href="beneficios_sociales.html">
+        </Link>
+        <Link className="bot botones_celestes" to="/beneficios_sociales">
           BENEFICIOS SOCIALES
-        </a>
-        <a className="bot botones_celestes" href="serv_acompañamiento.html">
+        </Link>
+        <Link className="bot botones_celestes" to="/acompañamiento_espiritual">
           SERVICIO DE ACOMPAÑAMIENTO ESPIRITUAL (Independiente de su credo o
           visión de vida)
-        </a>
-        <a className="bot botones_celestes" href="seguros.html">
+        </Link>
+
+        <Link className="bot botones_celestes" to="/seguros_convenios">
           SEGUROS UC CHRISTUS Y CONVENIOS COMERCIALES
-        </a>
+        </Link>
 
         <form className="pregunta" action="respuesta.html" method="get">
           <input
