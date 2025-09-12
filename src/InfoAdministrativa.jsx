@@ -11,25 +11,19 @@ export default function InfoAdministrativa() {
         <section className="botones">
         <div className="bot botones_azules titulo-estatica"> INFORMACIÓN ADMINISTRATIVA A PACIENTES </div>
           <Link className="bot botones_blancos" to="/info_administrativa">
-            COSTO DE PRESTACIONES
-          </Link>
-          <Link className="bot botones_blancos" to="/info_administrativa">
-            CUENTA HOSPITALARIA Y PAGOS
-          </Link>
-          <Link className="bot botones_blancos" to="/info_administrativa">
             INFORMACIÓN GES-CAEC-LEY DE URGENCIA
           </Link>
           <Link className="bot botones_blancos" to="/info_administrativa">
-            BENEFICIOS SOCIALES
+            COSTO DE PRESTACIONES
           </Link>
           <Link className="bot botones_blancos" to="/info_administrativa">
-            FELICITACIONES
+            PRESUPUESTOS, CUENTA HOSPITALARIA, PAGOS
           </Link>
           <Link className="bot botones_blancos" to="/info_administrativa">
-            SUGERENCIAS
+            BENEFICIOS SOCIALES / ASISTENCIA SOCIAL
           </Link>
           <Link className="bot botones_blancos" to="/info_administrativa">
-            RECLAMOS
+            SUGERENCIAS, RECLAMOS Y FELICITACIONES
           </Link>
           <Link className="bot botones_azules" to="/">
             Volver
