@@ -1,6 +1,6 @@
 import React from "react";
 import "./homepage.css";
-import logo from "./assets/logo-ucchristus.png";
+import logo from "../assets/logo-ucchristus.png";
 import { Link } from "react-router-dom";
 
 export default function Homepage() {
@@ -30,8 +30,11 @@ export default function Homepage() {
         <Link className="bot botones_morados" to="/limpieza">
           LIMPIEZA DE HABITACIÓN, BAÑO O BOX
         </Link>
-        <Link className="bot botones_morados" to="/acompañamiento_espiritual">
-          ASISTENCIA SOCIAL Y/O ESPIRITUAL
+        <Link className="bot botones_morados" to="/asistencia_social">
+          ASISTENCIA SOCIAL
+        </Link>
+        <Link className="bot botones_morados" to="/acompanamiento_espiritual">
+          ACOMPAÑAMIENTO ESPIRITUAL
         </Link>
         <form className="pregunta" action="respuesta.html" method="get">
           <input

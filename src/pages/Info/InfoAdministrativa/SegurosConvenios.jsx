@@ -1,6 +1,6 @@
 import React from "react";
-import "./homepage.css";
-import logo from "./assets/logo-ucchristus.png";
+import "../../homepage.css";
+import logo from "../../../assets/logo-ucchristus.png";
 import { Link } from "react-router-dom";
 
 export default function SegurosConvenios() {
