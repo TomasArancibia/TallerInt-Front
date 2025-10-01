@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Homepage from "./pages/Homepage.jsx";
+import Landing from "./pages/Landing.jsx";  
 
 // INFO
 
@@ -39,6 +40,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path="/landing" element={<Landing />} />
         <Route path="/procesosclinicos" element={<ProcesosClinicos />} />
         <Route path="/info_administrativa" element={<InfoAdministrativa />} />
         <Route path="/info_visitas" element={<InfoVisitas />} />
