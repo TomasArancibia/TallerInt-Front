@@ -30,14 +30,15 @@ p {
   margin: 0 auto;
   padding: 15px 15px;
   border-radius: 15px;
-  font-weight: 70;
+  font-weight: 600; /* corregido: antes era 70 */
   line-height: 1.25;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.3px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   border: 1px solid #7c00a5;
-  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease,
+    background-color 0.12s ease, color 0.12s ease;
 }
 
 .bot:hover {
@@ -50,15 +51,40 @@ p {
   background: #0f74c8;
   color: #fff;
 }
+.botones_azules:hover {
+  background: #0056b3;
+  color: #fff;  
+  border-color: #004080;
+}
 
 .botones_morados {
   background: #7c00a5;
   color: #fff;
 }
+.botones_morados:hover {
+  background: #5a007a;
+  color: #fff;
+  border-color: #4a0065;
+}
 
 .botones_celestes {
   background-color: #b2c5eb;
-  color: black;
+  color: #000;
+}
+.botones_celestes:hover {
+  background-color: #94aedf;
+  color: #000;
+  border-color: #7a93c2;
+}
+
+.botones_blancos {
+  background-color: #f1f1f1;
+  color: #000;
+}
+.botones_blancos:hover {
+  background-color: #e4e4e4;
+  color: #000;
+  border-color: #999;
 }
 
 .pregunta {
@@ -99,4 +125,10 @@ p {
 
 .pregunta button:hover {
   filter: brightness(1.05);
+}
+
+.titulo-estatica {
+  cursor: default;     
+  pointer-events: none; 
+  text-decoration: none; 
 }
