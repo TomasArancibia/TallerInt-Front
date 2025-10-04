@@ -1,14 +1,14 @@
-name: Frontend CI/CD
+name: Build and Deploy on Netlify
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -29,10 +29,10 @@ jobs:
         run: npm run build
 
       - name: Deploy to Netlify
-        if: github.ref == 'refs/heads/main'
-        uses: nwtgck/actions-netlify@v2.0.1
+        uses: nwtgck/actions-netlify@v3.0.0
         with:
           publish-dir: ./build
           production-deploy: true
+        env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
