@@ -16,6 +16,24 @@ import SegurosConvenios from "./pages/Info/InfoAdministrativa/SegurosConvenios.j
 // Info visitas
 import InfoVisitas from "./pages/Info/InfoVisitas/InfoVisitas.jsx";
 
+// Subpaginas Info General Visitas
+import InfoGeneralVisita from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoGeneralVisita.jsx";
+import InfoDifVisAco from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoDifVisAco.jsx";
+import InfoRolResp from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoRolResp.jsx";
+import InfoRolPagare from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoRolPagare.jsx";
+
+// Subpaginas Info Horarios y Condiciones
+import InfoHorariosCon from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoHorariosCon.jsx";
+import InfoHoriariosVisitas from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoHorariosVisitas.jsx";
+import InfoHorariosEntrada from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoHoriosEntrada.jsx";
+
+// Subpaginas Info Servicios para visitas
+import InfoServiciosVisitas from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosVisitas.jsx";
+import InfoComida from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosComida.jsx";
+import InfoReflexion from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServicioReflexion.jsx";
+import InfoInstalaciones from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosInstalaciones.jsx";
+
+
 // SOLICITUDES
 // Mantencion
 import Mantencion from "./pages/Solicitudes/Mantencion/Mantencion.jsx";
@@ -52,6 +70,17 @@ function App() {
         <Route path="/acompanamiento_espiritual" element={<AcompanamientoEspiritual />} />
         <Route path="/asistencia_social" element={<AsistenciaSocial />} />
         <Route path="/seguros_convenios" element={<SegurosConvenios />} />
+        <Route path="/info_general_visitas" element={<InfoGeneralVisita />} />
+        <Route path="/info_dif_vis_aco" element={<InfoDifVisAco />} />
+        <Route path="/info_rol_resp" element={<InfoRolResp />} />
+        <Route path="/info_rol_pagare" element={<InfoRolPagare />} />
+        <Route path="/info_horarios_condiciones" element={<InfoHorariosCon />} />
+        <Route path="/info_horarios_visitas" element={<InfoHoriariosVisitas />} />
+        <Route path="/info_horarios_entrada" element={<InfoHorariosEntrada />} />
+        <Route path="/info_servicios_visitas" element={<InfoServiciosVisitas />} />
+        <Route path="/info_comida" element={<InfoComida />} />
+        <Route path="/info_reflexion" element={<InfoReflexion />} />
+        <Route path="/info_instalaciones" element={<InfoInstalaciones />} />
       </Routes>
     </Router>
   );

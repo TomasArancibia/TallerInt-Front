@@ -10,13 +10,13 @@ export default function InfoVisitas() {
       <p>Por favor indíquenos de qué área es su consulta</p>
       <section className="botones">
           <div className="bot botones_azules titulo-estatica"> INFORMACIÓN SOBRE ACOMPAÑANTES Y VISITAS </div>
-          <Link className="bot botones_blancos" to="/info_visitas">
+          <Link className="bot botones_blancos" to="/info_general_visitas">
             INFORMACIÓN GENERAL DE ACOMPAÑANTES Y VISITAS
           </Link>
-          <Link className="bot botones_blancos" to="/info_visitas">
+          <Link className="bot botones_blancos" to="/info_horarios_condiciones">
             HORARIOS Y CONDICIONES
           </Link>
-          <Link className="bot botones_blancos" to="/info_visitas">
+          <Link className="bot botones_blancos" to="/info_servicios_visitas">
             SERVICIOS Y APOYO DISPONIBLES PARA VISITAS
           </Link>
           <Link className="bot botones_azules" to="/">
