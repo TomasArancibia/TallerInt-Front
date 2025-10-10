@@ -17,7 +17,7 @@ export default function InfoGeneralVisita() {
             ROL Y RESPONSABILIDADES DEL ACOMPAÑANTE RESPONSABLE
           </Link>
           <Link className="bot botones_blancos" to="/info_rol_pagare">
-            DIFERENCIA ENTRE RESPONSABLE DE PAGARÉ YACOMPAÑANTE
+            DIFERENCIA ENTRE RESPONSABLE DE PAGARÉ Y ACOMPAÑANTE
           </Link>
           <Link className="bot botones_azules" to="/info_visitas">
             Volver
