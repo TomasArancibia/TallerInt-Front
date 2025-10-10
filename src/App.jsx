@@ -33,6 +33,8 @@ import InfoComida from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServic
 import InfoReflexion from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServicioReflexion.jsx";
 import InfoInstalaciones from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosInstalaciones.jsx";
 
+// Admin
+import Admin from "./pages/Admin.jsx";
 
 // SOLICITUDES
 // Mantencion
@@ -81,6 +83,7 @@ function App() {
         <Route path="/info_comida" element={<InfoComida />} />
         <Route path="/info_reflexion" element={<InfoReflexion />} />
         <Route path="/info_instalaciones" element={<InfoInstalaciones />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </Router>
   );

@@ -1,0 +1,29 @@
+.admin-view {
+  background-color: #f6f7fb;
+  color: #222;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.admin-view h1,
+.admin-view h2,
+.admin-view h3 {
+  color: #222;
+}
+
+.admin-view table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.admin-view th,
+.admin-view td {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.admin-view th {
+  background-color: #e9ecf3;
+}
