@@ -16,6 +16,13 @@ export default function Admin() {
   const [areas, setAreas] = useState([]);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+  const [fechaInicio, setFechaInicio] = useState("2025-01-01");
+  const [fechaFin, setFechaFin] = useState("2025-12-31");
+  // Metricas
+  const [metricasArea, setMetricasArea] = useState([]);
+  const [metricasHospitalEstado, setMetricasHospitalEstado] = useState([]);
+  const [metricasAreaDia, setMetricasAreaDia] = useState([]);
+  const [metricasHospitalArea, setMetricasHospitalArea] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -52,10 +59,74 @@ export default function Admin() {
     fetchData();
   }, []);
 
+
+  useEffect(() => {
+    async function fetchMetricas() {
+      try {
+        const [areaRes, hospEstadoRes, areaDiaRes, hospAreaRes] = await Promise.all([
+          fetch(`${API}/metricas/solicitudes-por-area-estado?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
+          fetch(`${API}/metricas/solicitudes-por-hospital-estado?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
+          fetch(`${API}/metricas/solicitudes-por-area-dia?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
+          fetch(`${API}/metricas/solicitudes-por-hospital-area?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`)
+        ]);
+
+        const [areaData, hospEstadoData, areaDiaData, hospAreaData] = await Promise.all([
+          areaRes.json(),
+          hospEstadoRes.json(),
+          areaDiaRes.json(),
+          hospAreaRes.json()
+        ]);
+
+        setMetricasArea(areaData.metricas || areaData);
+        setMetricasHospitalEstado(hospEstadoData.metricas || hospEstadoData);
+        setMetricasAreaDia(areaDiaData.metricas || areaDiaData);
+        setMetricasHospitalArea(hospAreaData.metricas || hospAreaData);
+      } catch (err) {
+        console.error("Error cargando metricas:", err);
+      }
+    }
+  
+    fetchMetricas();
+  }, [fechaInicio, fechaFin]);
+
   return (
+    <div className="admin-container">
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <h3>UC Solicitudes</h3>
+        </div>
+        <nav className="sidebar-menu">
+          <button className="menu-item active">Dashboard</button>
+          <button className="menu-item">Solicitudes</button>
+          <button className="menu-item">Ubicaciones</button>
+          <button className="menu-item">Áreas de Solicitudes</button>
+          <button className="menu-item">Usuarios</button>
+        </nav>
+      </aside>
+
     <div className="admin-view">
-      <img src={logo} alt="Logo UC Christus" className="logo" />
-      <h2 style={{ marginTop: "1rem" }}>Panel de Administración</h2>
+      <header className="admin-header">
+        <div className="header-left">
+          <img src={logo} alt="Logo UC Christus" className="logo" />
+          <h1>Dashboard de Solicitudes</h1>
+        </div>
+
+        <div className="header-right">
+          <div className="filtro-fechas">
+            <input
+              type="date"
+              value={fechaInicio}
+              onChange={(e) => setFechaInicio(e.target.value)}
+            />
+            <span style={{ margin: "0 0.5rem" }}>a</span>
+            <input
+              type="date"
+              value={fechaFin}
+              onChange={(e) => setFechaFin(e.target.value)}
+            />
+          </div>
+        </div>
+      </header>
 
       {status === "loading" && <p>Cargando datos...</p>}
       {status === "error" && <p style={{ color: "#b00020" }}>Error: {error}</p>}
@@ -177,8 +248,36 @@ export default function Admin() {
               </tbody>
             </table>
           </section>
+
+        {/* MÉTRICAS */}  
+        <section style={{ marginTop: "2rem", marginBottom: "4rem" }}>
+          <h3>Métricas</h3>
+          {/* Solicitudes por área */}
+          <div style={{ marginBottom: "2rem" }}>
+            <h4>Solicitudes por Área</h4>
+            <table className="tabla"> 
+              <thead>
+                <tr>
+                  <th>Área</th>
+                  <th>Estado</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metricasArea.map((m, idx) => (
+                  <tr key={idx}>
+                    <td>{m.nombre_area}</td>
+                    <td>{m.estado}</td>
+                    <td>{m.total}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
         </>
       )}
     </div>
+  </div>
   );
 }

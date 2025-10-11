@@ -27,3 +27,66 @@
 .admin-view th {
   background-color: #e9ecf3;
 }
+
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-header {
+  background-color: #3e3c49;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 1rem;
+}
+
+.filtro-fechas {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.filtro-fechas label {
+  margin-right: 0.5rem;
+  font-weight: bold;
+  color: #b61515;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #3e3c49;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
