@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "../assets/logo-ucchristus.png";
 import "./Admin.css"
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const API =
   import.meta.env.VITE_API_URL ||
@@ -92,6 +93,23 @@ export default function Admin() {
   
     fetchMetricas();
   }, [fechaInicio, fechaFin]);
+
+  // Últimos 15 días para métricas diarias
+  const metricasUltimosDias = metricasAreaDia.filter(m => {
+    const fecha = new Date(m.dia);
+    const fechaFinal = new Date(fechaFin);
+    const fechaLimite = new Date(fechaFinal);
+    fechaLimite.setDate(fechaFinal.getDate() - 15);
+    return fecha >= fechaLimite && fecha <= fechaFinal;
+  });
+
+  // Reorganizar datos para que recharts pueda leerlo
+  const datosAgrupados = Object.values(metricasUltimosDias.reduce((acc, curr) => {
+    const { dia, nombre_area, total_solicitudes } = curr;
+    if (!acc[dia]) acc[dia] = { dia };
+    acc[dia][nombre_area] = total_solicitudes;
+    return acc;
+  }, {}));
 
   return (
     <div className="admin-container">
@@ -269,7 +287,7 @@ export default function Admin() {
               ))}
             </div>
           </div>
-          
+
           {/*Totales por Hospital y Estado*/}
           <div className="metricas-hospital">
             <h3>Totales por Institución</h3>
@@ -322,6 +340,28 @@ export default function Admin() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/*Totales por Área y día*/}
+          <div className="metricas-area-dia">
+            <h3>Totales por Área y Día (Últimos 15 días)</h3>
+            <div className="chart-container">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={datosAgrupados} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="dia" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {/*Hacer una barra por cada área*/}
+                {[...new Set(metricasUltimosDias.map(m => m.nombre_area))].map((area, index) => (
+                  <Bar key={area} dataKey={area} name={area} stackId="a"
+                  fill={["#27ae60", "#e67e22", "#3498db", "#9b59b6", "#f1c40f"][index % 5]}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
             </div>
           </div>
 
