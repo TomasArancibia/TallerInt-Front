@@ -35,6 +35,11 @@ import InfoInstalaciones from "./pages/Info/InfoVisitas/InfoServiciosVisitas/Inf
 
 // Admin
 import Admin from "./pages/Admin.jsx";
+import Dashboard from "./pages/Admin/Dashboard.jsx";
+//import Solicitudes from "./pages/Admin/Solicitudes.jsx";
+//import Ubicaciones from "./pages/Admin/Ubicaciones.jsx";
+//import Areas from "./pages/Admin/Areas.jsx";
+//import Usuarios from "./pages/Admin/Usuarios.jsx";
 
 // SOLICITUDES
 // Mantencion
@@ -83,7 +88,16 @@ function App() {
         <Route path="/info_comida" element={<InfoComida />} />
         <Route path="/info_reflexion" element={<InfoReflexion />} />
         <Route path="/info_instalaciones" element={<InfoInstalaciones />} />
-        <Route path="/admin" element={<Admin />} />
+        
+        {/* Rutas Admin */}
+        <Route path="/admin" element={<Admin />}>
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          {/* <Route path="solicitudes" element={<Solicitudes />} /> */}
+          {/* <Route path="ubicaciones" element={<Ubicaciones />} /> */}
+          {/* <Route path="areas" element={<Areas />} /> */}
+          {/* <Route path="usuarios" element={<Usuarios />} /> */}
+        </Route>
       </Routes>
     </Router>
   );
