@@ -62,9 +62,13 @@ export default function Admin() {
 
   useEffect(() => {
     async function fetchMetricas() {
+      if (new Date(fechaFin) < new Date(fechaInicio)) {
+      alert("Fecha inválida");
+      return;
+    }
       try {
         const [areaRes, hospEstadoRes, areaDiaRes, hospAreaRes] = await Promise.all([
-          fetch(`${API}/metricas/solicitudes-por-area-estado?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
+          fetch(`${API}/metricas/solicitudes-por-area?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
           fetch(`${API}/metricas/solicitudes-por-hospital-estado?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
           fetch(`${API}/metricas/solicitudes-por-area-dia?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
           fetch(`${API}/metricas/solicitudes-por-hospital-area?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`)
@@ -250,30 +254,77 @@ export default function Admin() {
           </section>
 
         {/* MÉTRICAS */}  
-        <section style={{ marginTop: "2rem", marginBottom: "4rem" }}>
-          <h3>Métricas</h3>
-          {/* Solicitudes por área */}
-          <div style={{ marginBottom: "2rem" }}>
-            <h4>Solicitudes por Área</h4>
-            <table className="tabla"> 
-              <thead>
-                <tr>
-                  <th>Área</th>
-                  <th>Estado</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {metricasArea.map((m, idx) => (
-                  <tr key={idx}>
-                    <td>{m.nombre_area}</td>
-                    <td>{m.estado}</td>
-                    <td>{m.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <section className="metricas-dashboard">
+          <h2 className="metricas-title">Métricas</h2>
+
+          {/*Totales por Área*/}
+          <div className="metricas-areas">
+            <h3>Totales por Área</h3>
+            <div className="metricas-areas-grid">
+              {metricasArea.map((m) => (
+                <div key={m.id_area} className="metrica-area-card">
+                  <h4>{m.nombre_area}</h4>
+                  <p>{m.total_solicitudes}</p>
+                </div>
+              ))}
+            </div>
           </div>
+          
+          {/*Totales por Hospital y Estado*/}
+          <div className="metricas-hospital">
+            <h3>Totales por Institución</h3>
+            <p className="metricas-hospital-subtitle">
+              Total general: {metricasHospitalEstado.reduce((sum, m) => sum + m.total_solicitudes, 0)}
+            </p>
+
+            <div className="metricas-hospital-grid">
+              {Array.from(
+                new Set(metricasHospitalEstado.map((m) => m.nombre_hospital))
+              ).map((hospital) => {
+                const datosHospital = metricasHospitalEstado.filter(
+                  (m) => m.nombre_hospital === hospital
+                );
+
+                const totalHospital = datosHospital.reduce(
+                  (sum, m) => sum + m.total_solicitudes,
+                  0
+                );
+                const pendientes = datosHospital.find((m) => m.estado === "pendiente")?.total_solicitudes || 0;
+                const enProceso = datosHospital.find((m) => m.estado === "en_proceso")?.total_solicitudes || 0;
+                const resueltos = datosHospital.find((m) => m.estado === "resuelto")?.total_solicitudes || 0;
+
+                // Porcentaje de resueltos
+                const porcentaje = totalHospital > 0 ? Math.round((resueltos / totalHospital) * 100) : 0;
+
+                return (
+                  <div key={hospital} className="metricas-hospital-card">
+                    <h4>{hospital}</h4>
+                    <h2>{totalHospital}</h2>
+                    <div className="circle">
+                      <div className="circle-inner">
+                        <span>{porcentaje}%</span>
+                      </div>
+                    </div>
+                    <div className="hospital-estados">
+                      <div className="hospital-estado-item">
+                        <span className="hospital-estado-num">{pendientes}</span>
+                        <span className="estado-label estado-pendiente">Pendientes</span>
+                      </div>
+                      <div className="hospital-estado-item">
+                        <span className="hospital-estado-num">{enProceso}</span>
+                        <span className="estado-label estado-enproceso">En Proceso</span>
+                      </div>
+                      <div className="hospital-estado-item">
+                        <span className="hospital-estado-num">{resueltos}</span>
+                        <span className="estado-label estado-resuelto">Resueltos</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
         </section>
         </>
       )}

@@ -90,3 +90,152 @@
   gap: 0.5rem;
   padding: 0 1rem;
 }
+
+/*Dashboard*/
+.metricas-dashboard {
+  margin-top: 3rem;
+  margin-bottom: 4rem;
+}
+
+.metricas-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #3e3c49;
+}
+
+/*Totales por área*/
+.metricas-areas {
+  margin-bottom: 3rem;
+}
+
+.metricas-areas-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  justify-content: flex-start;
+}
+
+.metrica-area-card {
+  flex: 1 1 220px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.metrica-area-card h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.metrica-area-card p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/*Totales por hospital y estado*/
+.metricas-hospital {
+  margin-top: 2rem;
+}
+
+.metricas-hospital-subtitle {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.metricas-hospital-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: flex-start;
+}
+
+.metricas-hospital-card {
+  flex: 1 1 250px;
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.metricas-hospital-card h4 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.metricas-hospital-card h2 {
+  margin: 0.3rem 0;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #3e3c49;
+}
+
+.circle {
+  margin: 1rem auto;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 8px solid #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.circle-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #3e3c49;
+}
+
+/* === Estados dentro de tarjetas de hospital === */
+.hospital-estados {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  margin-top: 1rem;
+  gap: 1rem;
+  text-align: center;
+}
+
+.hospital-estado-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hospital-estado-num {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000; /* números en negro */
+  line-height: 1.2;
+}
+
+.estado-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+/* Colores del texto del estado */
+.estado-pendiente {
+  color: #e41717;
+}
+
+.estado-enproceso {
+  color: #f5c02d;
+}
+
+.estado-resuelto {
+  color: #3bff09;
+}
