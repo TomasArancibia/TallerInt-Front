@@ -6,6 +6,12 @@ import Landing from "./pages/Landing.jsx";
 
 // Info Procesos clinicos
 import ProcesosClinicos from "./pages/Info/InfoClinica/ProcesosClinicos.jsx";
+import ResultadosExamenes from "./pages/Info/InfoClinica/ResultadosExamenes";
+import DocumentacionClinica from "./pages/Info/InfoClinica/DocumentacionClinica";
+import InfoDiagnosticoTratamiento from "./pages/Info/InfoClinica/InfoDiagnosticoTratamiento";
+import CitaPostHospitalizacion from "./pages/Info/InfoClinica/CitaPostHospitalizacion";
+import HorariosVisitasBanco from "./pages/Info/InfoClinica/HorariosVisitasBanco";
+
 
 // Info administrativa
 import InfoAdministrativa from "./pages/Info/InfoAdministrativa/InfoAdministrativa.jsx";
@@ -97,7 +103,13 @@ function App() {
           {/* <Route path="ubicaciones" element={<Ubicaciones />} /> */}
           {/* <Route path="areas" element={<Areas />} /> */}
           {/* <Route path="usuarios" element={<Usuarios />} /> */}
-        </Route>
+  
+        <Route path="/procesosclinicos" element={<ProcesosClinicos />} />
+        <Route path="/procesosclinicos/resultados" element={<ResultadosExamenes />} />
+        <Route path="/procesosclinicos/documentacion" element={<DocumentacionClinica />} />
+        <Route path="/procesosclinicos/info-diagnostico" element={<InfoDiagnosticoTratamiento />} />
+        <Route path="/procesosclinicos/cita-post" element={<CitaPostHospitalizacion />} />
+        <Route path="/procesosclinicos/horarios-banco" element={<HorariosVisitasBanco />} />
       </Routes>
     </Router>
   );
