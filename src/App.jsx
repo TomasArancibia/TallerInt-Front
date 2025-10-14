@@ -94,16 +94,13 @@ function App() {
         <Route path="/info_comida" element={<InfoComida />} />
         <Route path="/info_reflexion" element={<InfoReflexion />} />
         <Route path="/info_instalaciones" element={<InfoInstalaciones />} />
-        
         {/* Rutas Admin */}
-        <Route path="/admin" element={<Admin />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<Admin />}/>
+        <Route path="/dashboard" element={<Dashboard />} />
           {/* <Route path="solicitudes" element={<Solicitudes />} /> */}
           {/* <Route path="ubicaciones" element={<Ubicaciones />} /> */}
           {/* <Route path="areas" element={<Areas />} /> */}
           {/* <Route path="usuarios" element={<Usuarios />} /> */}
-  
         <Route path="/procesosclinicos" element={<ProcesosClinicos />} />
         <Route path="/procesosclinicos/resultados" element={<ResultadosExamenes />} />
         <Route path="/procesosclinicos/documentacion" element={<DocumentacionClinica />} />
