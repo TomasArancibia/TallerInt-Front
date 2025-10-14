@@ -64,8 +64,6 @@ import AsistenciaSocial from "./pages/Solicitudes/AsistenciaSocial/AsistenciaSoc
 // Acompanamiento espiritual
 import AcompanamientoEspiritual from "./pages/Solicitudes/AcompanamientoEspiritual/AcompanamientoEspiritual.jsx";
 
-import "./App.css";
-
 function App() {
   return (
     <Router>
@@ -113,4 +111,3 @@ function App() {
 }
 
 export default App;
-
