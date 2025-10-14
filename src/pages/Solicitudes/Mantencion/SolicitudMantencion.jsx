@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "../../homepage.css";
 import logo from "../../../assets/logo-ucchristus.png";
 import { Link, useLocation } from "react-router-dom";
+import {
+  pageContainer,
+  logoClass,
+  helperText,
+  sectionStack,
+  actionPurple,
+  actionWhite,
+  actionBlue,
+} from "../../../components/ui.js";
 
 const API =
   import.meta.env.VITE_API_URL ||
@@ -59,7 +67,8 @@ export default function SolicitudMantencion() {
 
       setResultadoEnvio("success");
       setMensaje("");
-    } catch (e) {
+    } catch (err) {
+      console.error("Error al enviar la solicitud", err);
       setResultadoEnvio("fail");
     } finally {
       setEnviando(false);
@@ -67,56 +76,64 @@ export default function SolicitudMantencion() {
   };
 
   return (
-    <div className="app">
-      <img src={logo} alt="Logo UC Christus" className="logo" />
-      <p>Por favor indíquenos de qué área es su consulta</p>
-      <section className="botones">
-        <div className="bot botones_morados titulo-estatica"> SOLICITUDES DE MANTENCIÓN</div>
-        <div className="bot" style={{ marginBottom: 6 }}>
+    <main className={pageContainer}>
+      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
+      <section className={`${sectionStack} items-center`}>
+        <div className={`${actionPurple} pointer-events-none`}>
+          SOLICITUDES DE MANTENCIÓN
+        </div>
+        <div className={`${actionWhite} text-xs font-medium text-slate-700 sm:text-sm`}>
           Área seleccionada: {areaName} — Tipo: {tipo}
         </div>
 
         <textarea
-          className="text-area"
+          className="w-full max-w-2xl rounded-2xl border-2 border-purple-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-300"
           name="mensaje"
-          rows="10"
-          cols="30"
+          rows="8"
           placeholder="Escriba aquí su solicitud"
           value={mensaje}
           onChange={(e) => setMensaje(e.target.value)}
-        ></textarea>
+        />
 
         {/* Estado de conexión con el backend */}
         {status === "loading" && (
-          <div className="bot" style={{ marginTop: 8 }}>Conectando al backend…</div>
+          <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
+            Conectando al backend…
+          </div>
         )}
         {status === "ok" && (
-          <div className="bot" style={{ marginTop: 8 }}>
+          <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
             Backend OK. Áreas: {areas.map((a) => a.nombre).join(", ")}
           </div>
         )}
         {status === "error" && (
-          <div className="bot" style={{ marginTop: 8, color: "#b00020" }}>
+          <div className="w-full max-w-2xl rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
             Error al conectar: {error}
           </div>
         )}
         {resultadoEnvio === "success" && (
-          <div className="bot" style={{ marginTop: 8, color: "#0a7c2f" }}>
+          <div className="w-full max-w-2xl rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm text-emerald-600 shadow-sm">
             Solicitud enviada correctamente
           </div>
         )}
         {resultadoEnvio === "fail" && (
-          <div className="bot" style={{ marginTop: 8, color: "#b00020" }}>
+          <div className="w-full max-w-2xl rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
             Error al enviar la solicitud
           </div>
         )}
 
-        <br />
-        <button className="bot botones_morados" onClick={handleEnviar} disabled={enviando}>
+        <button
+          className={`${actionPurple} w-full max-w-2xl disabled:cursor-not-allowed disabled:opacity-60`}
+          onClick={handleEnviar}
+          disabled={enviando}
+        >
           {enviando ? "Enviando…" : "Enviar"}
         </button>
-        <Link className="bot botones_azules" to="/">Volver</Link>
+        <Link className={`${actionBlue} w-full max-w-2xl`} to="/">
+          Volver
+        </Link>
       </section>
-    </div>
+    </main>
   );
 }
