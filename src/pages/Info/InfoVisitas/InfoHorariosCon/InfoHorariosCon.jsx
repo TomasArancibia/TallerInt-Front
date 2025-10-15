@@ -1,19 +1,20 @@
 import React from "react";
-import logo from "../../../../assets/logo-ucchristus.png";
 import { Link } from "react-router-dom";
 import {
   pageContainer,
-  logoClass,
   helperText,
   sectionStack,
   actionBlue,
   actionWhite,
-} from "../../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../../components/ui.jsx";
 
 export default function InfoHorariosCon() {
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/info_visitas" className="mb-4" backLabel="Menú visitas" />
+      <Logo />
       <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
       <section className={sectionStack}>
         <div className={`${actionBlue} pointer-events-none`}>HORARIOS Y CONDICIONES</div>
@@ -22,10 +23,6 @@ export default function InfoHorariosCon() {
         </Link>
         <Link className={actionWhite} to="/info_horarios_entrada">
           CONDICIONES DE ENTRADA DE VISITAS AL HOSPITAL
-        </Link>
-
-        <Link className={actionBlue} to="/info_visitas">
-          Volver
         </Link>
       </section>
     </main>

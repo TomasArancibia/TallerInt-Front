@@ -1,20 +1,20 @@
 import React from "react";
-import logo from "../../../../assets/logo-ucchristus.png";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import {
   pageContainer,
-  logoClass,
   sectionStack,
   actionBlue,
   infoText,
-} from "../../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../../components/ui.jsx";
 
 export default function InfoResPagare() {
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/info_general_visitas" className="mb-4" backLabel="Menú general visitas" />
+      <Logo />
       <section className={sectionStack}>
         <div className={`${actionBlue} pointer-events-none`}>ROL RESPONSABLE DE PAGARÉ</div>
         <div className={`${infoText} text-center`}>
@@ -43,9 +43,6 @@ export default function InfoResPagare() {
             </p>
           </div>
         </div>
-        <Link className={actionBlue} to="/info_general_visitas">
-          Volver
-        </Link>
       </section>
     </main>
   );

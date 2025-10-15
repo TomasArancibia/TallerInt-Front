@@ -1,14 +1,13 @@
 import React from "react";
-import logo from "../assets/logo-ucchristus.png";
 import { Link } from "react-router-dom";
 import {
   pageContainer,
-  logoClass,
   helperText,
   sectionStack,
   actionBlue,
   actionPurple,
-} from "../components/ui.js";
+  Logo,
+} from "../components/ui.jsx";
 
 export default function Homepage() {
   // Si vienes desde /landing con QR válido, estos valores existen
@@ -17,7 +16,7 @@ export default function Homepage() {
 
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <Logo />
 
       {/* Aviso pequeño (solo se muestra si hay QR/cama en sesión) */}
       {camaId && (

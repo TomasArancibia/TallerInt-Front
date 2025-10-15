@@ -1,18 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../../../assets/logo-ucchristus.png";
 import {
   pageContainer,
-  logoClass,
   actionBlue,
   contentCard,
   inlineCta,
-} from "../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../components/ui.jsx";
 
 export default function ResultadosExamenes() {
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/procesosclinicos" className="mb-4" backLabel="Menú procesos" />
+      <Logo />
       <div className={`${actionBlue} pointer-events-none`}>RESULTADOS DE EXÁMENES</div>
 
       <div className="mx-auto mt-4 w-full max-w-3xl space-y-4 text-center text-sm leading-relaxed text-slate-700">
@@ -41,9 +42,6 @@ export default function ResultadosExamenes() {
         </div>
       </div>
 
-      <Link className={`${actionBlue} mt-6 w-full max-w-2xl`} to="/procesosclinicos">
-        Volver
-      </Link>
     </main>
   );
 }

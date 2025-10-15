@@ -1,18 +1,18 @@
 import React from "react";
-import logo from "../../../../assets/logo-ucchristus.png";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
-  logoClass,
   sectionStack,
   actionBlue,
   infoText,
-} from "../../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../../components/ui.jsx";
 
 export default function InfoReflexion() {
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/info_servicios_visitas" className="mb-4" backLabel="Menú servicios" />
+      <Logo />
       <section className={sectionStack}>
         <div className={`${actionBlue} pointer-events-none`}>SERVICIOS DISPONIBLES</div>
         <div className={infoText}>
@@ -38,9 +38,6 @@ export default function InfoReflexion() {
             acompañantes o familiares.
           </p>
         </div>
-        <Link className={actionBlue} to="/info_servicios_visitas">
-          Volver
-        </Link>
       </section>
     </main>
   );

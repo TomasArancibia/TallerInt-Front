@@ -1,18 +1,18 @@
 import React from "react";
-import logo from "../../../../assets/logo-ucchristus.png";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
-  logoClass,
   sectionStack,
   actionBlue,
   infoText,
-} from "../../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../../components/ui.jsx";
 
 export default function InfoHorariosEntrada() {
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/info_horarios_condiciones" className="mb-4" backLabel="Menú horarios" />
+      <Logo />
       <section className={sectionStack}>
         <div className={`${actionBlue} pointer-events-none`}>CONDICIONES DE ENTRADA</div>
         <div className={infoText}>
@@ -50,9 +50,6 @@ export default function InfoHorariosEntrada() {
             <li>El hospital puede restringir el ingreso si se incumplen estas condiciones.</li>
           </ul>
         </div>
-        <Link className={actionBlue} to="/info_horarios_condiciones">
-          Volver
-        </Link>
       </section>
     </main>
   );

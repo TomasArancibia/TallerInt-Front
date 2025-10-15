@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../../assets/logo-ucchristus.png";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   pageContainer,
-  logoClass,
   helperText,
   sectionStack,
   actionPurple,
   actionWhite,
-  actionBlue,
-} from "../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../components/ui.jsx";
 
 const API =
   import.meta.env.VITE_API_URL ||
@@ -77,7 +76,8 @@ export default function SolicitudMantencion() {
 
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/mantencion" className="mb-4" backLabel="Menú mantención" />
+      <Logo />
       <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
       <section className={`${sectionStack} items-center`}>
         <div className={`${actionPurple} pointer-events-none`}>
@@ -130,9 +130,6 @@ export default function SolicitudMantencion() {
         >
           {enviando ? "Enviando…" : "Enviar"}
         </button>
-        <Link className={`${actionBlue} w-full max-w-2xl`} to="/">
-          Volver
-        </Link>
       </section>
     </main>
   );

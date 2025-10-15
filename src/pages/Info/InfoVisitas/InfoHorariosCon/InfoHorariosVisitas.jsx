@@ -1,20 +1,20 @@
 import React from "react";
-import logo from "../../../../assets/logo-ucchristus.png";
 import horarioVisitas from "../../../../assets/HorarioAtencion.png";
 import horarioBanco from "../../../../assets/HorarioBanco.png";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
-  logoClass,
   sectionStack,
   actionBlue,
   infoText,
-} from "../../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../../components/ui.jsx";
 
 export default function InfoHoriariosVisitas() {
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/info_horarios_condiciones" className="mb-4" backLabel="Menú horarios" />
+      <Logo />
       <section className={sectionStack}>
         <div className={`${actionBlue} pointer-events-none`}>HORARIOS DE VISITAS</div>
         <div className={`${infoText} text-center`}>
@@ -38,9 +38,6 @@ export default function InfoHoriariosVisitas() {
             className="mx-auto w-full max-w-xl rounded-lg shadow-sm"
           />
         </div>
-        <Link className={actionBlue} to="/info_horarios_condiciones">
-          Volver
-        </Link>
       </section>
     </main>
   );
