@@ -1,17 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import logo from "../../../assets/logo-ucchristus.png";
 import {
   pageContainer,
-  logoClass,
   actionBlue,
   contentCard,
-} from "../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../components/ui.jsx";
 
 export default function HorariosVisitasBanco() {
   return (
     <main className={pageContainer}>
-      <img src={logo} alt="Logo UC Christus" className={logoClass} />
+      <PageNav backHref="/procesosclinicos" className="mb-4" backLabel="Menú procesos" />
+      <Logo />
       <div className={`${actionBlue} pointer-events-none`}>
         HORARIOS VISITAS / BANCO DE SANGRE
       </div>
@@ -40,9 +40,6 @@ export default function HorariosVisitasBanco() {
         </div>
       </div>
 
-      <Link className={`${actionBlue} mt-6 w-full max-w-2xl`} to="/procesosclinicos">
-        Volver
-      </Link>
     </main>
   );
 }

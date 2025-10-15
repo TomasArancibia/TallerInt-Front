@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import logo from "../assets/logo-ucchristus.png";
+import { PageNav, Logo } from "../components/ui.jsx";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function Admin() {
     <div className="flex min-h-screen bg-slate-100 text-slate-900">
       <aside className="hidden w-60 flex-col bg-slate-900 px-5 py-8 text-slate-100 sm:flex">
         <div className="flex items-center gap-3 pb-10">
-          <img src={logo} alt="Logo UC Christus" className="h-10 w-auto rounded-lg bg-white p-1" />
+          <Logo className="h-10 w-auto rounded-lg bg-white p-1" />
           <h3 className="text-lg font-semibold">UC Solicitudes</h3>
         </div>
 
@@ -43,6 +43,7 @@ export default function Admin() {
       </aside>
 
       <div className="flex min-h-screen w-full flex-1 flex-col bg-slate-50 px-4 py-6 sm:px-8">
+        <PageNav backHref="/" className="mb-6" />
         <Outlet />
       </div>
     </div>

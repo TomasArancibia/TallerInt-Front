@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../assets/logo-ucchristus.png";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Logo } from "../../components/ui.jsx";
 
 const API =
   import.meta.env.VITE_API_URL ||
@@ -115,7 +115,7 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-4 rounded-2xl bg-slate-900 px-6 py-5 text-slate-50 shadow-md sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Logo UC Christus" className="h-12 w-auto rounded-lg bg-white p-2" />
+          <Logo className="h-12 w-auto rounded-lg bg-white p-2" />
           <h1 className="text-xl font-semibold">Dashboard de Solicitudes</h1>
         </div>
 

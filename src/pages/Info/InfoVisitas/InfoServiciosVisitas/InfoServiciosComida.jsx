@@ -1,18 +1,18 @@
 import React from "react";
-import logo from "../../../../assets/logo-ucchristus.png";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
-  logoClass,
   sectionStack,
   actionBlue,
   infoText,
-} from "../../../../components/ui.js";
+  PageNav,
+  Logo,
+} from "../../../../components/ui.jsx";
 
 export default function InfoComida() {
     return (
         <main className={pageContainer}>
-            <img src={logo} alt="Logo UC Christus" className={logoClass} />
+            <PageNav backHref="/info_servicios_visitas" className="mb-4" backLabel="Menú servicios" />
+            <Logo />
             <section className={sectionStack}>
                 <div className={`${actionBlue} pointer-events-none`}>CAFETERÍAS, MARKETPLACES, ETC</div>
                 <div className={infoText}>
@@ -44,9 +44,6 @@ export default function InfoComida() {
                     El hospital permite que los acompañantes traigan alimentos solo para <strong className="text-purple-700">consumo personal</strong> (no compartir con pacientes), siempre que estén en envases sellados (como tuppers o termos). La manipulación, refrigeración y pérdida de estos alimentos es responsabilidad del acompañante. No se permite su almacenamiento en espacios del hospital ni el uso de recursos del personal.
                    </p>
                 </div>
-                <Link className={actionBlue} to="/info_servicios_visitas">
-                    Volver
-                </Link>
             </section>
         </main>
     );
