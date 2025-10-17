@@ -1,8 +1,8 @@
 import React from "react";
 import {
   pageContainer,
-  sectionStack,
   actionBlue,
+  contentCard,
   infoText,
   PageNav,
   Logo,
@@ -11,31 +11,35 @@ import {
 export default function InfoReflexion() {
   return (
     <main className={pageContainer}>
-      <PageNav backHref="/info_servicios_visitas" className="mb-4" backLabel="Menú servicios" />
+      <PageNav
+        backHref="/info_servicios_visitas"
+        className="mb-4"
+        backLabel="Menú servicios"
+      />
       <Logo />
-      <section className={sectionStack}>
+      <div className="mx-auto mt-6 w-full max-w-3xl">
         <div className={`${actionBlue} pointer-events-none`}>SERVICIOS DISPONIBLES</div>
-        <div className={infoText}>
+      </div>
+      <section className={infoText}>
+        <div className={`${contentCard} space-y-4`}>
           <p>
             En UC CHRISTUS existen espacios dedicados a la oración y la reflexión espiritual. En el
-            caso del hospital, se dispone de los siguientes espacios:
+            hospital cuentas con los siguientes lugares:
           </p>
 
           <h3 className="text-base font-semibold text-purple-700">Capilla San Lucas</h3>
-          <p>
-            Se ubica en el 1er piso del hospital y oficia los siguientes servicios:
-          </p>
+          <p>Ubicada en el 1er piso del hospital, ofrece:</p>
           <ul className="list-disc space-y-2 pl-5">
             <li>Misa diaria: 12:00 hrs.</li>
-            <li>Santo Rosario: 8:10 hrs.</li>
+            <li>Santo Rosario: 08:10 hrs.</li>
             <li>Adoración al Santísimo: jueves entre 12:30 y 13:00 hrs.</li>
-            <li>Misa mensual para pacientes fallecidos: segundos viernes de cada mes.</li>
+            <li>Misa mensual para pacientes fallecidos: segundo viernes de cada mes.</li>
           </ul>
 
           <h3 className="text-base font-semibold text-purple-700">Oratorio San Alberto Hurtado</h3>
           <p>
-            Se ubica en 4to piso del hospital y permite el ofrecimiento de oraciones por parte de
-            acompañantes o familiares.
+            Espacio ubicado en el 4to piso donde acompañantes y familiares pueden ofrecer oraciones
+            de manera tranquila.
           </p>
         </div>
       </section>

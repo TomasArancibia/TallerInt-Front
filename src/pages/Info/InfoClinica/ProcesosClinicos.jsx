@@ -30,7 +30,7 @@ export default function ProcesosClinicos() {
           INFORMACIÓN SOBRE DIÁGNOSTICO O DE TRATAMIENTO MÉDICO
         </Link>
         <Link className={actionWhite} to="/procesosclinicos/cita-post">
-          ¿DONDE AGENDO UNA CITA POST HOSPITALIZACIÓN?
+          ¿DÓNDE AGENDO UNA CITA POST HOSPITALIZACIÓN?
         </Link>
         <Link className={actionWhite} to="/procesosclinicos/horarios-banco">
           HORARIO VISITAS Y BANCO SANGRE

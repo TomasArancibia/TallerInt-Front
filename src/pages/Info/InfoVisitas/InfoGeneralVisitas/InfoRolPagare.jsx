@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import {
   pageContainer,
-  sectionStack,
   actionBlue,
+  contentCard,
   infoText,
   PageNav,
   Logo,
@@ -13,32 +13,37 @@ import {
 export default function InfoResPagare() {
   return (
     <main className={pageContainer}>
-      <PageNav backHref="/info_general_visitas" className="mb-4" backLabel="Menú general visitas" />
+      <PageNav
+        backHref="/info_general_visitas"
+        className="mb-4"
+        backLabel="Menú general visitas"
+      />
       <Logo />
-      <section className={sectionStack}>
+      <div className="mx-auto mt-6 w-full max-w-3xl">
         <div className={`${actionBlue} pointer-events-none`}>ROL RESPONSABLE DE PAGARÉ</div>
-        <div className={`${infoText} text-center`}>
+      </div>
+      <section className={infoText}>
+        <div className={`${contentCard} space-y-5`}>
           <h3 className="text-base font-semibold text-purple-700">¿Sabías que...?</h3>
           <p>
-            El responsable del pagaré es la persona que firma el pagaré de cuenta hospitalaria.
-            Puede ser el mismo paciente, acompañante, representante legal o tercera persona. Tiene
-            responsabilidad financiera con la institución sobre la cuenta hospitalaria del paciente.
-            La institución no está obligada a entregar información clínica al responsable del
-            pagaré, si no es el mismo paciente o acompañante responsable declarado.
+            El responsable del pagaré es quien firma la cuenta hospitalaria. Puede ser el paciente,
+            un acompañante, el representante legal u otra persona. Tiene responsabilidad financiera
+            con la institución y solo accederá a información clínica si cuenta con la autorización
+            correspondiente.
           </p>
           <h3 className="text-base font-semibold text-purple-700">
             ¿Dónde puedo recibir mayor orientación?
           </h3>
-          <div className="flex items-start gap-3 text-left">
+          <div className="flex items-start gap-3">
             <FontAwesomeIcon icon={faLocationDot} className="mt-1 text-purple-700" />
             <p>
-              Marcoleta 367, 1er piso, Hospital Clínico UC CHRISTUS, Santiago Centro
+              Marcoleta 367, 1er piso, Hospital Clínico UC CHRISTUS, Santiago Centro.
             </p>
           </div>
-          <div className="flex items-start gap-3 text-left">
+          <div className="flex items-start gap-3">
             <FontAwesomeIcon icon={faCalendar} className="mt-1 text-purple-700" />
             <p>
-              De lunes a jueves: 09:00 a 16:30. Viernes de 09:00 a 15:30 hrs. Sábados, domingos y
+              De lunes a jueves: 09:00 a 16:30. Viernes: 09:00 a 15:30 hrs. Sábados, domingos y
               festivos cerrado.
             </p>
           </div>
