@@ -3,40 +3,53 @@ import {
   pageContainer,
   actionBlue,
   contentCard,
+  infoText,
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import horarioVisitasImg from "../../../assets/HorarioAtencion.png";
+import horarioBancoImg from "../../../assets/HorarioBanco.png";
 
 export default function HorariosVisitasBanco() {
   return (
     <main className={pageContainer}>
       <PageNav backHref="/procesosclinicos" className="mb-4" backLabel="Menú procesos" />
       <Logo />
-      <div className={`${actionBlue} pointer-events-none`}>
-        HORARIOS VISITAS / BANCO DE SANGRE
+      <div className="mx-auto mt-6 w-full max-w-3xl">
+        <div className={`${actionBlue} pointer-events-none`}>
+          HORARIOS VISITAS / BANCO DE SANGRE
+        </div>
       </div>
 
-      <div className="mx-auto mt-4 w-full max-w-3xl space-y-4 text-center text-sm leading-relaxed text-slate-700">
-        <h2 className="text-base font-semibold text-purple-700">¿Sabías que…?</h2>
+      <div className={infoText}>
+        <h2 className="text-lg font-semibold text-purple-700">¿Sabías que…?</h2>
 
-        <div className={`${contentCard} space-y-4 text-center`}>
+        <div className={`${contentCard} space-y-5`}>
           <p>
-            Los horarios de visita pueden variar según la unidad (médico-quirúrgico, maternidad,
-            pediatría, UCI/Intermedio, etc.). Verifica siempre con la unidad de hospitalización.
+            Los horarios de visitas médicas a pacientes hospitalizados en UC Christus, en las
+            distintas unidades, son los siguientes:
           </p>
-          <ul className="mx-auto list-inside list-disc space-y-2 text-left text-sm leading-relaxed text-slate-700 sm:max-w-xl">
-            <li>Respeta los aforos definidos por cada unidad.</li>
-            <li>En unidades críticas, el tiempo de visita es más acotado.</li>
-            <li>Si el paciente es menor de edad, debe asistir con su adulto responsable.</li>
-          </ul>
 
-          <div className="space-y-2">
-            <h3 className="text-base font-semibold text-purple-700">Banco de sangre</h3>
-            <p>
-              El horario de donación y retiro de hemocomponentes se publica por el hospital y puede
-              actualizarse en contingencias. Revisa los horarios oficiales antes de acudir.
-            </p>
-          </div>
+          <figure className="mx-auto w-full max-w-2xl">
+            <img
+              src={horarioVisitasImg}
+              alt="Cuadro de horarios de visitas por unidad"
+              className="w-full rounded-xl border border-slate-200 object-contain shadow-sm"
+            />
+          </figure>
+
+          <p>
+            El horario de banco de sangre es de lunes a viernes con última emisión de ticket a las
+            16:45 hrs. Sábados, domingos y festivos cerrado.
+          </p>
+
+          <figure className="mx-auto w-full max-w-2xl">
+            <img
+              src={horarioBancoImg}
+              alt="Tabla de horarios del banco de sangre"
+              className="w-full rounded-xl border border-slate-200 object-contain shadow-sm"
+            />
+          </figure>
         </div>
       </div>
 

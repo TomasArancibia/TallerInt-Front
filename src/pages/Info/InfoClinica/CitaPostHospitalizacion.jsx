@@ -5,6 +5,7 @@ import {
   actionBlue,
   contentCard,
   inlineCta,
+  infoText,
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
@@ -14,22 +15,30 @@ export default function CitaPostHospitalizacion() {
     <main className={pageContainer}>
       <PageNav backHref="/procesosclinicos" className="mb-4" backLabel="Menú procesos" />
       <Logo />
-      <div className={`${actionBlue} pointer-events-none`}>CITA POST HOSPITALIZACIÓN</div>
+      <div className="mx-auto mt-6 w-full max-w-3xl">
+        <div className={`${actionBlue} pointer-events-none`}>CITA POST HOSPITALIZACIÓN</div>
+      </div>
 
-      <div className="mx-auto mt-4 w-full max-w-3xl space-y-4 text-center text-sm leading-relaxed text-slate-700">
-        <h2 className="text-base font-semibold text-purple-700">
+      <div className={infoText}>
+        <h2 className="text-lg font-semibold text-purple-700">
           ¿Dónde agendo una cita post hospitalización?
         </h2>
 
-        <div className={`${contentCard} space-y-3 text-center`}>
+        <div className={`${contentCard} space-y-4`}>
           <p>
             Tras el alta, el hospital suele indicar controles con tu especialista o con equipos
             de apoyo (kinesiología, nutrición, etc.). Puedes gestionarlos en línea o por los
             canales de agenda indicados por el centro.
           </p>
-          <Link className={inlineCta} to="/procesosclinicos/cita-post" aria-label="Agendar cita post hospitalización">
-            Agendar cita
-          </Link>
+          <div className="flex justify-start">
+            <Link
+              className={inlineCta}
+              to="/procesosclinicos/cita-post"
+              aria-label="Agendar cita post hospitalización"
+            >
+              Agendar cita
+            </Link>
+          </div>
         </div>
       </div>
 

@@ -3,8 +3,8 @@ import horarioVisitas from "../../../../assets/HorarioAtencion.png";
 import horarioBanco from "../../../../assets/HorarioBanco.png";
 import {
   pageContainer,
-  sectionStack,
   actionBlue,
+  contentCard,
   infoText,
   PageNav,
   Logo,
@@ -13,30 +13,40 @@ import {
 export default function InfoHoriariosVisitas() {
   return (
     <main className={pageContainer}>
-      <PageNav backHref="/info_horarios_condiciones" className="mb-4" backLabel="Menú horarios" />
+      <PageNav
+        backHref="/info_horarios_condiciones"
+        className="mb-4"
+        backLabel="Menú horarios"
+      />
       <Logo />
-      <section className={sectionStack}>
+      <div className="mx-auto mt-6 w-full max-w-3xl">
         <div className={`${actionBlue} pointer-events-none`}>HORARIOS DE VISITAS</div>
-        <div className={`${infoText} text-center`}>
-          <h3 className="text-base font-semibold text-purple-700">¿Sabías que...?</h3>
+      </div>
+      <section className={infoText}>
+        <h2 className="text-lg font-semibold text-purple-700">¿Sabías que…?</h2>
+        <div className={`${contentCard} space-y-5`}>
           <p>
             Los horarios de visitas médicas a pacientes hospitalizados en UC Christus, en las
             distintas unidades, son los siguientes:
           </p>
-          <img
-            src={horarioVisitas}
-            alt="Horario de visitas"
-            className="mx-auto w-full max-w-xl rounded-lg shadow-sm"
-          />
+          <figure className="mx-auto w-full max-w-2xl">
+            <img
+              src={horarioVisitas}
+              alt="Cuadro de horarios de visitas por unidad"
+              className="w-full rounded-xl border border-slate-200 object-contain shadow-sm"
+            />
+          </figure>
           <p>
-            El horario de banco de sangre es de lunes a viernes (última emisión de ticket 16:45 hrs).
-            Sábados, domingos y festivos cerrado.
+            El horario de banco de sangre es de lunes a viernes con última emisión de ticket a las
+            16:45 hrs. Sábados, domingos y festivos cerrado.
           </p>
-          <img
-            src={horarioBanco}
-            alt="Horario de Banco de Sangre"
-            className="mx-auto w-full max-w-xl rounded-lg shadow-sm"
-          />
+          <figure className="mx-auto w-full max-w-2xl">
+            <img
+              src={horarioBanco}
+              alt="Tabla de horarios del banco de sangre"
+              className="w-full rounded-xl border border-slate-200 object-contain shadow-sm"
+            />
+          </figure>
         </div>
       </section>
     </main>

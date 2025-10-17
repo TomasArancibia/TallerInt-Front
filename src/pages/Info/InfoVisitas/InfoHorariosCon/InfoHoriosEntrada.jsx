@@ -1,8 +1,8 @@
 import React from "react";
 import {
   pageContainer,
-  sectionStack,
   actionBlue,
+  contentCard,
   infoText,
   PageNav,
   Logo,
@@ -11,17 +11,23 @@ import {
 export default function InfoHorariosEntrada() {
   return (
     <main className={pageContainer}>
-      <PageNav backHref="/info_horarios_condiciones" className="mb-4" backLabel="Menú horarios" />
+      <PageNav
+        backHref="/info_horarios_condiciones"
+        className="mb-4"
+        backLabel="Menú horarios"
+      />
       <Logo />
-      <section className={sectionStack}>
+      <div className="mx-auto mt-6 w-full max-w-3xl">
         <div className={`${actionBlue} pointer-events-none`}>CONDICIONES DE ENTRADA</div>
-        <div className={infoText}>
-          <h3 className="text-center text-base font-semibold text-purple-700">
+      </div>
+      <section className={infoText}>
+        <div className={`${contentCard} space-y-4`}>
+          <h3 className="text-base font-semibold text-purple-700">
             ¿Qué debo cumplir para ser visita?
           </h3>
           <p>
             Las visitas deben ser mayores de 12 años; sin embargo, se permite el ingreso de menores
-            de 12 años en estos casos:
+            en los siguientes casos:
           </p>
           <ul className="list-disc space-y-2 pl-5">
             <li>Hijos(as) o hermanos(as) de pacientes hospitalizados por más de 12 días.</li>
@@ -32,11 +38,13 @@ export default function InfoHorariosEntrada() {
             </li>
           </ul>
           <p>Siempre deben estar acompañados de un adulto responsable.</p>
-          <h3 className="text-base font-semibold text-purple-700">Condiciones sanitarias de ingreso</h3>
+          <h3 className="text-base font-semibold text-purple-700">
+            Condiciones sanitarias de ingreso
+          </h3>
           <ul className="list-disc space-y-2 pl-5">
             <li>Higiene de manos obligatoria al entrar o salir de salas.</li>
             <li>Uso de mascarilla si presenta síntomas respiratorios.</li>
-            <li>Seguir instrucciones del personal ante señaléticas especiales.</li>
+            <li>Seguir las indicaciones del personal ante señaléticas especiales.</li>
           </ul>
           <h3 className="text-base font-semibold text-purple-700">Restricción por síntomas</h3>
           <ul className="list-disc space-y-2 pl-5">

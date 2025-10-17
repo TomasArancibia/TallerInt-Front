@@ -17,6 +17,15 @@ import HorariosVisitasBanco from "./pages/Info/InfoClinica/HorariosVisitasBanco"
 import InfoAdministrativa from "./pages/Info/InfoAdministrativa/InfoAdministrativa.jsx";
 import BeneficiosSociales from "./pages/Info/InfoAdministrativa/BeneficiosSociales.jsx";
 import SegurosConvenios from "./pages/Info/InfoAdministrativa/SegurosConvenios.jsx";
+import InfoGesCaecLey from "./pages/Info/InfoAdministrativa/InfoGesCaecLey.jsx";
+import InfoGes from "./pages/Info/InfoAdministrativa/InfoGes.jsx";
+import InfoCaec from "./pages/Info/InfoAdministrativa/InfoCaec.jsx";
+import InfoLeyUrgencia from "./pages/Info/InfoAdministrativa/InfoLeyUrgencia.jsx";
+import InfoCostosPrestaciones from "./pages/Info/InfoAdministrativa/InfoCostosPrestaciones.jsx";
+import InfoPresupuestosCuenta from "./pages/Info/InfoAdministrativa/InfoPresupuestosCuenta.jsx";
+import InfoPresupuestos from "./pages/Info/InfoAdministrativa/InfoPresupuestos.jsx";
+import InfoCuentaPagos from "./pages/Info/InfoAdministrativa/InfoCuentaPagos.jsx";
+import InfoSugerencias from "./pages/Info/InfoAdministrativa/InfoSugerencias.jsx";
 
 
 // Info visitas
@@ -72,6 +81,15 @@ function App() {
         <Route path="/landing" element={<Landing />} />
         <Route path="/procesosclinicos" element={<ProcesosClinicos />} />
         <Route path="/info_administrativa" element={<InfoAdministrativa />} />
+        <Route path="/info_administrativa/ges-caec-ley" element={<InfoGesCaecLey />} />
+        <Route path="/info_administrativa/ges" element={<InfoGes />} />
+        <Route path="/info_administrativa/caec" element={<InfoCaec />} />
+        <Route path="/info_administrativa/ley-de-urgencia" element={<InfoLeyUrgencia />} />
+        <Route path="/info_administrativa/costos-prestaciones" element={<InfoCostosPrestaciones />} />
+        <Route path="/info_administrativa/presupuestos-cuenta" element={<InfoPresupuestosCuenta />} />
+        <Route path="/info_administrativa/presupuestos" element={<InfoPresupuestos />} />
+        <Route path="/info_administrativa/cuenta-hospitalaria-pagos" element={<InfoCuentaPagos />} />
+        <Route path="/info_administrativa/sugerencias" element={<InfoSugerencias />} />
         <Route path="/info_visitas" element={<InfoVisitas />} />
         <Route path="/nutricion_y_alimentacion" element={<Nutricion />} />
         <Route path="/limpieza" element={<Limpieza />} />

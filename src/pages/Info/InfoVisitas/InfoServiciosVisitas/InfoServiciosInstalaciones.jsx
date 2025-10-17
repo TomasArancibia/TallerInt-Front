@@ -1,8 +1,8 @@
 import React from "react";
 import {
   pageContainer,
-  sectionStack,
   actionBlue,
+  contentCard,
   infoText,
   PageNav,
   Logo,
@@ -11,11 +11,17 @@ import {
 export default function InfoInstalaciones() {
   return (
     <main className={pageContainer}>
-      <PageNav backHref="/info_servicios_visitas" className="mb-4" backLabel="Menú servicios" />
+      <PageNav
+        backHref="/info_servicios_visitas"
+        className="mb-4"
+        backLabel="Menú servicios"
+      />
       <Logo />
-      <section className={sectionStack}>
+      <div className="mx-auto mt-6 w-full max-w-3xl">
         <div className={`${actionBlue} pointer-events-none`}>SERVICIOS DISPONIBLES</div>
-        <div className={infoText}>
+      </div>
+      <section className={infoText}>
+        <div className={`${contentCard} space-y-4`}>
           <h3 className="text-base font-semibold text-purple-700">Cajero automático</h3>
           <p>
             Se encuentra en el 1er piso de la salida norte del hospital clínico (sector G).
