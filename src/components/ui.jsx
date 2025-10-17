@@ -17,25 +17,25 @@ export const sectionStack =
   "mt-6 flex w-full max-w-xl flex-col gap-3 sm:max-w-2xl";
 
 export const buttonBase =
-  "w-full rounded-2xl border border-purple-700 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide shadow-md transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring focus-visible:ring-purple-300 sm:text-base";
+  "w-full rounded-2xl border-2 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide shadow-md transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 sm:text-base";
 
 export const infoCard =
   "rounded-2xl bg-white p-5 text-left text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 sm:text-base";
 
 export const actionBlue =
-  `${buttonBase} border-blue-700 bg-blue-600 text-white hover:bg-blue-700`;
+  `${buttonBase} border-[#3481E2] bg-[#3481E2] text-white hover:bg-[#3481E2] focus-visible:ring-[rgba(52,129,226,0.35)]`;
 
 export const actionPurple =
-  `${buttonBase} border-purple-700 bg-purple-700 text-white hover:bg-purple-800`;
+  `${buttonBase} border-[#682076] bg-[#682076] text-white hover:bg-[#682076] focus-visible:ring-[rgba(104,32,118,0.35)]`;
 
 export const actionWhite =
   `${buttonBase} border-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-200`;
 
 export const actionSky =
-  `${buttonBase} border-indigo-300 bg-indigo-100 text-slate-900 hover:bg-indigo-200`;
+  `${buttonBase} border-[#A7CBF5] bg-[#E7F2FE] text-slate-900 hover:bg-[#E7F2FE] focus-visible:ring-[rgba(52,129,226,0.25)]`;
 
 export const actionStatic =
-  `${buttonBase} border-blue-700 bg-blue-600 text-white cursor-default pointer-events-none`;
+  `${buttonBase} border-[#3481E2] bg-[#3481E2] text-white cursor-default pointer-events-none focus-visible:ring-[rgba(52,129,226,0.35)]`;
 
 export const viewContainer =
   "w-full max-w-4xl px-4 pb-10 pt-4 sm:px-6";
@@ -47,7 +47,7 @@ export const contentCard =
   "mx-auto mt-3 w-full max-w-3xl rounded-2xl bg-white px-5 py-4 text-left text-sm leading-relaxed text-slate-700 shadow-md ring-1 ring-slate-200 sm:text-base";
 
 export const inlineCta =
-  "mt-4 inline-flex items-center justify-center rounded-full bg-purple-700 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 hover:bg-purple-800 focus:outline-none focus-visible:ring focus-visible:ring-purple-300 sm:px-5 sm:py-2.5";
+  "mt-4 inline-flex items-center justify-center rounded-full bg-[#682076] px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 hover:bg-[#682076] focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(104,32,118,0.35)] sm:px-5 sm:py-2.5";
 
 export const infoText =
   "mx-auto mt-6 w-full max-w-3xl space-y-5 text-left text-sm leading-relaxed text-slate-700 sm:text-base";
@@ -67,7 +67,7 @@ export function Logo({
 }
 
 const navButton =
-  "inline-flex items-center gap-1 rounded-full border border-slate-300 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-600 shadow-sm transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring focus-visible:ring-purple-300 sm:text-xs";
+  "inline-flex items-center gap-1 rounded-full border border-slate-300 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-600 shadow-sm transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(104,32,118,0.35)] sm:text-xs";
 
 export function PageNav({
   backHref,
