@@ -64,6 +64,9 @@ import SolicitudMantencion from "./pages/Solicitudes/Mantencion/SolicitudMantenc
 // Nutricion y alimentacion
 import Nutricion from "./pages/Solicitudes/Nutricion/Nutricion.jsx";
 
+// Solicitudes compartidas
+import SolicitudGenerica from "./pages/Solicitudes/Shared/SolicitudGenerica.jsx";
+
 // Limpieza
 import Limpieza from "./pages/Solicitudes/Limpieza/Limpieza.jsx";
 
@@ -97,6 +100,7 @@ function App() {
         <Route path="/solicitudmantencion" element={<SolicitudMantencion />} />
         <Route path="/beneficios_sociales" element={<BeneficiosSociales />} />
         <Route path="/acompanamiento_espiritual" element={<AcompanamientoEspiritual />} />
+        <Route path="/solicitudes/nueva" element={<SolicitudGenerica />} />
         <Route path="/asistencia_social" element={<AsistenciaSocial />} />
         <Route path="/seguros_convenios" element={<SegurosConvenios />} />
         <Route path="/info_general_visitas" element={<InfoGeneralVisita />} />

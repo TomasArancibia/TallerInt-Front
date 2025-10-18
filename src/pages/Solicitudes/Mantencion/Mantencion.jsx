@@ -11,32 +11,41 @@ import {
 } from "../../../components/ui.jsx";
 
 export default function Mantencion() {
+  const opciones = [
+    "BAÑO",
+    "CAMA (LUCES, TIMBRE, ETC)",
+    "CLIMATIZACIÓN",
+    "TELEVISOR Y CONTROL REMOTO",
+    "MOBILIARIO DENTRO DE LA HABITACIÓN",
+    "OTRO TIPO DE MANTENCIÓN",
+  ];
+
   return (
     <main className={pageContainer}>
       <PageNav backHref="/" className="mb-4" />
       <Logo />
       <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
       <section className={sectionStack}>
-        <div className={`${actionPurple} pointer-events-none`}>SOLICITUDES DE MANTENCIÓN</div>
+        <div className={`${actionPurple} pointer-events-none`}>
+          SOLICITUDES DE MANTENCIÓN - COMODIDAD
+        </div>
 
-        <Link className={actionWhite} to="/solicitudmantencion" state={{ areaName: "Mantención", tipo: "BAÑO" }}>
-          BAÑO
-        </Link>
-        <Link className={actionWhite} to="/solicitudmantencion" state={{ areaName: "Mantención", tipo: "CAMA (LUCES, TIMBRE, ETC)" }}>
-          CAMA (LUCES, TIMBRE, ETC)
-        </Link>
-        <Link className={actionWhite} to="/solicitudmantencion" state={{ areaName: "Mantención", tipo: "CLIMATIZACIÓN" }}>
-          CLIMATIZACIÓN
-        </Link>
-        <Link className={actionWhite} to="/solicitudmantencion" state={{ areaName: "Mantención", tipo: "TELEVISOR Y CONTROL REMOTO" }}>
-          TELEVISOR Y CONTROL REMOTO
-        </Link>
-        <Link className={actionWhite} to="/solicitudmantencion" state={{ areaName: "Mantención", tipo: "MOBILIARIO DENTRO DE LA HABITACIÓN" }}>
-          MOBILIARIO DENTRO DE LA HABITACIÓN
-        </Link>
-        <Link className={actionWhite} to="/solicitudmantencion" state={{ areaName: "Mantención", tipo: "OTRO TIPO DE MANTENCIÓN" }}>
-          OTRO TIPO DE MANTENCIÓN
-        </Link>
+        {opciones.map((nombre) => (
+          <Link
+            key={nombre}
+            className={`${actionWhite} border-purple-700 text-black`}
+            to="/solicitudes/nueva"
+            state={{
+              areaName: "Mantención y Comodidad",
+              tipo: nombre,
+              backHref: "/mantencion",
+              backLabel: "Menú mantención",
+              titulo: "SOLICITUDES DE MANTENCIÓN - COMODIDAD",
+            }}
+          >
+            {nombre}
+          </Link>
+        ))}
       </section>
     </main>
   );

@@ -11,6 +11,13 @@ import {
 } from "../../../components/ui.jsx";
 
 export default function AcompanamientoEspiritual() {
+  const opciones = [
+    "Solicita visita de acompañante espiritual",
+    "Solicita oraciones por su salud",
+    "Solicita sacramento Unción, Comunión y Confesión",
+    "Otros",
+  ];
+
   return (
     <main className={pageContainer}>
       <PageNav backHref="/" className="mb-4" />
@@ -20,12 +27,26 @@ export default function AcompanamientoEspiritual() {
         <div className={`${actionPurple} pointer-events-none`}>
           ACOMPAÑAMIENTO SOCIAL Y/O ESPIRITUAL
         </div>
-        <Link className={actionWhite} to="/acompanamiento_espiritual">
-          PREGUNTAR A CONI
-        </Link>
-        <Link className={actionWhite} to="/acompanamiento_espiritual">
-          PREGUNTAR A CONI
-        </Link>
+        <p className="mt-1 text-sm text-slate-600 sm:text-base">
+          (Independiente de su credo o visión de la vida)
+        </p>
+
+        {opciones.map((nombre) => (
+          <Link
+            key={nombre}
+            className={`${actionWhite} border-purple-700 text-black`}
+            to="/solicitudes/nueva"
+            state={{
+              areaName: "Acompañamiento espiritual",
+              tipo: nombre,
+              backHref: "/acompanamiento_espiritual",
+              backLabel: "Menú acompañamiento",
+              titulo: "SERVICIO DE ACOMPAÑAMIENTO ESPIRITUAL",
+            }}
+          >
+            {nombre}
+          </Link>
+        ))}
       </section>
     </main>
   );
