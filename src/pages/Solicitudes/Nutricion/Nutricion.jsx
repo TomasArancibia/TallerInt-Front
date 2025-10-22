@@ -36,6 +36,7 @@ export default function NutricionAlimentacion() {
             to="/solicitudes/nueva"
             state={{
               areaName: "Nutrición",
+              apiAreaName: "Nutrición y alimentación a pacientes",
               tipo: nombre,
               backHref: "/nutricion_y_alimentacion",
               backLabel: "Menú nutrición",

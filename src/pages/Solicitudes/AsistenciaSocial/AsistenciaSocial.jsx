@@ -33,6 +33,7 @@ export default function AsistenciaSocial() {
             to="/solicitudes/nueva"
             state={{
               areaName: "Asistencia social",
+              apiAreaName: "Asistencia social",
               tipo: nombre,
               backHref: "/asistencia_social",
               backLabel: "Menú asistencia social",

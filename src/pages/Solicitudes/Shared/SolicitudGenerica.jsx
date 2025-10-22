@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   pageContainer,
@@ -10,6 +10,12 @@ import {
   Logo,
 } from "../../../components/ui.jsx";
 
+const API =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === "production"
+    ? "https://tallerintegracion-back.onrender.com"
+    : "http://127.0.0.1:8000");
+
 export default function SolicitudGenerica() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,6 +26,7 @@ export default function SolicitudGenerica() {
     backHref = "/",
     backLabel = "Volver",
     titulo = areaName,
+    apiAreaName,
   } = location.state || {};
 
   const [step, setStep] = useState("contacto"); // contacto | mensaje
@@ -28,9 +35,30 @@ export default function SolicitudGenerica() {
   const [mensaje, setMensaje] = useState("");
   const [errors, setErrors] = useState({});
   const [mensajeError, setMensajeError] = useState(null);
-  const [enviado, setEnviado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [resultadoEnvio, setResultadoEnvio] = useState(null); // success | fail | null
+  const [areas, setAreas] = useState([]);
+  const [status, setStatus] = useState("idle"); // idle | loading | ok | error
+  const [error, setError] = useState(null);
 
   const validarEmail = (value) => /\S+@\S+\.\S+/.test(value);
+
+  useEffect(() => {
+    setStatus("loading");
+    fetch(`${API}/areas`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setAreas(data);
+        setStatus("ok");
+      })
+      .catch((err) => {
+        setError(err.message);
+        setStatus("error");
+      });
+  }, []);
 
   const handleVolver = () => {
     if (step === "contacto") {
@@ -39,7 +67,7 @@ export default function SolicitudGenerica() {
       setStep("contacto");
       setMensaje("");
       setMensajeError(null);
-      setEnviado(false);
+      setResultadoEnvio(null);
     }
   };
 
@@ -62,20 +90,52 @@ export default function SolicitudGenerica() {
     if (Object.keys(nuevosErrores).length === 0) {
       setStep("mensaje");
       setMensajeError(null);
-      setEnviado(false);
+      setResultadoEnvio(null);
+    }
+  };
+
+  const handleEnviar = async () => {
+    if (!mensaje.trim()) {
+      setMensajeError("Escriba el detalle de la solicitud antes de enviarla");
+      setResultadoEnvio(null);
+      return;
+    }
+
+    setMensajeError(null);
+    setEnviando(true);
+    setResultadoEnvio(null);
+    try {
+      const payload = {
+        id_cama: Number(sessionStorage.getItem("id_cama")),
+        area_nombre: apiAreaName ?? areaName,
+        tipo,
+        descripcion: mensaje || "",
+        nombre,
+        email,
+      };
+
+      const res = await fetch(`${API}/solicitudes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await res.json();
+
+      setResultadoEnvio("success");
+      setMensaje("");
+    } catch (err) {
+      console.error("Error al enviar la solicitud", err);
+      setResultadoEnvio("fail");
+    } finally {
+      setEnviando(false);
     }
   };
 
   const handleSubmitMensaje = (event) => {
     event.preventDefault();
-    if (!mensaje.trim()) {
-      setMensajeError("Escriba el detalle de la solicitud antes de enviarla");
-      setEnviado(false);
-      return;
-    }
-
-    setMensajeError(null);
-    setEnviado(true);
+    handleEnviar();
   };
 
   return (
@@ -206,11 +266,31 @@ export default function SolicitudGenerica() {
               <p className="text-xs font-medium text-red-600">{mensajeError}</p>
             ) : null}
 
-            {enviado ? (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                Solicitud registrada (diseño de prueba, sin envío al backend).
+            {status === "loading" && (
+              <div className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
+                Conectando al backend…
               </div>
-            ) : null}
+            )}
+            {status === "ok" && (
+              <div className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
+                Backend OK. Áreas: {areas.map((a) => a.nombre).join(", ")}
+              </div>
+            )}
+            {status === "error" && (
+              <div className="w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
+                Error al conectar: {error}
+              </div>
+            )}
+            {resultadoEnvio === "success" && (
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                Solicitud enviada correctamente
+              </div>
+            )}
+            {resultadoEnvio === "fail" && (
+              <div className="rounded-xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
+                Error al enviar la solicitud
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
               <button
@@ -222,9 +302,10 @@ export default function SolicitudGenerica() {
               </button>
               <button
                 type="submit"
-                className={`${actionPurple} w-auto px-6 py-2 text-sm sm:text-base`}
+                className={`${actionPurple} w-auto px-6 py-2 text-sm sm:text-base disabled:cursor-not-allowed disabled:opacity-60`}
+                disabled={enviando}
               >
-                Enviar solicitud
+                {enviando ? "Enviando…" : "Enviar solicitud"}
               </button>
             </div>
           </form>

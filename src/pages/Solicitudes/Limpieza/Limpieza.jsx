@@ -34,6 +34,7 @@ export default function Limpieza() {
             to="/solicitudes/nueva"
             state={{
               areaName: "Limpieza",
+              apiAreaName: "Limpieza de habitación, baño o box",
               tipo: nombre,
               backHref: "/limpieza",
               backLabel: "Menú limpieza",

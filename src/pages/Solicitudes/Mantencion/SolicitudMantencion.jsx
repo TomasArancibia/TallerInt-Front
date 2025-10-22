@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -18,7 +18,15 @@ const API =
 
 export default function SolicitudMantencion() {
   const location = useLocation();
-  const { areaName = "Mantención", tipo = "MANTENCIÓN" } = location.state || {};
+  const navigate = useNavigate();
+  const {
+    areaName = "Mantención",
+    tipo = "MANTENCIÓN",
+    backHref = "/mantencion",
+    backLabel = "Menú mantención",
+    titulo = "SOLICITUDES DE MANTENCIÓN - COMODIDAD",
+    apiAreaName,
+  } = location.state || {};
 
   const [areas, setAreas] = useState([]);
   const [status, setStatus] = useState("idle"); // idle | loading | ok | error
@@ -26,6 +34,11 @@ export default function SolicitudMantencion() {
   const [mensaje, setMensaje] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [resultadoEnvio, setResultadoEnvio] = useState(null); // success | fail | null
+  const [step, setStep] = useState("contacto"); // contacto | mensaje
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({});
+  const [mensajeError, setMensajeError] = useState(null);
 
   useEffect(() => {
     setStatus("loading");
@@ -44,15 +57,60 @@ export default function SolicitudMantencion() {
       });
   }, []);
 
+  const validarEmail = (value) => /\S+@\S+\.\S+/.test(value);
+
+  const handleSubmitContacto = (event) => {
+    event.preventDefault();
+    const nuevosErrores = {};
+
+    if (!nombre.trim()) {
+      nuevosErrores.nombre = "Escriba nombre y apellido";
+    }
+
+    if (!email.trim()) {
+      nuevosErrores.email = "Escriba un correo electrónico";
+    } else if (!validarEmail(email.trim())) {
+      nuevosErrores.email = "Ingrese un correo válido";
+    }
+
+    setErrors(nuevosErrores);
+
+    if (Object.keys(nuevosErrores).length === 0) {
+      setStep("mensaje");
+      setMensajeError(null);
+      setResultadoEnvio(null);
+    }
+  };
+
+  const handleVolver = () => {
+    if (step === "contacto") {
+      navigate(backHref);
+      return;
+    }
+    setStep("contacto");
+    setMensaje("");
+    setMensajeError(null);
+    setResultadoEnvio(null);
+  };
+
   const handleEnviar = async () => {
+    if (!mensaje.trim()) {
+      setMensajeError("Escriba el detalle de la solicitud antes de enviarla");
+      setResultadoEnvio(null);
+      return;
+    }
+
+    setMensajeError(null);
     setEnviando(true);
     setResultadoEnvio(null);
     try {
       const payload = {
         id_cama: Number(sessionStorage.getItem("id_cama")), // del QR validado
-        area_nombre: areaName,                               // ✅ backend resuelve el id
-        tipo,                                               // subcategoría elegida
+        area_nombre: apiAreaName ?? areaName, // backend resuelve el id
+        tipo, // subcategoría elegida
         descripcion: mensaje || "",
+        nombre,
+        email,
       };
 
       const res = await fetch(`${API}/solicitudes`, {
@@ -74,62 +132,178 @@ export default function SolicitudMantencion() {
     }
   };
 
+  const handleSubmitMensaje = (event) => {
+    event.preventDefault();
+    handleEnviar();
+  };
+
   return (
     <main className={pageContainer}>
-      <PageNav backHref="/mantencion" className="mb-4" backLabel="Menú mantención" />
+      <PageNav backHref={backHref} className="mb-4" backLabel={backLabel} />
       <Logo />
       <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
       <section className={`${sectionStack} items-center`}>
         <div className={`${actionPurple} pointer-events-none`}>
-          SOLICITUDES DE MANTENCIÓN
+          {titulo}
         </div>
         <div className={`${actionWhite} text-xs font-medium text-slate-700 sm:text-sm`}>
           Área seleccionada: {areaName} — Tipo: {tipo}
         </div>
 
-        <textarea
-          className="w-full max-w-2xl rounded-2xl border-2 border-purple-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-300"
-          name="mensaje"
-          rows="8"
-          placeholder="Escriba aquí su solicitud"
-          value={mensaje}
-          onChange={(e) => setMensaje(e.target.value)}
-        />
+        <div className="flex w-full max-w-2xl flex-col items-center gap-2 sm:flex-row sm:justify-center">
+          <span
+            className={`rounded-full px-4 py-1 text-xs font-semibold transition ${
+              step === "contacto"
+                ? "bg-purple-700 text-white shadow-sm"
+                : "bg-slate-200 text-slate-600"
+            }`}
+          >
+            Paso 1: Datos de contacto
+          </span>
+          <span
+            className={`rounded-full px-4 py-1 text-xs font-semibold transition ${
+              step === "mensaje"
+                ? "bg-purple-700 text-white shadow-sm"
+                : "bg-slate-200 text-slate-600"
+            }`}
+          >
+            Paso 2: Detalle de solicitud
+          </span>
+        </div>
 
-        {/* Estado de conexión con el backend */}
-        {status === "loading" && (
-          <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
-            Conectando al backend…
-          </div>
-        )}
-        {status === "ok" && (
-          <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
-            Backend OK. Áreas: {areas.map((a) => a.nombre).join(", ")}
-          </div>
-        )}
-        {status === "error" && (
-          <div className="w-full max-w-2xl rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
-            Error al conectar: {error}
-          </div>
-        )}
-        {resultadoEnvio === "success" && (
-          <div className="w-full max-w-2xl rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm text-emerald-600 shadow-sm">
-            Solicitud enviada correctamente
-          </div>
-        )}
-        {resultadoEnvio === "fail" && (
-          <div className="w-full max-w-2xl rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
-            Error al enviar la solicitud
-          </div>
-        )}
+        {step === "contacto" ? (
+          <form
+            className="w-full max-w-2xl space-y-4 rounded-2xl border border-purple-200 bg-white px-6 py-6 text-left shadow-sm"
+            onSubmit={handleSubmitContacto}
+          >
+            <div>
+              <label htmlFor="nombre" className="block text-sm font-semibold text-slate-700">
+                Nombre y Apellido *
+              </label>
+              <input
+                id="nombre"
+                type="text"
+                value={nombre}
+                onChange={(event) => setNombre(event.target.value)}
+                className="mt-1 w-full rounded-xl border-2 border-purple-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-300"
+                placeholder="Ej: María López"
+                required
+              />
+              {errors.nombre ? (
+                <p className="mt-1 text-xs font-medium text-red-600">{errors.nombre}</p>
+              ) : null}
+            </div>
 
-        <button
-          className={`${actionPurple} w-full max-w-2xl disabled:cursor-not-allowed disabled:opacity-60`}
-          onClick={handleEnviar}
-          disabled={enviando}
-        >
-          {enviando ? "Enviando…" : "Enviar"}
-        </button>
+            <div>
+              <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
+                Email *
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="mt-1 w-full rounded-xl border-2 border-purple-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-300"
+                placeholder="nombre@correo.cl"
+                required
+              />
+              {errors.email ? (
+                <p className="mt-1 text-xs font-medium text-red-600">{errors.email}</p>
+              ) : null}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => navigate(backHref)}
+                className="rounded-xl border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200"
+              >
+                Volver
+              </button>
+              <button
+                type="submit"
+                className={`${actionPurple} w-auto px-6 py-2 text-sm sm:text-base`}
+              >
+                Continuar
+              </button>
+            </div>
+          </form>
+        ) : null}
+
+        {step === "mensaje" ? (
+          <form
+            className="w-full max-w-2xl space-y-4 rounded-2xl border border-purple-200 bg-white px-6 py-6 text-left shadow-sm"
+            onSubmit={handleSubmitMensaje}
+          >
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+              <p className="font-semibold text-slate-700">Datos de contacto</p>
+              <p>Nombre: {nombre}</p>
+              <p>Correo: {email}</p>
+            </div>
+
+            <div>
+              <label htmlFor="mensaje" className="block text-sm font-semibold text-slate-700">
+                Describe tu solicitud *
+              </label>
+              <textarea
+                id="mensaje"
+                rows="8"
+                value={mensaje}
+                onChange={(event) => setMensaje(event.target.value)}
+                className="mt-1 w-full rounded-2xl border-2 border-purple-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-300"
+                placeholder="Escriba aquí los detalles de su solicitud"
+                required
+              />
+            </div>
+
+            {mensajeError ? (
+              <p className="text-xs font-medium text-red-600">{mensajeError}</p>
+            ) : null}
+
+            {status === "loading" && (
+              <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
+                Conectando al backend…
+              </div>
+            )}
+            {status === "ok" && (
+              <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
+                Backend OK. Áreas: {areas.map((a) => a.nombre).join(", ")}
+              </div>
+            )}
+            {status === "error" && (
+              <div className="w-full max-w-2xl rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
+                Error al conectar: {error}
+              </div>
+            )}
+            {resultadoEnvio === "success" && (
+              <div className="w-full max-w-2xl rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm text-emerald-600 shadow-sm">
+                Solicitud enviada correctamente
+              </div>
+            )}
+            {resultadoEnvio === "fail" && (
+              <div className="w-full max-w-2xl rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
+                Error al enviar la solicitud
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+              <button
+                type="button"
+                onClick={handleVolver}
+                className="rounded-xl border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200"
+              >
+                Volver
+              </button>
+              <button
+                type="submit"
+                className={`${actionPurple} w-auto px-6 py-2 text-sm sm:text-base disabled:cursor-not-allowed disabled:opacity-60`}
+                disabled={enviando}
+              >
+                {enviando ? "Enviando…" : "Enviar solicitud"}
+              </button>
+            </div>
+          </form>
+        ) : null}
       </section>
     </main>
   );

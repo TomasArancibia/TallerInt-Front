@@ -34,9 +34,10 @@ export default function Mantencion() {
           <Link
             key={nombre}
             className={`${actionWhite} border-purple-700 text-black`}
-            to="/solicitudes/nueva"
+            to="/solicitudmantencion"
             state={{
               areaName: "Mantención y Comodidad",
+              apiAreaName: "Mantención",
               tipo: nombre,
               backHref: "/mantencion",
               backLabel: "Menú mantención",

@@ -38,6 +38,7 @@ export default function AcompanamientoEspiritual() {
             to="/solicitudes/nueva"
             state={{
               areaName: "Acompañamiento espiritual",
+              apiAreaName: "Acompañamiento espiritual",
               tipo: nombre,
               backHref: "/acompanamiento_espiritual",
               backLabel: "Menú acompañamiento",
