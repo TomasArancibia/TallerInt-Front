@@ -28,6 +28,8 @@ export default function SolicitudMantencion() {
     apiAreaName,
   } = location.state || {};
 
+  const camaId = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
+
   const [areas, setAreas] = useState([]);
   const [status, setStatus] = useState("idle"); // idle | loading | ok | error
   const [error, setError] = useState(null);
@@ -41,6 +43,7 @@ export default function SolicitudMantencion() {
   const [mensajeError, setMensajeError] = useState(null);
 
   useEffect(() => {
+    if (!camaId) return;
     setStatus("loading");
     fetch(`${API}/areas`)
       .then((res) => {
@@ -55,7 +58,7 @@ export default function SolicitudMantencion() {
         setError(err.message);
         setStatus("error");
       });
-  }, []);
+  }, [camaId]);
 
   const validarEmail = (value) => /\S+@\S+\.\S+/.test(value);
 
@@ -105,7 +108,7 @@ export default function SolicitudMantencion() {
     setResultadoEnvio(null);
     try {
       const payload = {
-        id_cama: Number(sessionStorage.getItem("id_cama")), // del QR validado
+        id_cama: Number(camaId), // del QR validado
         area_nombre: apiAreaName ?? areaName, // backend resuelve el id
         tipo,
         descripcion: mensaje.trim(),
@@ -136,6 +139,17 @@ export default function SolicitudMantencion() {
     event.preventDefault();
     handleEnviar();
   };
+
+  if (!camaId) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Para ingresar una solicitud debe escanear primero el QR de su cama o habitación.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main className={pageContainer}>

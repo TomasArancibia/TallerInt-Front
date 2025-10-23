@@ -14,6 +14,18 @@ export default function Homepage() {
   const camaId = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
   const qrCode = typeof window !== "undefined" ? sessionStorage.getItem("qr_code") : null;
 
+  if (!camaId) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Para continuar, escanee el código QR disponible en su habitación. Una vez validado,
+          verá aquí el menú de solicitudes e información.
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className={pageContainer}>
       <Logo />

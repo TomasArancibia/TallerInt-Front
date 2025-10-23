@@ -18,6 +18,19 @@ export default function AcompanamientoEspiritual() {
     "Otros",
   ];
 
+  const hasContext = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
+
+  if (!hasContext) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Esta sección requiere un QR válido. Escanee el código en su cama para solicitar acompañamiento espiritual.
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className={pageContainer}>
       <PageNav backHref="/" className="mb-4" />

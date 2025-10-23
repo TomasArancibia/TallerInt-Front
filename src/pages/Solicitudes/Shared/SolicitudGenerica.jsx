@@ -29,6 +29,8 @@ export default function SolicitudGenerica() {
     apiAreaName,
   } = location.state || {};
 
+  const camaId = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
+
   const [step, setStep] = useState("contacto"); // contacto | mensaje
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
@@ -44,6 +46,7 @@ export default function SolicitudGenerica() {
   const validarEmail = (value) => /\S+@\S+\.\S+/.test(value);
 
   useEffect(() => {
+    if (!camaId) return;
     setStatus("loading");
     fetch(`${API}/areas`)
       .then((res) => {
@@ -58,7 +61,7 @@ export default function SolicitudGenerica() {
         setError(err.message);
         setStatus("error");
       });
-  }, []);
+  }, [camaId]);
 
   const handleVolver = () => {
     if (step === "contacto") {
@@ -106,7 +109,7 @@ export default function SolicitudGenerica() {
     setResultadoEnvio(null);
     try {
       const payload = {
-        id_cama: Number(sessionStorage.getItem("id_cama")),
+        id_cama: Number(camaId),
         area_nombre: apiAreaName ?? areaName,
         tipo,
         descripcion: mensaje.trim(),
@@ -137,6 +140,17 @@ export default function SolicitudGenerica() {
     event.preventDefault();
     handleEnviar();
   };
+
+  if (!camaId) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Para ingresar una solicitud debe escanear primero el QR de su cama o habitación.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main className={pageContainer}>
