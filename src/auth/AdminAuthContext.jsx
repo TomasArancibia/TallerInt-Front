@@ -41,7 +41,7 @@ async function fetchAdminProfile(accessToken) {
     },
   });
   if (!response.ok) {
-    throw new Error("No se pudo obtener el perfil del usuario.");
+    throw new Error("Perfil desactivado. Por favor, contacta al administrador.");
   }
   return response.json();
 }
@@ -136,6 +136,20 @@ export function AdminAuthProvider({ children }) {
     return current?.access_token ?? null;
   }, [refreshIfNeeded]);
 
+  const refreshProfile = useCallback(async () => {
+    const current = await refreshIfNeeded();
+    if (!current || !current.access_token) {
+      throw new Error("Sesión expirada, vuelva a iniciar sesión.");
+    }
+    const profile = await fetchAdminProfile(current.access_token);
+    const nextSession = {
+      ...current,
+      usuario: profile.usuario,
+    };
+    updateSession(nextSession);
+    return profile.usuario;
+  }, [refreshIfNeeded, updateSession]);
+
   useEffect(() => {
     let active = true;
     (async () => {
@@ -164,8 +178,9 @@ export function AdminAuthProvider({ children }) {
       signOut,
       getAccessToken,
       usuario: session?.usuario ?? null,
+      refreshProfile,
     }),
-    [getAccessToken, initializing, session, signIn, signOut],
+    [getAccessToken, initializing, refreshProfile, session, signIn, signOut],
   );
 
   return (

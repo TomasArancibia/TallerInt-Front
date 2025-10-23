@@ -13,13 +13,21 @@ export default function Admin() {
     navigate("/login", { replace: true });
   };
 
-  const menu = [
+  const baseMenu = [
     { name: "Dashboard", path: "dashboard" },
     { name: "Solicitudes", path: "solicitudes" },
     { name: "Ubicaciones", path: "ubicaciones" },
     { name: "Áreas de Solicitudes", path: "areas" },
     { name: "Usuarios", path: "usuarios" },
+    { name: "Mi Perfil", path: "perfil" },
   ];
+
+  const menu = baseMenu.filter((item) => {
+    if (item.path === "usuarios" && usuario?.rol !== "ADMIN") {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="admin-layout">
