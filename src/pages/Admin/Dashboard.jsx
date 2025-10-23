@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Logo } from "../../components/ui.jsx";
+import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
   import.meta.env.VITE_API_URL ||
@@ -10,10 +11,11 @@ const API =
 
 export default function Dashboard() {
   const [hospitales, setHospitales] = useState([]);
-  const [habitaciones, setHabitaciones] = useState({});
-  const [camas, setCamas] = useState({});
+  const [habitaciones, setHabitaciones] = useState([]);
+  const [camas, setCamas] = useState([]);
   const [solicitudes, setSolicitudes] = useState([]);
   const [areas, setAreas] = useState([]);
+  const [usuario, setUsuario] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
   const [fechaInicio, setFechaInicio] = useState("2025-01-01");
@@ -22,72 +24,102 @@ export default function Dashboard() {
   const [metricasArea, setMetricasArea] = useState([]);
   const [metricasHospitalEstado, setMetricasHospitalEstado] = useState([]);
   const [metricasAreaDia, setMetricasAreaDia] = useState([]);
+  const { getAccessToken, signOut } = useAdminAuth();
 
   useEffect(() => {
+    let active = true;
     async function fetchData() {
       setStatus("loading");
       try {
-        const [hospRes, habRes, camasRes, areasRes, solicitudesRes] = await Promise.all([
-          fetch(`${API}/hospitales`),
-          fetch(`${API}/habitaciones`),
-          fetch(`${API}/camas`),
-          fetch(`${API}/areas`),
-          fetch(`${API}/solicitudes`)
-        ]);
-        if (!hospRes.ok || !habRes.ok || !camasRes.ok || !areasRes.ok || !solicitudesRes.ok)
-          throw new Error("Error al conectar con el backend");
+        const token = await getAccessToken();
+        if (!token) {
+          throw new Error("Sesión expirada. Vuelva a iniciar sesión.");
+        }
 
-        const hospitalesData = await hospRes.json();
-        const habitacionesData = await habRes.json();
-        const camasData = await camasRes.json();
-        const areasData = await areasRes.json();
-        const solicitudesData = await solicitudesRes.json();
+        const response = await fetch(`${API}/admin/bootstrap`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        setHospitales(hospitalesData);
-        setHabitaciones(habitacionesData);
-        setCamas(camasData);
-        setAreas(areasData);
-        setSolicitudes(solicitudesData);
+        if (response.status === 401 || response.status === 403) {
+          await signOut();
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error("No se pudo cargar la información del dashboard.");
+        }
+
+        const data = await response.json();
+        if (!active) return;
+        setUsuario(data.usuario);
+        setHospitales(data.hospitales || []);
+        setHabitaciones(data.habitaciones || []);
+        setCamas(data.camas || []);
+        setAreas(data.areas || []);
+        setSolicitudes(data.solicitudes || []);
         setStatus("ok");
       } catch (err) {
+        if (!active) return;
         setError(err.message);
         setStatus("error");
       }
     }
 
     fetchData();
-  }, []);
-
+    return () => {
+      active = false;
+    };
+  }, [getAccessToken, signOut]);
 
   useEffect(() => {
+    let active = true;
     async function fetchMetricas() {
       if (new Date(fechaFin) < new Date(fechaInicio)) {
-      alert("Fecha inválida");
-      return;
-    }
+        alert("Fecha inválida");
+        return;
+      }
       try {
-        const [areaRes, hospEstadoRes, areaDiaRes] = await Promise.all([
-          fetch(`${API}/metricas/solicitudes-por-area?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
-          fetch(`${API}/metricas/solicitudes-por-hospital-estado?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`),
-          fetch(`${API}/metricas/solicitudes-por-area-dia?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`)
-        ]);
+        const token = await getAccessToken();
+        if (!token) {
+          throw new Error("Sesión expirada. Vuelva a iniciar sesión.");
+        }
 
-        const [areaData, hospEstadoData, areaDiaData] = await Promise.all([
-          areaRes.json(),
-          hospEstadoRes.json(),
-          areaDiaRes.json()
-        ]);
+        const response = await fetch(
+          `${API}/admin/metricas?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
 
-        setMetricasArea(areaData.metricas || areaData);
-        setMetricasHospitalEstado(hospEstadoData.metricas || hospEstadoData);
-        setMetricasAreaDia(areaDiaData.metricas || areaDiaData);
+        if (response.status === 401 || response.status === 403) {
+          await signOut();
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error("No se pudieron cargar las métricas.");
+        }
+
+        const data = await response.json();
+        if (!active) return;
+        setMetricasArea(data.por_area || []);
+        setMetricasHospitalEstado(data.por_hospital_estado || []);
+        setMetricasAreaDia(data.por_area_dia || []);
       } catch (err) {
-        console.error("Error cargando metricas:", err);
+        if (!active) return;
+        console.error("Error cargando métricas:", err);
       }
     }
-  
+
     fetchMetricas();
-  }, [fechaInicio, fechaFin]);
+    return () => {
+      active = false;
+    };
+  }, [fechaFin, fechaInicio, getAccessToken, signOut]);
 
   // Últimos 15 días para métricas diarias
   const metricasUltimosDias = metricasAreaDia.filter(m => {
@@ -119,7 +151,7 @@ export default function Dashboard() {
           <h1 className="text-xl font-semibold">Dashboard de Solicitudes</h1>
         </div>
 
-        <div className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-800 shadow-sm">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-800 shadow-sm">
           <input
             type="date"
             value={fechaInicio}
@@ -169,7 +201,7 @@ export default function Dashboard() {
                 <thead>
                   <tr>
                     <th className={headerCell}>ID Habitación</th>
-                    <th className={headerCell}>Número</th>
+                    <th className={headerCell}>Nombre</th>
                     <th className={headerCell}>ID Hospital</th>
                   </tr>
                 </thead>
@@ -177,8 +209,8 @@ export default function Dashboard() {
                   {habitaciones.map((hab) => (
                     <tr key={hab.id_habitacion}>
                       <td className={dataCell}>{hab.id_habitacion}</td>
-                      <td className={dataCell}>{hab.numero}</td>
-                      <td className={dataCell}>{hab.id_hospital}</td>
+                      <td className={dataCell}>{hab.nombre}</td>
+                      <td className={dataCell}>{hab.id_hospital ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -244,6 +276,7 @@ export default function Dashboard() {
                     <th className={headerCell}>Tipo</th>
                     <th className={headerCell}>Descripción</th>
                     <th className={headerCell}>Estado</th>
+                    <th className={headerCell}>Solicitante</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -254,7 +287,8 @@ export default function Dashboard() {
                       <td className={dataCell}>{areas.find((a) => a.id_area === s.id_area)?.nombre || "—"}</td>
                       <td className={dataCell}>{s.tipo}</td>
                       <td className={dataCell}>{s.descripcion}</td>
-                      <td className={dataCell}>{s.estado}</td>
+                      <td className={dataCell}>{s.estado.replaceAll("_", " ")}</td>
+                      <td className={dataCell}>{s.nombre_solicitante || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -272,7 +306,7 @@ export default function Dashboard() {
               <div className="mt-4 flex flex-wrap gap-5">
                 {metricasArea.map((m) => (
                   <div
-                    key={m.id_area}
+                    key={m.nombre_area}
                     className="w-full flex-1 min-w-[220px] rounded-2xl bg-white px-6 py-5 text-center shadow-md ring-1 ring-slate-200"
                   >
                     <h4 className="text-base font-semibold text-slate-700">{m.nombre_area}</h4>
@@ -294,19 +328,18 @@ export default function Dashboard() {
                     (m) => m.nombre_hospital === hospital
                   );
 
-                  const totalHospital = datosHospital.reduce(
-                    (sum, m) => sum + m.total_solicitudes,
-                    0
-                  );
+                  const totalHospital = datosHospital.reduce((sum, m) => sum + m.total_solicitudes, 0);
                   const pendientes =
                     datosHospital.find((m) => m.estado === "pendiente")?.total_solicitudes || 0;
                   const enProceso =
                     datosHospital.find((m) => m.estado === "en_proceso")?.total_solicitudes || 0;
-                  const resueltos =
-                    datosHospital.find((m) => m.estado === "resuelto")?.total_solicitudes || 0;
+                  const cerradas =
+                    datosHospital.find((m) => m.estado === "cerrada")?.total_solicitudes || 0;
 
                   const porcentaje =
-                    totalHospital > 0 ? Math.round((resueltos / totalHospital) * 100) : 0;
+                    totalHospital > 0
+                      ? Math.round((cerradas / totalHospital) * 100)
+                      : 0;
 
                   return (
                     <div
@@ -328,8 +361,8 @@ export default function Dashboard() {
                           <span>En Proceso</span>
                         </div>
                         <div className="flex flex-col items-center gap-1">
-                          <span className="text-lg font-bold text-slate-900">{resueltos}</span>
-                          <span>Resueltos</span>
+                          <span className="text-lg font-bold text-slate-900">{cerradas}</span>
+                          <span>Cerradas</span>
                         </div>
                       </div>
                     </div>

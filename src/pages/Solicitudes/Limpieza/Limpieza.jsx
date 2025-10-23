@@ -17,6 +17,19 @@ export default function Limpieza() {
     "Derrame de líquidos",
   ];
 
+  const hasContext = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
+
+  if (!hasContext) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Esta sección requiere un QR válido. Escanee el código en su cama para solicitar servicios de limpieza.
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className={pageContainer}>
       <PageNav backHref="/" className="mb-4" />
