@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:admin": "vite --open /admin.html",
     "build": "vite build",
-    "build:admin": "vite build",
+    "build:admin": "vite build --config src/apps/vite.config.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "preview:admin": "vite preview --open /admin.html"
