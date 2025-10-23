@@ -15,24 +15,23 @@ export default function Admin() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-slate-100 text-slate-900">
-      <aside className="hidden w-60 flex-col bg-slate-900 px-5 py-8 text-slate-100 sm:flex">
-        <div className="flex items-center gap-3 pb-10">
+    <div className="admin-layout">
+      <aside className="admin-sidebar">
+        <div className="admin-brand">
           <Logo className="h-10 w-auto rounded-lg bg-white p-1" />
           <h3 className="text-lg font-semibold">UC Solicitudes</h3>
         </div>
 
-        <nav className="flex flex-col gap-2">
+        <nav className="admin-menu">
           {menu.map((item) => {
-            const isActive = location.pathname.endsWith(item.path);
+            const isDashboard = item.path === "dashboard";
+            const pathname = location.pathname;
+            const isActive =
+              pathname.endsWith(item.path) || (isDashboard && (pathname === "/" || pathname === "/admin" || pathname.endsWith("/admin")));
             return (
               <button
                 key={item.path}
-                className={`rounded-xl px-3 py-2 text-left text-sm font-semibold transition-colors ${
-                  isActive
-                    ? "bg-slate-100 text-slate-900"
-                    : "bg-transparent text-slate-200 hover:bg-slate-800"
-                }`}
+                className={`admin-nav-btn ${isActive ? "admin-nav-btn--active" : "admin-nav-btn--idle"}`}
                 onClick={() => navigate(item.path)}
               >
                 {item.name}
@@ -42,7 +41,7 @@ export default function Admin() {
         </nav>
       </aside>
 
-      <div className="flex min-h-screen w-full flex-1 flex-col bg-slate-50 px-4 py-6 sm:px-8">
+      <div className="admin-main">
         <PageNav backHref="/" className="mb-6" />
         <Outlet />
       </div>
