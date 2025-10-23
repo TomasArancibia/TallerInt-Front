@@ -109,9 +109,9 @@ export default function SolicitudGenerica() {
         id_cama: Number(sessionStorage.getItem("id_cama")),
         area_nombre: apiAreaName ?? areaName,
         tipo,
-        descripcion: mensaje || "",
-        nombre,
-        email,
+        descripcion: mensaje.trim(),
+        nombre_solicitante: nombre,
+        correo_solicitante: email,
       };
 
       const res = await fetch(`${API}/solicitudes`, {

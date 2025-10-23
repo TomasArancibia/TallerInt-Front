@@ -107,10 +107,10 @@ export default function SolicitudMantencion() {
       const payload = {
         id_cama: Number(sessionStorage.getItem("id_cama")), // del QR validado
         area_nombre: apiAreaName ?? areaName, // backend resuelve el id
-        tipo, // subcategoría elegida
-        descripcion: mensaje || "",
-        nombre,
-        email,
+        tipo,
+        descripcion: mensaje.trim(),
+        nombre_solicitante: nombre,
+        correo_solicitante: email,
       };
 
       const res = await fetch(`${API}/solicitudes`, {
