@@ -32,6 +32,7 @@ import InfoServiciosVisitas from "./pages/Info/InfoVisitas/InfoServiciosVisitas/
 import InfoComida from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosComida.jsx";
 import InfoReflexion from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServicioReflexion.jsx";
 import InfoInstalaciones from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosInstalaciones.jsx";
+import Chatbot from "./pages/Chatbot.jsx";
 
 
 // SOLICITUDES
@@ -81,6 +82,7 @@ function App() {
         <Route path="/info_comida" element={<InfoComida />} />
         <Route path="/info_reflexion" element={<InfoReflexion />} />
         <Route path="/info_instalaciones" element={<InfoInstalaciones />} />
+        <Route path="/chatbot" element={<Chatbot />} />
       </Routes>
     </Router>
   );

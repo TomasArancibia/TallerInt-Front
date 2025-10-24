@@ -1,12 +1,23 @@
 import React from "react";
 import "./homepage.css";
 import logo from "../assets/logo-ucchristus.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Homepage() {
+  const navigate = useNavigate();
   // Si vienes desde /landing con QR válido, estos valores existen
   const camaId = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
   const qrCode = typeof window !== "undefined" ? sessionStorage.getItem("qr_code") : null;
+
+  function handleAskQuestion(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const question = (data.get("q") || "").toString().trim();
+    if (!question) return;
+    sessionStorage.setItem("chat_seed_message", question);
+    navigate("/chatbot");
+  }
 
   return (
     <div className="app">
@@ -61,7 +72,7 @@ export default function Homepage() {
           ACOMPAÑAMIENTO ESPIRITUAL
         </Link>
 
-        <form className="pregunta" action="respuesta.html" method="get">
+        <form className="pregunta" onSubmit={handleAskQuestion}>
           <input
             id="q"
             name="q"
