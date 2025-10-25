@@ -65,7 +65,14 @@ export default function Admin() {
                   <div className={`group admin-nav-item ${isActive ? "admin-nav-item--active" : "admin-nav-item--idle"}`}>
                     <button
                       className="flex grow items-center gap-3 text-left"
-                      onClick={(e) => { e.stopPropagation(); navigate(item.path); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (hasDropdown) {
+                          setOpenMenu((prev) => (prev === item.path ? null : item.path));
+                        } else {
+                          navigate(item.path);
+                        }
+                      }}
                     >
                       <Icon className="admin-nav-icon" />
                       <span className="truncate">{item.name}</span>

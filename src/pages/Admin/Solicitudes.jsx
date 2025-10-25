@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
@@ -9,6 +9,9 @@ const API =
 
 export default function Solicitudes() {
   const { getAccessToken, signOut } = useAdminAuth();
+
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState(null);
   const [solicitudes, setSolicitudes] = useState([]);
   const [areas, setAreas] = useState([]);
   const [hospitales, setHospitales] = useState([]);
@@ -16,34 +19,14 @@ export default function Solicitudes() {
   const [pisos, setPisos] = useState([]);
   const [habitaciones, setHabitaciones] = useState([]);
   const [camas, setCamas] = useState([]);
-  const [status, setStatus] = useState("idle");
-  const [error, setError] = useState(null);
-
-  // Filtros
-  const today = new Date();
-  const pad = (n) => String(n).padStart(2, "0");
-  const toYMD = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-  const start7 = new Date(today); start7.setDate(today.getDate() - 6);
-  const [fechaInicio, setFechaInicio] = useState(toYMD(start7));
-  const [fechaFin, setFechaFin] = useState(toYMD(today));
-  const [rangeOpen, setRangeOpen] = useState(false);
-  const [customMode, setCustomMode] = useState(false);
-  const [tmpStart, setTmpStart] = useState(toYMD(start7));
-  const [tmpEnd, setTmpEnd] = useState(toYMD(today));
-  // Checklists (vacío => todos)
-  const [estadosSel, setEstadosSel] = useState(["pendiente", "en_proceso", "cerrada"]);
-  const [areasSel, setAreasSel] = useState([]); // ids en string
-  const [instSel, setInstSel] = useState([]);   // ids en string
-  const [edifSel, setEdifSel] = useState([]);   // ids en string
-  const [pisoSel, setPisoSel] = useState([]);   // ids en string
 
   useEffect(() => {
     let active = true;
-    async function fetchAll() {
+    async function load() {
       setStatus("loading");
       try {
         const token = await getAccessToken();
-        if (!token) throw new Error("Sesión expirada");
+        if (!token) throw new Error("Sesion expirada");
         const res = await fetch(`${API}/admin/bootstrap`, { headers: { Authorization: `Bearer ${token}` } });
         if (res.status === 401 || res.status === 403) { await signOut(); return; }
         if (!res.ok) throw new Error("No se pudieron cargar solicitudes");
@@ -63,17 +46,20 @@ export default function Solicitudes() {
         setStatus("error");
       }
     }
-    fetchAll();
+    load();
     return () => { active = false; };
   }, [getAccessToken, signOut]);
 
+  // Estilos
   const tableWrapper = "mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm";
   const tableClass = "min-w-full border-collapse text-left text-sm text-slate-700";
   const headerCell = "border border-slate-200 bg-slate-100 px-4 py-2 font-semibold text-slate-700";
   const dataCell = "border border-slate-200 px-4 py-2";
 
+  // Utiles de fecha + MultiSelect
   const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
-  const parseYMD = (s) => { const [y,m,d] = s.split("-").map(Number); return new Date(y, (m||1)-1, d||1); };
+  const fmtDateTime = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  const parseYMD = (s) => { const [y,m,d] = String(s||"").split("-").map(Number); return new Date(y, (m||1)-1, d||1); };
   const NONE = "__none__";
 
   function MultiSelect({ label, options, selected, setSelected, disabled=false }) {
@@ -106,22 +92,18 @@ export default function Solicitudes() {
             <div className="p-2 text-sm">
               {options.map(opt => {
                 const id = String(opt.id);
-                const isAll = selected.length === 0; // todos
+                const isAll = selected.length === 0;
                 const isNone = selected.includes(NONE);
                 const checked = isNone ? false : (isAll ? true : selected.includes(id));
                 return (
                   <label key={id} className="mb-1 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 hover:bg-slate-50">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => {
-                        setSelected(prev => {
-                          if (prev.includes(NONE)) return [id];
-                          if (prev.length === 0) return [id];
-                          return prev.includes(id) ? prev.filter(v=>v!==id) : [...prev, id];
-                        });
-                      }}
-                    />
+                    <input type="checkbox" checked={checked} onChange={() => {
+                      setSelected(prev => {
+                        if (prev.includes(NONE)) return [id];
+                        if (prev.length === 0) return [id];
+                        return prev.includes(id) ? prev.filter(v=>v!==id) : [...prev, id];
+                      });
+                    }} />
                     <span className="truncate">{opt.label}</span>
                   </label>
                 );
@@ -133,6 +115,23 @@ export default function Solicitudes() {
     );
   }
 
+  // Estados de filtros
+  const pad = (n) => String(n).padStart(2, "0");
+  const toYMD = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const today = new Date();
+  const start7 = new Date(today); start7.setDate(today.getDate() - 6);
+  const [fechaInicio, setFechaInicio] = useState(toYMD(start7));
+  const [fechaFin, setFechaFin] = useState(toYMD(today));
+  const [rangeOpen, setRangeOpen] = useState(false);
+  const [customMode, setCustomMode] = useState(false);
+  const [tmpStart, setTmpStart] = useState(toYMD(start7));
+  const [tmpEnd, setTmpEnd] = useState(toYMD(today));
+  const [estadosSel, setEstadosSel] = useState(["pendiente", "en_proceso", "cerrada"]);
+  const [areasSel, setAreasSel] = useState([]);
+  const [instSel, setInstSel] = useState([]);
+  const [edifSel, setEdifSel] = useState([]);
+  const [pisoSel, setPisoSel] = useState([]);
+
   function setPreset(preset) {
     const d = new Date(); const c = (x)=> new Date(x.getTime()); let a=c(d), b=c(d);
     setCustomMode(false);
@@ -140,12 +139,12 @@ export default function Solicitudes() {
     } else if (preset === "yestoday") { a.setDate(a.getDate()-1);} else if (preset === "last7") { a.setDate(a.getDate()-6);} else if (preset === "last30") { a.setDate(a.getDate()-29);} else if (preset === "thisMonth") { a = new Date(d.getFullYear(), d.getMonth(), 1); b = new Date(d.getFullYear(), d.getMonth()+1, 0);} else if (preset === "lastMonth") { a = new Date(d.getFullYear(), d.getMonth()-1, 1); b = new Date(d.getFullYear(), d.getMonth(), 0);} else if (preset === "custom") { setCustomMode(true); return; }
     setFechaInicio(toYMD(a)); setFechaFin(toYMD(b)); setRangeOpen(false);
   }
-
   function applyCustom() {
-    if (parseYMD(tmpEnd) < parseYMD(tmpStart)) return alert("Rango inválido");
+    if (parseYMD(tmpEnd) < parseYMD(tmpStart)) return alert("Rango invalido");
     setFechaInicio(tmpStart); setFechaFin(tmpEnd); setRangeOpen(false); setCustomMode(false);
   }
 
+  // Vistas dependientes
   const edificiosFiltrados = useMemo(() => (
     instSel.length === 0 ? edificios : edificios.filter(e => instSel.includes(String(e.id_hospital)))
   ), [edificios, instSel]);
@@ -153,15 +152,17 @@ export default function Solicitudes() {
     edifSel.length === 0 ? pisos : pisos.filter(p => edifSel.includes(String(p.id_edificio)))
   ), [pisos, edifSel]);
 
+  // Indexes
   const camasById = useMemo(() => Object.fromEntries(camas.map(c => [c.id_cama, c])), [camas]);
   const habitById = useMemo(() => Object.fromEntries(habitaciones.map(h => [h.id_habitacion, h])), [habitaciones]);
   const pisoById = useMemo(() => Object.fromEntries(pisos.map(p => [p.id_piso, p])), [pisos]);
   const edifById = useMemo(() => Object.fromEntries(edificios.map(e => [e.id_edificio, e])), [edificios]);
+  const hospById = useMemo(() => Object.fromEntries(hospitales.map(h => [h.id_hospital, h])), [hospitales]);
 
+  // Filtro + orden por ID ascendente
   const filtradas = useMemo(() => {
     const ini = parseYMD(fechaInicio); const fin = parseYMD(fechaFin); fin.setHours(23,59,59,999);
-    return solicitudes.filter((s) => {
-      // fecha: usamos campo fecha_creacion en ISO
+    const res = solicitudes.filter((s) => {
       const d = s.fecha_creacion ? new Date(s.fecha_creacion) : null;
       if (d && (d < ini || d > fin)) return false;
       if (estadosSel.includes(NONE)) return false;
@@ -181,7 +182,21 @@ export default function Solicitudes() {
       if (pisoSel.length && (!piso || !pisoSel.includes(String(piso.id_piso)))) return false;
       return true;
     });
+    return res.slice().sort((a,b)=> (a.id ?? 0) - (b.id ?? 0));
   }, [solicitudes, fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel, camasById, habitById, pisoById, edifById]);
+
+  // Paginacion simple 10 por pagina
+  const PAGE_SIZE = 10;
+  const [page, setPage] = useState(1);
+  useEffect(() => { setPage(1); }, [fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel]);
+  const totalPages = Math.max(1, Math.ceil(filtradas.length / PAGE_SIZE));
+  const startIdx = (page - 1) * PAGE_SIZE;
+  const endIdx = Math.min(filtradas.length, startIdx + PAGE_SIZE);
+  const pageItems = useMemo(() => filtradas.slice(startIdx, endIdx), [filtradas, startIdx, endIdx]);
+
+  // Expand/colapse
+  const [openRows, setOpenRows] = useState(new Set());
+  const toggleRow = (id) => setOpenRows(prev => { const n=new Set(prev); n.has(id)?n.delete(id):n.add(id); return n; });
 
   return (
     <div className="flex flex-col gap-4">
@@ -211,10 +226,10 @@ export default function Solicitudes() {
                     {!customMode ? (
                       <div className="py-1">
                         <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("today")}>Hoy</button>
-                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("last7")}>Últimos 7 días</button>
-                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("last30")}>Últimos 30 días</button>
+                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("last7")}>Ultimos 7 dias</button>
+                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("last30")}>Ultimos 30 dias</button>
                         <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("thisMonth")}>Este mes</button>
-                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("lastMonth")}>Último mes</button>
+                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("lastMonth")}>Ultimo mes</button>
                         <div className="my-1 border-t border-slate-200" />
                         <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("custom")}>Rango personalizado…</button>
                       </div>
@@ -235,42 +250,11 @@ export default function Solicitudes() {
                 )}
               </div>
 
-              <MultiSelect
-                label="Estado"
-                options={[{id:'pendiente',label:'Pendiente'},{id:'en_proceso',label:'En Proceso'},{id:'cerrada',label:'Cerrada'}]}
-                selected={estadosSel}
-                setSelected={setEstadosSel}
-              />
-
-              <MultiSelect
-                label="Área"
-                options={areas.map(a=>({id:a.id_area,label:a.nombre}))}
-                selected={areasSel}
-                setSelected={setAreasSel}
-              />
-
-              <MultiSelect
-                label="Institución"
-                options={hospitales.map(h=>({id:h.id_hospital,label:h.nombre}))}
-                selected={instSel}
-                setSelected={(vals)=>{ setInstSel(vals); setEdifSel([]); setPisoSel([]); }}
-              />
-
-              <MultiSelect
-                label="Edificio"
-                options={edificiosFiltrados.map(e=>({id:e.id_edificio,label:e.nombre}))}
-                selected={edifSel}
-                setSelected={(vals)=>{ setEdifSel(vals); setPisoSel([]); }}
-                disabled={instSel.length===0}
-              />
-
-              <MultiSelect
-                label="Piso"
-                options={pisosFiltrados.map(p=>({id:p.id_piso,label:`${(edificios.find(e=>e.id_edificio===p.id_edificio)?.nombre)||('Edificio '+p.id_edificio)} — Piso ${p.numero}`}))}
-                selected={pisoSel}
-                setSelected={setPisoSel}
-                disabled={edifSel.length===0}
-              />
+              <MultiSelect label="Estado" options={[{id:'pendiente',label:'Pendiente'},{id:'en_proceso',label:'En Proceso'},{id:'cerrada',label:'Cerrada'}]} selected={estadosSel} setSelected={setEstadosSel} />
+              <MultiSelect label="Area" options={areas.map(a=>({id:a.id_area,label:a.nombre}))} selected={areasSel} setSelected={setAreasSel} />
+              <MultiSelect label="Institucion" options={hospitales.map(h=>({id:h.id_hospital,label:h.nombre}))} selected={instSel} setSelected={(vals)=>{ setInstSel(vals); setEdifSel([]); setPisoSel([]); }} />
+              <MultiSelect label="Edificio" options={edificiosFiltrados.map(e=>({id:e.id_edificio,label:e.nombre}))} selected={edifSel} setSelected={(vals)=>{ setEdifSel(vals); setPisoSel([]); }} disabled={instSel.length===0} />
+              <MultiSelect label="Piso" options={pisosFiltrados.map(p=>({id:p.id_piso,label:`${(edificios.find(e=>e.id_edificio===p.id_edificio)?.nombre)||('Edificio '+p.id_edificio)} — Piso ${p.numero}`}))} selected={pisoSel} setSelected={setPisoSel} disabled={edifSel.length===0} />
             </div>
           </section>
 
@@ -281,28 +265,67 @@ export default function Solicitudes() {
                 <thead>
                   <tr>
                     <th className={headerCell}>ID</th>
-                    <th className={headerCell}>ID Cama</th>
-                    <th className={headerCell}>Área</th>
-                    <th className={headerCell}>Tipo</th>
-                    <th className={headerCell}>Descripción</th>
-                    <th className={headerCell}>Estado</th>
+                    <th className={headerCell}>Area</th>
+                    <th className={headerCell}>Habitacion</th>
+                    <th className={headerCell}>Cama</th>
+                    <th className={headerCell}>Piso</th>
+                    <th className={headerCell}>Edificio</th>
+                    <th className={headerCell}>Institucion</th>
                     <th className={headerCell}>Solicitante</th>
+                    <th className={headerCell}>Fecha de creacion</th>
+                    <th className={headerCell}>Estado</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filtradas.map((s) => (
-                    <tr key={s.id}>
-                      <td className={dataCell}>{s.id}</td>
-                      <td className={dataCell}>{s.id_cama}</td>
-                      <td className={dataCell}>{areas.find((a) => a.id_area === s.id_area)?.nombre || "—"}</td>
-                      <td className={dataCell}>{s.tipo}</td>
-                      <td className={dataCell}>{s.descripcion}</td>
-                      <td className={dataCell}>{s.estado.replaceAll("_", " ")}</td>
-                      <td className={dataCell}>{s.nombre_solicitante || "—"}</td>
-                    </tr>
-                  ))}
+                  {pageItems.map((s) => {
+                    const cama = camasById[s.id_cama];
+                    const hab = cama ? habitById[cama.id_habitacion] : null;
+                    const piso = hab ? pisoById[hab.id_piso] : null;
+                    const edif = piso ? edifById[piso.id_edificio] : null;
+                    const inst = edif ? hospById[edif.id_hospital] : null;
+                    const isOpen = openRows.has(s.id);
+                    const estadoClass = s.estado === 'cerrada'
+                      ? 'inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700'
+                      : (s.estado === 'en_proceso'
+                          ? 'inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800'
+                          : 'inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700');
+                    return (
+                      <React.Fragment key={s.id}>
+                        <tr onClick={() => toggleRow(s.id)} className={isOpen ? 'bg-slate-50' : 'hover:bg-slate-50'} style={{cursor:'pointer'}}>
+                          <td className={dataCell}>{s.id}</td>
+                          <td className={dataCell}>{areas.find(a => a.id_area === s.id_area)?.nombre || '—'}</td>
+                          <td className={dataCell}>{hab?.nombre || '—'}</td>
+                          <td className={dataCell}>{cama?.letra || '—'}</td>
+                          <td className={dataCell}>{piso?.numero ?? '—'}</td>
+                          <td className={dataCell}>{edif?.nombre || '—'}</td>
+                          <td className={dataCell}>{inst?.nombre || '—'}</td>
+                          <td className={dataCell}>{s.nombre_solicitante || '—'}</td>
+                          <td className={dataCell}>{s.fecha_creacion ? fmtDateTime.format(new Date(s.fecha_creacion)) : '—'}</td>
+                          <td className={dataCell}><span className={estadoClass}>{(s.estado || '').replaceAll('_',' ')}</span></td>
+                        </tr>
+                        {isOpen && (
+                          <tr>
+                            <td className={dataCell} colSpan={10}>
+                              <div className="rounded-md bg-slate-50 p-3 text-sm text-slate-700">
+                                <div><span className="font-semibold">Subarea:</span> {s.tipo || '-'}</div>
+                                <div className="mt-1"><span className="font-semibold">Descripcion:</span> {s.descripcion || '-'}</div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-sm">
+              <div className="text-slate-600">Mostrando {filtradas.length === 0 ? 0 : (startIdx + 1)}–{endIdx} de {filtradas.length}</div>
+              <div className="flex items-center gap-2">
+                <button className="rounded-md border border-slate-300 px-3 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Anterior</button>
+                <span>Pagina {page} de {totalPages}</span>
+                <button className="rounded-md border border-slate-300 px-3 py-1 disabled:opacity-50" disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>Siguiente</button>
+              </div>
             </div>
           </section>
         </>
@@ -310,3 +333,4 @@ export default function Solicitudes() {
     </div>
   );
 }
+
