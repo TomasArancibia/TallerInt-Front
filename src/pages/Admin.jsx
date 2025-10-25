@@ -101,33 +101,14 @@ export default function Admin() {
           </nav>
         </div>
 
-        <div className="admin-footer">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 text-sm font-semibold text-white">
-              {(usuario?.nombre?.[0] || "U").toUpperCase()}
-            </div>
-            <div className="leading-tight">
-              <p className="text-sm font-medium text-white">
-                {usuario ? `${usuario.nombre} ${usuario.apellido}` : "Usuario"}
-              </p>
-              <p className="text-[11px] uppercase tracking-wide text-slate-400">{usuario?.rol ?? ""}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleSignOut}
-            className="mt-3 w-full rounded-lg bg-slate-800 px-3 py-2 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
-          >
-            Cerrar sesión
-          </button>
-        </div>
       </aside>
 
       <div className="admin-main">
         <div className="admin-topbar">
           <div className="flex w-full items-center justify-end gap-3">
-            <div className="relative">
+            <div className="relative" onClick={(e)=> e.stopPropagation()}>
               <button
-                onClick={() => setProfileOpen((v) => !v)}
+                onClick={(e) => { e.stopPropagation(); setProfileOpen((v) => !v); }}
                 className="flex items-center gap-3 rounded-full border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700 sm:text-sm"
                 title="Opciones de perfil"
               >
@@ -139,7 +120,7 @@ export default function Admin() {
                 </span>
               </button>
               {profileOpen && (
-                <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
+                <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200" onClick={(e)=> e.stopPropagation()}>
                   <button
                     onClick={() => { setProfileOpen(false); navigate("perfil"); }}
                     className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
