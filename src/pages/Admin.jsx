@@ -9,6 +9,7 @@ export default function Admin() {
   const { usuario, signOut } = useAdminAuth();
   const [profileOpen, setProfileOpen] = React.useState(false);
   const [openMenu, setOpenMenu] = React.useState(null);
+  const [openSubMenu, setOpenSubMenu] = React.useState(null);
 
   React.useEffect(() => {
     function closeAll() { setOpenMenu(null); setProfileOpen(false); }
@@ -94,12 +95,51 @@ export default function Admin() {
                   </div>
                   {hasDropdown && openMenu === item.path && (
                     <div className="admin-submenu" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        className="admin-submenu-item"
-                        onClick={() => { setOpenMenu(null); navigate(item.path); }}
-                      >
-                        Listar
-                      </button>
+                      {item.path === 'ubicaciones' ? (
+                        <>
+                          {/* Nivel 1: secciones */}
+                          {[
+                            { key: 'habitaciones', label: 'Habitaciones', route: 'ubicaciones/habitaciones' },
+                            { key: 'pisos', label: 'Pisos', route: 'ubicaciones/pisos' },
+                            { key: 'edificios', label: 'Edificios', route: 'ubicaciones/edificios' },
+                            { key: 'instituciones', label: 'Instituciones', route: 'ubicaciones/instituciones' },
+                            { key: 'servicios', label: 'Servicios', route: 'ubicaciones/servicios' },
+                          ].map((sec) => (
+                            <div key={sec.key}>
+                              <button
+                                className="admin-submenu-item"
+                                onClick={() => setOpenSubMenu((prev) => (prev === sec.key ? null : sec.key))}
+                              >
+                                <span className="inline-flex w-full items-center justify-between">
+                                  <span>{sec.label}</span>
+                                  <span className="admin-caret" aria-hidden>{openSubMenu === sec.key ? "▾" : "▸"}</span>
+                                </span>
+                              </button>
+                              {openSubMenu === sec.key && (
+                                <div className="admin-submenu" onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    className="admin-submenu-item"
+                                    onClick={() => {
+                                      setOpenSubMenu(null);
+                                      setOpenMenu(null);
+                                      navigate(sec.route);
+                                    }}
+                                  >
+                                    Listar
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        <button
+                          className="admin-submenu-item"
+                          onClick={() => { setOpenMenu(null); navigate(item.path); }}
+                        >
+                          Listar
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

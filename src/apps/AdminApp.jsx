@@ -4,6 +4,11 @@ import Admin from "../pages/Admin.jsx";
 import Dashboard from "../pages/Admin/Dashboard.jsx";
 import Areas from "../pages/Admin/Areas.jsx";
 import Ubicaciones from "../pages/Admin/Ubicaciones.jsx";
+import UbicacionesHabitaciones from "../pages/Admin/UbicacionesHabitaciones.jsx";
+import UbicacionesPisos from "../pages/Admin/UbicacionesPisos.jsx";
+import UbicacionesEdificios from "../pages/Admin/UbicacionesEdificios.jsx";
+import UbicacionesInstituciones from "../pages/Admin/UbicacionesInstituciones.jsx";
+import UbicacionesServicios from "../pages/Admin/UbicacionesServicios.jsx";
 import Solicitudes from "../pages/Admin/Solicitudes.jsx";
 import Usuarios from "../pages/Admin/Usuarios.jsx";
 import Perfil from "../pages/Admin/Perfil.jsx";
@@ -25,6 +30,11 @@ export default function AdminApp() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="areas" element={<Areas />} />
               <Route path="ubicaciones" element={<Ubicaciones />} />
+              <Route path="ubicaciones/habitaciones" element={<UbicacionesHabitaciones />} />
+              <Route path="ubicaciones/pisos" element={<UbicacionesPisos />} />
+              <Route path="ubicaciones/edificios" element={<UbicacionesEdificios />} />
+              <Route path="ubicaciones/instituciones" element={<UbicacionesInstituciones />} />
+              <Route path="ubicaciones/servicios" element={<UbicacionesServicios />} />
               <Route path="solicitudes" element={<Solicitudes />} />
               <Route path="perfil" element={<Perfil />} />
               <Route path="usuarios" element={<Usuarios />} />
