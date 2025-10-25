@@ -1,12 +1,13 @@
 import React from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { PageNav, Logo } from "../components/ui.jsx";
+import { DashboardIcon, RequestsIcon, LocationsIcon, AreasIcon, UsersIcon, ProfileIcon } from "../components/icons.jsx";
 import { useAdminAuth } from "../auth/AdminAuthContext.jsx";
 
 export default function Admin() {
   const navigate = useNavigate();
   const location = useLocation();
   const { usuario, signOut } = useAdminAuth();
+  const [profileOpen, setProfileOpen] = React.useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -14,12 +15,12 @@ export default function Admin() {
   };
 
   const baseMenu = [
-    { name: "Dashboard", path: "dashboard" },
-    { name: "Solicitudes", path: "solicitudes" },
-    { name: "Ubicaciones", path: "ubicaciones" },
-    { name: "Áreas de Solicitudes", path: "areas" },
-    { name: "Usuarios", path: "usuarios" },
-    { name: "Mi Perfil", path: "perfil" },
+    { name: "Dashboard", path: "dashboard", icon: DashboardIcon },
+    { name: "Solicitudes", path: "solicitudes", icon: RequestsIcon },
+    { name: "Ubicaciones", path: "ubicaciones", icon: LocationsIcon },
+    { name: "Áreas de Solicitudes", path: "areas", icon: AreasIcon },
+    { name: "Usuarios", path: "usuarios", icon: UsersIcon },
+    { name: "Mi Perfil", path: "perfil", icon: ProfileIcon },
   ];
 
   const menu = baseMenu.filter((item) => {
@@ -32,48 +33,93 @@ export default function Admin() {
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
-        <div className="admin-brand">
-          <Logo className="h-10 w-auto rounded-lg bg-white p-1" />
-          <h3 className="text-lg font-semibold">UC Solicitudes</h3>
+        <div>
+          <div className="admin-brand">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 text-white">
+              <DashboardIcon className="h-6 w-6" />
+            </div>
+            <div className="leading-tight">
+              <h3 className="text-base font-semibold text-white">UC Solicitudes</h3>
+              <p className="text-[11px] uppercase tracking-wide text-slate-400">Panel</p>
+            </div>
+          </div>
+
+          <p className="admin-menu-label">Menu</p>
+          <nav className="admin-menu">
+            {menu.map((item) => {
+              const Icon = item.icon ?? (() => null);
+              const isDashboard = item.path === "dashboard";
+              const pathname = location.pathname;
+              const isActive =
+                pathname.endsWith(item.path) || (isDashboard && (pathname === "/" || pathname === "/admin" || pathname.endsWith("/admin")));
+              return (
+                <button
+                  key={item.path}
+                  className={`group admin-nav-item ${isActive ? "admin-nav-item--active" : "admin-nav-item--idle"}`}
+                  onClick={() => navigate(item.path)}
+                >
+                  <Icon className="admin-nav-icon" />
+                  <span className="truncate">{item.name}</span>
+                </button>
+              );
+            })}
+          </nav>
         </div>
 
-        <nav className="admin-menu">
-          {menu.map((item) => {
-            const isDashboard = item.path === "dashboard";
-            const pathname = location.pathname;
-            const isActive =
-              pathname.endsWith(item.path) || (isDashboard && (pathname === "/" || pathname === "/admin" || pathname.endsWith("/admin")));
-            return (
-              <button
-                key={item.path}
-                className={`admin-nav-btn ${isActive ? "admin-nav-btn--active" : "admin-nav-btn--idle"}`}
-                onClick={() => navigate(item.path)}
-              >
-                {item.name}
-              </button>
-            );
-          })}
-        </nav>
+        <div className="admin-footer">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 text-sm font-semibold text-white">
+              {(usuario?.nombre?.[0] || "U").toUpperCase()}
+            </div>
+            <div className="leading-tight">
+              <p className="text-sm font-medium text-white">
+                {usuario ? `${usuario.nombre} ${usuario.apellido}` : "Usuario"}
+              </p>
+              <p className="text-[11px] uppercase tracking-wide text-slate-400">{usuario?.rol ?? ""}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleSignOut}
+            className="mt-3 w-full rounded-lg bg-slate-800 px-3 py-2 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
+          >
+            Cerrar sesión
+          </button>
+        </div>
       </aside>
 
       <div className="admin-main">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <PageNav backHref="/" />
-          <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
-            <div className="text-right text-xs leading-tight text-slate-600 sm:text-sm">
-              <p className="font-semibold text-slate-800">
-                {usuario ? `${usuario.nombre} ${usuario.apellido}` : "Usuario"}
-              </p>
-              <p className="uppercase tracking-wide text-[11px] text-slate-400 sm:text-xs">
-                {usuario?.rol ?? ""}
-              </p>
+        <div className="admin-topbar">
+          <div className="flex w-full items-center justify-end gap-3">
+            <div className="relative">
+              <button
+                onClick={() => setProfileOpen((v) => !v)}
+                className="flex items-center gap-3 rounded-full border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700 sm:text-sm"
+                title="Opciones de perfil"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-sm font-semibold text-white">
+                  {(usuario?.nombre?.[0] || "U").toUpperCase()}
+                </span>
+                <span className="text-left leading-tight">
+                  {usuario ? `${usuario.nombre} ${usuario.apellido}` : "Mi Perfil"}
+                </span>
+              </button>
+              {profileOpen && (
+                <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
+                  <button
+                    onClick={() => { setProfileOpen(false); navigate("perfil"); }}
+                    className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
+                  >
+                    Editar perfil
+                  </button>
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
             </div>
-            <button
-              onClick={handleSignOut}
-              className="rounded-full border border-slate-300 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-200"
-            >
-              Cerrar sesión
-            </button>
           </div>
         </div>
         <Outlet />

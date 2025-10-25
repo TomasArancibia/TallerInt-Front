@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Logo } from "../../components/ui.jsx";
 import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
@@ -18,8 +17,18 @@ export default function Dashboard() {
   const [usuario, setUsuario] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
-  const [fechaInicio, setFechaInicio] = useState("2025-01-01");
-  const [fechaFin, setFechaFin] = useState("2025-12-31");
+  // Rango por defecto: últimos 7 días
+  const today = new Date();
+  const start7 = new Date(today);
+  start7.setDate(today.getDate() - 6);
+  const pad = (n) => String(n).padStart(2, "0");
+  const toYMD = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; // evitar desfases por UTC
+  const [fechaInicio, setFechaInicio] = useState(toYMD(start7));
+  const [fechaFin, setFechaFin] = useState(toYMD(today));
+  const [rangeOpen, setRangeOpen] = useState(false);
+  const [customMode, setCustomMode] = useState(false);
+  const [tmpStart, setTmpStart] = useState(toYMD(start7));
+  const [tmpEnd, setTmpEnd] = useState(toYMD(today));
   // Metricas
   const [metricasArea, setMetricasArea] = useState([]);
   const [metricasHospitalEstado, setMetricasHospitalEstado] = useState([]);
@@ -76,7 +85,7 @@ export default function Dashboard() {
   useEffect(() => {
     let active = true;
     async function fetchMetricas() {
-      if (new Date(fechaFin) < new Date(fechaInicio)) {
+      if (parseYMD(fechaFin) < parseYMD(fechaInicio)) {
         alert("Fecha inválida");
         return;
       }
@@ -121,6 +130,11 @@ export default function Dashboard() {
     };
   }, [fechaFin, fechaInicio, getAccessToken, signOut]);
 
+  useEffect(() => {
+    setTmpStart(fechaInicio);
+    setTmpEnd(fechaFin);
+  }, [fechaInicio, fechaFin]);
+
   // Últimos 15 días para métricas diarias
   const metricasUltimosDias = metricasAreaDia.filter(m => {
     const fecha = new Date(m.dia);
@@ -143,28 +157,106 @@ export default function Dashboard() {
   const headerCell = "border border-slate-200 bg-slate-100 px-4 py-2 font-semibold text-slate-700";
   const dataCell = "border border-slate-200 px-4 py-2";
 
+  const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
+  const parseYMD = (s) => {
+    const [y, m, d] = s.split("-").map(Number);
+    return new Date(y, (m || 1) - 1, d || 1);
+  };
+
+  function setPreset(preset) {
+    const d = new Date();
+    const copy = (x) => new Date(x.getTime());
+    let a = copy(d), b = copy(d);
+    setCustomMode(false);
+    if (preset === "today") {
+    } else if (preset === "yesterday") {
+      a.setDate(a.getDate() - 1);
+    } else if (preset === "last7") {
+      a.setDate(a.getDate() - 6);
+    } else if (preset === "last30") {
+      a.setDate(a.getDate() - 29);
+    } else if (preset === "thisMonth") {
+      a = new Date(d.getFullYear(), d.getMonth(), 1);
+      b = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    } else if (preset === "lastMonth") {
+      a = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+      b = new Date(d.getFullYear(), d.getMonth(), 0);
+    } else if (preset === "custom") {
+      setCustomMode(true);
+      return;
+    }
+    setFechaInicio(toYMD(a));
+    setFechaFin(toYMD(b));
+    setRangeOpen(false);
+  }
+
+  function applyCustom() {
+    if (parseYMD(tmpEnd) < parseYMD(tmpStart)) return alert("Rango inválido");
+    setFechaInicio(tmpStart);
+    setFechaFin(tmpEnd);
+    setRangeOpen(false);
+    setCustomMode(false);
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-4 rounded-2xl bg-slate-900 px-6 py-5 text-slate-50 shadow-md sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Logo className="h-12 w-auto rounded-lg bg-white p-2" />
-          <h1 className="text-xl font-semibold">Dashboard de Solicitudes</h1>
-        </div>
+      <header className="rounded-2xl bg-white px-4 py-4 text-slate-900 shadow-sm ring-1 ring-slate-200 sm:px-6">
+        <div className="grid grid-cols-3 items-center gap-3">
+          <div />
+          <h1 className="text-center text-xl font-semibold">Dashboard de Solicitudes</h1>
+          <div className="relative justify-self-end">
+            <button
+              onClick={() => setRangeOpen((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm hover:bg-slate-50"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              {`${fmtLong.format(parseYMD(fechaInicio))} - ${fmtLong.format(parseYMD(fechaFin))}`}
+              <svg className="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd"/></svg>
+            </button>
 
-        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-800 shadow-sm">
-          <input
-            type="date"
-            value={fechaInicio}
-            onChange={(e) => setFechaInicio(e.target.value)}
-            className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-300"
-          />
-          <span className="text-sm text-slate-500">a</span>
-          <input
-            type="date"
-            value={fechaFin}
-            onChange={(e) => setFechaFin(e.target.value)}
-            className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-300"
-          />
+            {rangeOpen && (
+              <div className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
+                {!customMode ? (
+                  <div className="py-1">
+                    <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("today")}>
+                      Hoy
+                    </button>
+                    <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("yesterday")}>
+                      Ayer
+                    </button>
+                    <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("last7")}>
+                      Últimos 7 días
+                    </button>
+                    <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("last30")}>
+                      Últimos 30 días
+                    </button>
+                    <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("thisMonth")}>
+                      Este mes
+                    </button>
+                    <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("lastMonth")}>
+                      Último mes
+                    </button>
+                    <div className="my-1 border-t border-slate-200" />
+                    <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("custom")}>
+                      Rango personalizado…
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-3">
+                    <div className="flex items-center gap-2">
+                      <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpStart} onChange={(e) => setTmpStart(e.target.value)} />
+                      <span className="text-sm text-slate-500">a</span>
+                      <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpEnd} onChange={(e) => setTmpEnd(e.target.value)} />
+                    </div>
+                    <div className="mt-3 flex justify-end gap-2">
+                      <button className="rounded-md px-3 py-1 text-sm text-slate-600 hover:bg-slate-50" onClick={() => setCustomMode(false)}>Volver</button>
+                      <button className="rounded-md bg-slate-900 px-3 py-1 text-sm text-white hover:bg-slate-800" onClick={applyCustom}>Aplicar</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

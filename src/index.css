@@ -106,11 +106,20 @@
 
 @layer components {
   .admin-layout { @apply flex min-h-screen bg-slate-100 text-slate-900; }
-  .admin-sidebar { @apply hidden w-60 flex-col bg-slate-900 px-5 py-8 text-slate-100 sm:flex; }
-  .admin-brand { @apply flex items-center gap-3 pb-10; }
-  .admin-menu { @apply flex flex-col gap-2; }
-  .admin-main { @apply flex min-h-screen w-full flex-1 flex-col bg-slate-50 px-4 py-6 sm:px-8; }
-  .admin-nav-btn { @apply rounded-xl px-3 py-2 text-left text-sm font-semibold transition-colors; }
-  .admin-nav-btn--active { @apply bg-slate-100 text-slate-900; }
-  .admin-nav-btn--idle { @apply bg-transparent text-slate-200 hover:bg-slate-800; }
+  .admin-sidebar { @apply hidden w-64 flex-col justify-between bg-slate-900 px-5 py-6 text-slate-100 sm:flex; }
+  .admin-brand { @apply mb-6 flex items-center gap-3; }
+  .admin-menu-label { @apply mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400; }
+  .admin-menu { @apply flex flex-col gap-1; }
+  .admin-main { @apply flex min-h-screen w-full flex-1 flex-col bg-slate-50 px-4 pt-0 pb-6 sm:px-8; }
+
+  /* New nav styles */
+  .admin-nav-item { @apply flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors; }
+  .admin-nav-item--idle { @apply text-slate-200 hover:bg-slate-800; }
+  .admin-nav-item--active { @apply bg-slate-800 text-white; }
+  .admin-nav-icon { @apply h-5 w-5 text-slate-300 group-hover:text-white; }
+
+  .admin-footer { @apply mt-8 rounded-xl bg-slate-900/40 p-4 ring-1 ring-white/5; }
+
+  /* Connected topbar to sidebar color */
+  .admin-topbar { @apply -mx-4 mb-6 border-b border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 sm:-mx-8 sm:px-8; }
 }
