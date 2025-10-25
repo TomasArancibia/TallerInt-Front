@@ -8,6 +8,13 @@ export default function Admin() {
   const location = useLocation();
   const { usuario, signOut } = useAdminAuth();
   const [profileOpen, setProfileOpen] = React.useState(false);
+  const [openMenu, setOpenMenu] = React.useState(null);
+
+  React.useEffect(() => {
+    function closeAll() { setOpenMenu(null); setProfileOpen(false); }
+    document.addEventListener("click", closeAll);
+    return () => document.removeEventListener("click", closeAll);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
@@ -52,15 +59,43 @@ export default function Admin() {
               const pathname = location.pathname;
               const isActive =
                 pathname.endsWith(item.path) || (isDashboard && (pathname === "/" || pathname === "/admin" || pathname.endsWith("/admin")));
+              const hasDropdown = item.path !== "dashboard" && item.path !== "perfil";
               return (
-                <button
-                  key={item.path}
-                  className={`group admin-nav-item ${isActive ? "admin-nav-item--active" : "admin-nav-item--idle"}`}
-                  onClick={() => navigate(item.path)}
-                >
-                  <Icon className="admin-nav-icon" />
-                  <span className="truncate">{item.name}</span>
-                </button>
+                <div key={item.path}>
+                  <div className={`group admin-nav-item ${isActive ? "admin-nav-item--active" : "admin-nav-item--idle"}`}>
+                    <button
+                      className="flex grow items-center gap-3 text-left"
+                      onClick={(e) => { e.stopPropagation(); navigate(item.path); }}
+                    >
+                      <Icon className="admin-nav-icon" />
+                      <span className="truncate">{item.name}</span>
+                    </button>
+                    {hasDropdown ? (
+                      <button
+                        className="admin-caret-btn"
+                        aria-label="Mostrar opciones"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenu((prev) => (prev === item.path ? null : item.path));
+                        }}
+                      >
+                        <span className="admin-caret" aria-hidden>
+                          {openMenu === item.path ? "▾" : "▸"}
+                        </span>
+                      </button>
+                    ) : null}
+                  </div>
+                  {hasDropdown && openMenu === item.path && (
+                    <div className="admin-submenu" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        className="admin-submenu-item"
+                        onClick={() => { setOpenMenu(null); navigate(item.path); }}
+                      >
+                        Listar
+                      </button>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
