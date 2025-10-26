@@ -9,6 +9,7 @@ import UbicacionesPisos from "../pages/Admin/UbicacionesPisos.jsx";
 import UbicacionesEdificios from "../pages/Admin/UbicacionesEdificios.jsx";
 import UbicacionesInstituciones from "../pages/Admin/UbicacionesInstituciones.jsx";
 import UbicacionesServicios from "../pages/Admin/UbicacionesServicios.jsx";
+import UbicacionesCamas from "../pages/Admin/UbicacionesCamas.jsx";
 import Solicitudes from "../pages/Admin/Solicitudes.jsx";
 import Usuarios from "../pages/Admin/Usuarios.jsx";
 import Perfil from "../pages/Admin/Perfil.jsx";
@@ -35,6 +36,7 @@ export default function AdminApp() {
               <Route path="ubicaciones/edificios" element={<UbicacionesEdificios />} />
               <Route path="ubicaciones/instituciones" element={<UbicacionesInstituciones />} />
               <Route path="ubicaciones/servicios" element={<UbicacionesServicios />} />
+              <Route path="ubicaciones/camas" element={<UbicacionesCamas />} />
               <Route path="solicitudes" element={<Solicitudes />} />
               <Route path="perfil" element={<Perfil />} />
               <Route path="usuarios" element={<Usuarios />} />

@@ -12,7 +12,7 @@ export default function Admin() {
   const [openSubMenu, setOpenSubMenu] = React.useState(null);
 
   React.useEffect(() => {
-    function closeAll() { setOpenMenu(null); setProfileOpen(false); }
+    function closeAll() { setOpenMenu(null); setOpenSubMenu(null); setProfileOpen(false); }
     document.addEventListener("click", closeAll);
     return () => document.removeEventListener("click", closeAll);
   }, []);
@@ -100,6 +100,7 @@ export default function Admin() {
                           {/* Nivel 1: secciones */}
                           {[
                             { key: 'habitaciones', label: 'Habitaciones', route: 'ubicaciones/habitaciones' },
+                            { key: 'camas', label: 'Camas', route: 'ubicaciones/camas' },
                             { key: 'pisos', label: 'Pisos', route: 'ubicaciones/pisos' },
                             { key: 'edificios', label: 'Edificios', route: 'ubicaciones/edificios' },
                             { key: 'instituciones', label: 'Instituciones', route: 'ubicaciones/instituciones' },

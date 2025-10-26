@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
@@ -19,10 +19,10 @@ export default function Areas() {
       setStatus("loading");
       try {
         const token = await getAccessToken();
-        if (!token) throw new Error("Sesión expirada");
+        if (!token) throw new Error("SesiÃ³n expirada");
         const res = await fetch(`${API}/admin/bootstrap`, { headers: { Authorization: `Bearer ${token}` } });
         if (res.status === 401 || res.status === 403) { await signOut(); return; }
-        if (!res.ok) throw new Error("No se pudo cargar áreas");
+        if (!res.ok) throw new Error("No se pudo cargar Ã¡reas");
         const data = await res.json();
         if (!active) return;
         setAreas(data.areas || []);
@@ -45,10 +45,10 @@ export default function Areas() {
   return (
     <div className="flex flex-col gap-4">
       <header className="rounded-2xl bg-white px-6 py-4 text-slate-900 shadow-sm ring-1 ring-slate-200">
-        <h1 className="text-lg font-semibold">Áreas de Solicitudes</h1>
+        <h1 className="text-lg font-semibold">Ãreas de Solicitudes</h1>
       </header>
 
-      {status === "loading" && <p className="text-sm text-slate-600">Cargando…</p>}
+      {status === "loading" && <p className="text-sm text-slate-600">Cargandoâ€¦</p>}
       {status === "error" && <p className="text-sm font-semibold text-red-600">{error}</p>}
       {status === "ok" && (
         <section>
@@ -56,7 +56,7 @@ export default function Areas() {
             <table className={tableClass}>
               <thead>
                 <tr>
-                  <th className={headerCell}>ID Área</th>
+                  <th className={headerCell}>ID Ãrea</th>
                   <th className={headerCell}>Nombre</th>
                 </tr>
               </thead>
@@ -75,3 +75,4 @@ export default function Areas() {
     </div>
   );
 }
+

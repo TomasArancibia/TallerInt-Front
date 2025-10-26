@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
@@ -24,7 +24,7 @@ export default function Ubicaciones() {
       setStatus("loading");
       try {
         const token = await getAccessToken();
-        if (!token) throw new Error("Sesión expirada");
+        if (!token) throw new Error("SesiÃ³n expirada");
         const res = await fetch(`${API}/admin/bootstrap`, { headers: { Authorization: `Bearer ${token}` } });
         if (res.status === 401 || res.status === 403) { await signOut(); return; }
         if (!res.ok) throw new Error("No se pudieron cargar ubicaciones");
@@ -58,7 +58,7 @@ export default function Ubicaciones() {
         <h1 className="text-lg font-semibold">Ubicaciones</h1>
       </header>
 
-      {status === "loading" && <p className="text-sm text-slate-600">Cargando…</p>}
+      {status === "loading" && <p className="text-sm text-slate-600">Cargandoâ€¦</p>}
       {status === "error" && <p className="text-sm font-semibold text-red-600">{error}</p>}
       {status === "ok" && (
         <>
@@ -115,7 +115,7 @@ export default function Ubicaciones() {
                 <thead>
                   <tr>
                     <th className={headerCell}>ID Piso</th>
-                    <th className={headerCell}>Número</th>
+                    <th className={headerCell}>NÃºmero</th>
                     <th className={headerCell}>ID Edificio</th>
                   </tr>
                 </thead>
@@ -160,7 +160,7 @@ export default function Ubicaciones() {
               <table className={tableClass}>
                 <thead>
                   <tr>
-                    <th className={headerCell}>ID Habitación</th>
+                    <th className={headerCell}>ID HabitaciÃ³n</th>
                     <th className={headerCell}>Nombre</th>
                     <th className={headerCell}>ID Hospital</th>
                   </tr>
@@ -170,7 +170,7 @@ export default function Ubicaciones() {
                     <tr key={hab.id_habitacion}>
                       <td className={dataCell}>{hab.id_habitacion}</td>
                       <td className={dataCell}>{hab.nombre}</td>
-                      <td className={dataCell}>{hab.id_hospital ?? "—"}</td>
+                      <td className={dataCell}>{hab.id_hospital ?? "â€”"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -186,7 +186,7 @@ export default function Ubicaciones() {
                   <tr>
                     <th className={headerCell}>ID Cama</th>
                     <th className={headerCell}>Identificador QR</th>
-                    <th className={headerCell}>ID Habitación</th>
+                    <th className={headerCell}>ID HabitaciÃ³n</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -206,3 +206,4 @@ export default function Ubicaciones() {
     </div>
   );
 }
+

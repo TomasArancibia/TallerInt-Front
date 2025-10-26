@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
@@ -204,7 +204,7 @@ export default function Solicitudes() {
         <h1 className="text-lg font-semibold">Solicitudes</h1>
       </header>
 
-      {status === "loading" && <p className="text-sm text-slate-600">Cargando…</p>}
+      {status === "loading" && <p className="text-sm text-slate-600">Cargando...</p>}
       {status === "error" && <p className="text-sm font-semibold text-red-600">{error}</p>}
       {status === "ok" && (
         <>
@@ -231,7 +231,7 @@ export default function Solicitudes() {
                         <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("thisMonth")}>Este mes</button>
                         <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("lastMonth")}>Ultimo mes</button>
                         <div className="my-1 border-t border-slate-200" />
-                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("custom")}>Rango personalizado…</button>
+                        <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("custom")}>Rango personalizado...</button>
                       </div>
                     ) : (
                       <div className="p-3">
@@ -254,7 +254,7 @@ export default function Solicitudes() {
               <MultiSelect label="Area" options={areas.map(a=>({id:a.id_area,label:a.nombre}))} selected={areasSel} setSelected={setAreasSel} />
               <MultiSelect label="Institucion" options={hospitales.map(h=>({id:h.id_hospital,label:h.nombre}))} selected={instSel} setSelected={(vals)=>{ setInstSel(vals); setEdifSel([]); setPisoSel([]); }} />
               <MultiSelect label="Edificio" options={edificiosFiltrados.map(e=>({id:e.id_edificio,label:e.nombre}))} selected={edifSel} setSelected={(vals)=>{ setEdifSel(vals); setPisoSel([]); }} disabled={instSel.length===0} />
-              <MultiSelect label="Piso" options={pisosFiltrados.map(p=>({id:p.id_piso,label:`${(edificios.find(e=>e.id_edificio===p.id_edificio)?.nombre)||('Edificio '+p.id_edificio)} — Piso ${p.numero}`}))} selected={pisoSel} setSelected={setPisoSel} disabled={edifSel.length===0} />
+              <MultiSelect label="Piso" options={pisosFiltrados.map(p=>({id:p.id_piso,label:`${(edificios.find(e=>e.id_edificio===p.id_edificio)?.nombre)||('Edificio '+p.id_edificio)} - Piso ${p.numero}`}))} selected={pisoSel} setSelected={setPisoSel} disabled={edifSel.length===0} />
             </div>
           </section>
 
@@ -293,14 +293,14 @@ export default function Solicitudes() {
                       <React.Fragment key={s.id}>
                         <tr onClick={() => toggleRow(s.id)} className={isOpen ? 'bg-slate-50' : 'hover:bg-slate-50'} style={{cursor:'pointer'}}>
                           <td className={dataCell}>{s.id}</td>
-                          <td className={dataCell}>{areas.find(a => a.id_area === s.id_area)?.nombre || '—'}</td>
-                          <td className={dataCell}>{hab?.nombre || '—'}</td>
-                          <td className={dataCell}>{cama?.letra || '—'}</td>
-                          <td className={dataCell}>{piso?.numero ?? '—'}</td>
-                          <td className={dataCell}>{edif?.nombre || '—'}</td>
-                          <td className={dataCell}>{inst?.nombre || '—'}</td>
-                          <td className={dataCell}>{s.nombre_solicitante || '—'}</td>
-                          <td className={dataCell}>{s.fecha_creacion ? fmtDateTime.format(new Date(s.fecha_creacion)) : '—'}</td>
+                          <td className={dataCell}>{areas.find(a => a.id_area === s.id_area)?.nombre || 'â€”'}</td>
+                          <td className={dataCell}>{hab?.nombre || 'â€”'}</td>
+                          <td className={dataCell}>{cama?.letra || 'â€”'}</td>
+                          <td className={dataCell}>{piso?.numero ?? 'â€”'}</td>
+                          <td className={dataCell}>{edif?.nombre || 'â€”'}</td>
+                          <td className={dataCell}>{inst?.nombre || 'â€”'}</td>
+                          <td className={dataCell}>{s.nombre_solicitante || 'â€”'}</td>
+                          <td className={dataCell}>{s.fecha_creacion ? fmtDateTime.format(new Date(s.fecha_creacion)) : 'â€”'}</td>
                           <td className={dataCell}><span className={estadoClass}>{(s.estado || '').replaceAll('_',' ')}</span></td>
                         </tr>
                         {isOpen && (
@@ -320,10 +320,10 @@ export default function Solicitudes() {
               </table>
             </div>
             <div className="mt-3 flex items-center justify-between text-sm">
-              <div className="text-slate-600">Mostrando {filtradas.length === 0 ? 0 : (startIdx + 1)}–{endIdx} de {filtradas.length}</div>
+              <div className="text-slate-600">Mostrando {filtradas.length === 0 ? 0 : (startIdx + 1)}-{endIdx} de {filtradas.length}</div>
               <div className="flex items-center gap-2">
                 <button className="rounded-md border border-slate-300 px-3 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Anterior</button>
-                <span>Pagina {page} de {totalPages}</span>
+                <span>Página {page} de {totalPages}</span>
                 <button className="rounded-md border border-slate-300 px-3 py-1 disabled:opacity-50" disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>Siguiente</button>
               </div>
             </div>
@@ -333,4 +333,5 @@ export default function Solicitudes() {
     </div>
   );
 }
+
 
