@@ -62,6 +62,7 @@ export default function UbicacionesCamas() {
   const [habitaciones, setHabitaciones] = useState([]);
   const [servicios, setServicios] = useState([]);
   const [camas, setCamas] = useState([]);
+  const [togglingId, setTogglingId] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -121,6 +122,31 @@ export default function UbicacionesCamas() {
     });
   }, [camas, habSel, pisoSel, edifSel, instSel, servSel, activoSel, habById, pisoById, edifById]);
 
+  async function handleToggleActiva(idCama, current) {
+    setError(null);
+    setTogglingId(idCama);
+    try {
+      const token = await getAccessToken();
+      if (!token) throw new Error('Sesion expirada');
+      const res = await fetch(`${API}/admin/camas/${idCama}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ activo: !current })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(()=>({}));
+        throw new Error(data.detail || 'No se pudo actualizar la cama');
+      }
+      const data = await res.json().catch(()=>null);
+      const updated = data?.cama ?? data ?? null;
+      setCamas(prev => prev.map(c => c.id_cama === idCama ? (updated ? { ...c, ...updated } : { ...c, activo: !current }) : c));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setTogglingId(null);
+    }
+  }
+
   // Paginacion 10 por pagina
   const PAGE_SIZE = 10;
   const [page, setPage] = useState(1);
@@ -167,7 +193,8 @@ export default function UbicacionesCamas() {
                   <th className={headerCell}>Edificio</th>
                   <th className={headerCell}>Institución</th>
                   <th className={headerCell}>Servicio</th>
-                  <th className={headerCell}>Activa</th>
+                  <th className={headerCell}>Estado</th>
+                  <th className={headerCell}>Acciones</th>
                 </tr></thead>
                 <tbody>
                   {pageItems.map(c=>{ const h=habById[c.id_habitacion]; const p=h? pisoById[h.id_piso]:null; const e=p?edifById[p.id_edificio]:null; const inst=e? hospById[e.id_hospital]:null; return (
@@ -180,7 +207,24 @@ export default function UbicacionesCamas() {
                       <td className={dataCell}>{e?.nombre || '-'}</td>
                       <td className={dataCell}>{inst?.nombre || '-'}</td>
                       <td className={dataCell}>{h ? (servById[h.id_servicio]?.nombre || '-') : '-'}</td>
-                      <td className={dataCell}>{c.activo ? 'Sí' : 'No'}</td>
+                      <td className={dataCell}>
+                        <span className={c.activo
+                          ? 'inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-700'
+                          : 'inline-flex items-center rounded-full bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700'}>
+                          {c.activo ? 'Activa' : 'Inactiva'}
+                        </span>
+                      </td>
+                      <td className={dataCell}>
+                        <button
+                          className={c.activo
+                            ? 'rounded-md border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60 disabled:cursor-not-allowed'
+                            : 'rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 disabled:opacity-60 disabled:cursor-not-allowed'}
+                          onClick={() => handleToggleActiva(c.id_cama, c.activo)}
+                          disabled={togglingId === c.id_cama}
+                        >
+                          {togglingId === c.id_cama ? 'Guardando...' : (c.activo ? 'Desactivar' : 'Activar')}
+                        </button>
+                      </td>
                     </tr>
                   );})}
                 </tbody>
@@ -200,4 +244,3 @@ export default function UbicacionesCamas() {
     </div>
   );
 }
-
