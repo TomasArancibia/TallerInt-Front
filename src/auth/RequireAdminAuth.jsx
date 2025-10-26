@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAdminAuth } from "./AdminAuthContext.jsx";
 
@@ -9,7 +9,7 @@ export default function RequireAdminAuth() {
   if (initializing) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-100 text-slate-600">
-        Cargando…
+        Cargandoâ€¦
       </main>
     );
   }
@@ -20,3 +20,4 @@ export default function RequireAdminAuth() {
 
   return <Outlet />;
 }
+

@@ -324,7 +324,11 @@ export default function Usuarios() {
                     {user.area_nombre ?? "Sin asignar"}
                   </td>
                   <td className="border border-slate-200 px-4 py-2">
-                    {user.activo ? "Activo" : "Inactivo"}
+                    <span className={user.activo
+                      ? "inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700"
+                      : "inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700"}>
+                      {user.activo ? "Activo" : "Inactivo"}
+                    </span>
                   </td>
                   <td className="border border-slate-200 px-4 py-2">
                     <div className="flex flex-wrap gap-2">
