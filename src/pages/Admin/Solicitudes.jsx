@@ -14,11 +14,13 @@ export default function Solicitudes() {
   const [error, setError] = useState(null);
   const [solicitudes, setSolicitudes] = useState([]);
   const [areas, setAreas] = useState([]);
+  const [usuario, setUsuario] = useState(null);
   const [hospitales, setHospitales] = useState([]);
   const [edificios, setEdificios] = useState([]);
   const [pisos, setPisos] = useState([]);
   const [habitaciones, setHabitaciones] = useState([]);
   const [camas, setCamas] = useState([]);
+  const [changingId, setChangingId] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -32,6 +34,7 @@ export default function Solicitudes() {
         if (!res.ok) throw new Error("No se pudieron cargar solicitudes");
         const data = await res.json();
         if (!active) return;
+        setUsuario(data.usuario || null);
         setAreas(data.areas || []);
         setHospitales(data.hospitales || []);
         setEdificios(data.edificios || []);
@@ -55,6 +58,23 @@ export default function Solicitudes() {
   const tableClass = "min-w-full border-collapse text-left text-sm text-slate-700";
   const headerCell = "border border-slate-200 bg-slate-100 px-4 py-2 font-semibold text-slate-700";
   const dataCell = "border border-slate-200 px-4 py-2";
+
+  async function handleCambiarEstado(id, nuevoEstado){
+    try{
+      setChangingId(id);
+      const token = await getAccessToken();
+      const url = `${API}/solicitudes/${id}/estado?nuevo_estado=${encodeURIComponent(nuevoEstado)}`;
+      const res = await fetch(url, { method:'PUT', headers: token ? { Authorization:`Bearer ${token}` } : {} });
+      if(!res.ok){ const data = await res.json().catch(()=>({})); throw new Error(data.detail || 'No se pudo actualizar el estado'); }
+      const data = await res.json().catch(()=>null);
+      const updated = data?.solicitud;
+      setSolicitudes(prev => prev.map(s => s.id === id ? (updated ? { ...s, ...updated } : { ...s, estado: nuevoEstado }) : s));
+    }catch(e){
+      alert(e.message);
+    }finally{
+      setChangingId(null);
+    }
+  }
 
   // Utiles de fecha + MultiSelect
   const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
@@ -171,7 +191,12 @@ export default function Solicitudes() {
       if (edifSel.includes(NONE)) return false;
       if (pisoSel.includes(NONE)) return false;
       if (estadosSel.length && !estadosSel.includes(s.estado)) return false;
-      if (areasSel.length && !areasSel.includes(String(s.id_area))) return false;
+      const isAdmin = (usuario?.rol === 'ADMIN');
+      if (isAdmin) {
+        if (areasSel.length && !areasSel.includes(String(s.id_area))) return false;
+      } else {
+        if (usuario?.id_area && s.id_area !== usuario.id_area) return false;
+      }
       const cama = camasById[s.id_cama];
       const hab = cama ? habitById[cama.id_habitacion] : null;
       const piso = hab ? pisoById[hab.id_piso] : null;
@@ -183,7 +208,7 @@ export default function Solicitudes() {
       return true;
     });
     return res.slice().sort((a,b)=> (a.id ?? 0) - (b.id ?? 0));
-  }, [solicitudes, fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel, camasById, habitById, pisoById, edifById]);
+  }, [solicitudes, fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel, camasById, habitById, pisoById, edifById, usuario]);
 
   // Paginacion simple 10 por pagina
   const PAGE_SIZE = 10;
@@ -251,7 +276,9 @@ export default function Solicitudes() {
               </div>
 
               <MultiSelect label="Estado" options={[{id:'pendiente',label:'Pendiente'},{id:'en_proceso',label:'En Proceso'},{id:'cerrada',label:'Cerrada'}]} selected={estadosSel} setSelected={setEstadosSel} />
-              <MultiSelect label="Area" options={areas.map(a=>({id:a.id_area,label:a.nombre}))} selected={areasSel} setSelected={setAreasSel} />
+              {(usuario?.rol === 'ADMIN') && (
+                <MultiSelect label="Area" options={areas.map(a=>({id:a.id_area,label:a.nombre}))} selected={areasSel} setSelected={setAreasSel} />
+              )}
               <MultiSelect label="Institucion" options={hospitales.map(h=>({id:h.id_hospital,label:h.nombre}))} selected={instSel} setSelected={(vals)=>{ setInstSel(vals); setEdifSel([]); setPisoSel([]); }} />
               <MultiSelect label="Edificio" options={edificiosFiltrados.map(e=>({id:e.id_edificio,label:e.nombre}))} selected={edifSel} setSelected={(vals)=>{ setEdifSel(vals); setPisoSel([]); }} disabled={instSel.length===0} />
               <MultiSelect label="Piso" options={pisosFiltrados.map(p=>({id:p.id_piso,label:`${(edificios.find(e=>e.id_edificio===p.id_edificio)?.nombre)||('Edificio '+p.id_edificio)} - Piso ${p.numero}`}))} selected={pisoSel} setSelected={setPisoSel} disabled={edifSel.length===0} />
@@ -301,7 +328,23 @@ export default function Solicitudes() {
                           <td className={dataCell}>{inst?.nombre || 'â€”'}</td>
                           <td className={dataCell}>{s.nombre_solicitante || 'â€”'}</td>
                           <td className={dataCell}>{s.fecha_creacion ? fmtDateTime.format(new Date(s.fecha_creacion)) : 'â€”'}</td>
-                          <td className={dataCell}><span className={estadoClass}>{(s.estado || '').replaceAll('_',' ')}</span></td>
+                          <td className={dataCell}>
+                            <div className="flex items-center gap-2" onClick={(e)=> e.stopPropagation()}>
+                              <span className={estadoClass}>{(s.estado || '').replaceAll('_',' ')}</span>
+                              {usuario?.rol === 'JEFE_AREA' && (
+                                <select
+                                  value={s.estado || 'pendiente'}
+                                  disabled={changingId === s.id}
+                                  onChange={(e)=> handleCambiarEstado(s.id, e.target.value)}
+                                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700"
+                                >
+                                  <option value="pendiente">Pendiente</option>
+                                  <option value="en_proceso">En proceso</option>
+                                  <option value="cerrada">Cerrada</option>
+                                </select>
+                              )}
+                            </div>
+                          </td>
                         </tr>
                         {isOpen && (
                           <tr>

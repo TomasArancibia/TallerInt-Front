@@ -32,8 +32,12 @@ export default function Admin() {
   ];
 
   const menu = baseMenu.filter((item) => {
-    if (item.path === "usuarios" && usuario?.rol !== "ADMIN") {
-      return false;
+    const isAdmin = usuario?.rol === "ADMIN";
+    if (!isAdmin) {
+      // Ocultar para JEFE_AREA: Areas, Ubicaciones y Usuarios
+      if (item.path === "usuarios" || item.path === "areas" || item.path === "ubicaciones") return false;
+    } else {
+      if (item.path === "usuarios") return true;
     }
     return true;
   });

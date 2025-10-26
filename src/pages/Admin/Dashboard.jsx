@@ -11,6 +11,7 @@ const API =
 export default function Dashboard() {
   const [hospitales, setHospitales] = useState([]);
   const [areas, setAreas] = useState([]);
+  const [usuario, setUsuario] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
 
@@ -51,6 +52,7 @@ export default function Dashboard() {
 
         const data = await response.json();
         if (!active) return;
+        setUsuario(data.usuario || null);
         setHospitales(data.hospitales || []);
         setAreas(data.areas || []);
         setStatus("ok");
@@ -98,6 +100,9 @@ export default function Dashboard() {
   const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
   const parseYMD = (s) => { const [y,m,d] = s.split("-").map(Number); return new Date(y,(m||1)-1,d||1); };
 
+  const isAdmin = usuario?.rol === 'ADMIN';
+  const jefeAreaId = !isAdmin ? usuario?.id_area : null;
+
   function setPreset(preset) {
     const d = new Date();
     const copy = (x) => new Date(x.getTime());
@@ -131,11 +136,12 @@ export default function Dashboard() {
 
   // Agregar cero para áreas e instituciones sin datos
   const tarjetasArea = useMemo(() => {
-    return areas.map(a => ({
+    const lista = isAdmin ? areas : areas.filter(a => a.id_area === jefeAreaId);
+    return lista.map(a => ({
       nombre_area: a.nombre,
       total_solicitudes: metricasArea.find(m => m.nombre_area === a.nombre)?.total_solicitudes || 0,
     }));
-  }, [areas, metricasArea]);
+  }, [areas, metricasArea, isAdmin, jefeAreaId]);
 
   const tarjetasInstitucion = useMemo(() => {
     return hospitales.map(h => {
@@ -163,7 +169,9 @@ export default function Dashboard() {
     return days;
   }, [fechaFin]);
 
-  const areaNames = useMemo(() => areas.map(a => a.nombre), [areas]);
+  const areaNames = useMemo(() => (
+    isAdmin ? areas.map(a => a.nombre) : areas.filter(a => a.id_area === jefeAreaId).map(a => a.nombre)
+  ), [areas, isAdmin, jefeAreaId]);
 
   const datosAgrupados = useMemo(() => {
     const base = chartDays.map(d => {
@@ -305,6 +313,7 @@ export default function Dashboard() {
             <div>
               <h3 className="text-lg font-semibold text-slate-800">Tiempo promedio de resolución (cerradas)</h3>
               <div className="mt-4 grid gap-6 md:grid-cols-2">
+                {isAdmin && (
                 <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                   <h4 className="mb-3 text-base font-semibold text-slate-700">Por Área</h4>
                   <div className={tableWrapper}>
@@ -316,7 +325,7 @@ export default function Dashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {areas.map(a => {
+                        {(isAdmin ? areas : areas.filter(a=> a.id_area===jefeAreaId)).map(a => {
                           const found = promArea.find(p => p.nombre_area === a.nombre);
                           const horas = found ? found.horas : 0;
                           return (
@@ -330,6 +339,7 @@ export default function Dashboard() {
                     </table>
                   </div>
                 </div>
+                )}
 
                 <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                   <h4 className="mb-3 text-base font-semibold text-slate-700">Por Institución</h4>
@@ -368,7 +378,7 @@ export default function Dashboard() {
                     <XAxis dataKey="dia" />
                     <YAxis />
                     <Tooltip />
-                    <Legend />
+                    {isAdmin && <Legend />}
                     {[...new Set(areaNames)].map((area, index) => (
                       <Bar key={area} dataKey={area} name={area} stackId="a" fill={["#27ae60", "#e67e22", "#3498db", "#9b59b6", "#f1c40f"][index % 5]} />
                     ))}
