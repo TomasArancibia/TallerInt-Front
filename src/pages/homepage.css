@@ -109,6 +109,7 @@ p {
   border-radius: 12px;
   background: transparent;
   font-size: 1rem;
+  color: #111;
 }
 
 .pregunta input::placeholder {

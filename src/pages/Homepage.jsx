@@ -10,10 +10,19 @@ import {
 } from "../components/ui.jsx";
 
 export default function Homepage() {
+  const navigate = useNavigate();
   // Si vienes desde /landing con QR válido, estos valores existen
   const camaId = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
   const qrCode = typeof window !== "undefined" ? sessionStorage.getItem("qr_code") : null;
 
+  function handleAskQuestion(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const question = (data.get("q") || "").toString().trim();
+    if (!question) return;
+    sessionStorage.setItem("chat_seed_message", question);
+    navigate("/chatbot");
   if (!camaId) {
     return (
       <main className={pageContainer}>
@@ -68,11 +77,7 @@ export default function Homepage() {
           ACOMPAÑAMIENTO ESPIRITUAL
         </Link>
 
-        <form
-          className="mx-auto mt-4 flex w-full max-w-2xl items-center gap-3 rounded-2xl border-2 border-purple-700 bg-white px-4 py-3 shadow-md"
-          action="respuesta.html"
-          method="get"
-        >
+        <form className="pregunta" onSubmit={handleAskQuestion}>
           <input
             id="q"
             name="q"
