@@ -1,25 +1,65 @@
 import React from "react";
-import "../../homepage.css";
-import logo from "../../../assets/logo-ucchristus.png";
 import { Link } from "react-router-dom";
+import {
+  pageContainer,
+  helperText,
+  sectionStack,
+  actionPurple,
+  actionWhite,
+  PageNav,
+  Logo,
+} from "../../../components/ui.jsx";
 
 export default function NutricionAlimentacion() {
+  const opciones = [
+    "Demora entrega de alimento",
+    "Alimentos no son según mi condición de salud",
+    "Problemas con la calidad de los alimentos",
+    "Necesito visita de nutricionista",
+    "Otros",
+  ];
+
+  const hasContext = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
+
+  if (!hasContext) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Esta sección requiere un QR válido. Escanee el código en su cama para solicitar asistencia.
+        </p>
+      </main>
+    );
+  }
+
   return (
-    <div className="app">
-      <img src={logo} alt="Logo UC Christus" className="logo" />
-      <p>Por favor indíquenos de qué área es su consulta</p>
-      <section className="botones">
-          <div className="bot botones_morados titulo-estatica"> NUTRICIÓN Y ALIMENTACIÓN A PACIENTES </div>
-          <Link className="bot botones_blancos" to="/nutricion_y_alimentacion">
-            PREGUNTAR A CONI
+    <main className={pageContainer}>
+      <PageNav backHref="/" className="mb-4" />
+      <Logo />
+      <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
+      <section className={sectionStack}>
+        <div className={`${actionPurple} pointer-events-none`}>
+          NUTRICIÓN Y ALIMENTACIÓN A PACIENTES
+        </div>
+
+        {opciones.map((nombre) => (
+          <Link
+            key={nombre}
+            className={`${actionWhite} border-purple-700 text-black`}
+            to="/solicitudes/nueva"
+            state={{
+              areaName: "Nutrición",
+              apiAreaName: "Nutrición y alimentación a pacientes",
+              tipo: nombre,
+              backHref: "/nutricion_y_alimentacion",
+              backLabel: "Menú nutrición",
+              titulo: "NUTRICIÓN Y ALIMENTACIÓN A PACIENTES",
+            }}
+          >
+            {nombre}
           </Link>
-          <Link className="bot botones_blancos" to="/nutricion_y_alimentacion">
-            PREGUNTAR A CONI
-          </Link>
-          <Link className="bot botones_azules" to="/">
-            Volver
-          </Link>
-        </section>
-    </div>
+        ))}
+      </section>
+    </main>
   );
 }

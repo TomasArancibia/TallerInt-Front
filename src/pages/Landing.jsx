@@ -9,7 +9,6 @@ export default function Landing() {
   const [params] = useSearchParams();
   const qr = params.get("qr");
 
-  const [ctx, setCtx] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,10 +20,8 @@ export default function Landing() {
       .then(data => {
         if (!data.ok) {
           setError(data.reason || "invalid_qr");
-          setCtx(null);
           return;
         }
-        setCtx(data);
         setError("");
 
         // Guardar para uso en otras páginas (solicitudes)
@@ -35,17 +32,17 @@ export default function Landing() {
       .finally(() => setLoading(false));
   }, [qr]);
 
-  if (!qr) return <main style={{ padding: 16 }}>QR no presente en la URL.</main>;
-  if (loading) return <main style={{ padding: 16 }}>Validando QR…</main>;
+  if (!qr) return <main className="p-4 text-sm text-slate-700">QR no presente en la URL.</main>;
+  if (loading) return <main className="p-4 text-sm text-slate-700">Validando QR…</main>;
 
   if (error === "inactive") {
-    return <main style={{ padding: 16 }}>Este QR está inactivo. Avise al personal.</main>;
+    return <main className="p-4 text-sm text-slate-700">Este QR está inactivo. Avise al personal.</main>;
   }
   if (error === "not_found") {
-    return <main style={{ padding: 16 }}>QR inválido. Avise al personal.</main>;
+    return <main className="p-4 text-sm text-slate-700">QR inválido. Avise al personal.</main>;
   }
   if (error) {
-    return <main style={{ padding: 16 }}>Error al validar QR.</main>;
+    return <main className="p-4 text-sm text-slate-700">Error al validar QR.</main>;
   }
 
   // Si está todo OK, renderizamos tu Homepage tal cual
