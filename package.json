@@ -10,7 +10,7 @@
     "build:admin": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node server/index.js"
+    "server": "node server/index.js",
     "preview:admin": "vite preview --open /admin.html"
   },
   "dependencies": {
