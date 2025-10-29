@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "./Chatbot.css";
+import { PageNav } from "../components/ui.jsx";
 
 function Chatbot() {
   const [messages, setMessages] = useState([
@@ -60,6 +61,7 @@ function Chatbot() {
 
   return (
     <div className="chat-wrapper">
+      <PageNav homeLabel="Volver al inicio" />
       <div className="chat-card">
         <div className="chat-header">
           <h3 className="chat-title">Asistente</h3>

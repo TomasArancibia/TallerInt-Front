@@ -64,6 +64,10 @@ export default function SolicitudGenerica() {
   }, [camaId]);
 
   const handleVolver = () => {
+    if (resultadoEnvio === "success") {
+      navigate("/");
+      return;
+    }
     if (step === "contacto") {
       navigate(backHref);
     } else {
@@ -207,6 +211,7 @@ export default function SolicitudGenerica() {
                 onChange={(event) => setNombre(event.target.value)}
                 className="mt-1 w-full rounded-xl border-2 border-purple-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-300"
                 placeholder="Ej: María López"
+                disabled={resultadoEnvio === "success"}
                 required
               />
               {errors.nombre ? (
@@ -238,7 +243,7 @@ export default function SolicitudGenerica() {
                 onClick={handleVolver}
                 className="rounded-xl border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200"
               >
-                Volver
+                {resultadoEnvio === "success" ? "Volver al inicio" : "Volver"}
               </button>
               <button
                 type="submit"
@@ -280,17 +285,17 @@ export default function SolicitudGenerica() {
               <p className="text-xs font-medium text-red-600">{mensajeError}</p>
             ) : null}
 
-            {status === "loading" && (
+            {false && (
               <div className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
                 Conectando al backend…
               </div>
             )}
-            {status === "ok" && (
+            {false && (
               <div className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
                 Backend OK. Áreas: {areas.map((a) => a.nombre).join(", ")}
               </div>
             )}
-            {status === "error" && (
+            {false && (
               <div className="w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-600 shadow-sm">
                 Error al conectar: {error}
               </div>
@@ -317,7 +322,7 @@ export default function SolicitudGenerica() {
               <button
                 type="submit"
                 className={`${actionPurple} w-auto px-6 py-2 text-sm sm:text-base disabled:cursor-not-allowed disabled:opacity-60`}
-                disabled={enviando}
+                disabled={enviando || resultadoEnvio === "success"}
               >
                 {enviando ? "Enviando…" : "Enviar solicitud"}
               </button>

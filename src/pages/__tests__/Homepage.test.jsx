@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-// Mock useNavigate so we can assert navigation without changing router behavior
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
@@ -53,7 +52,7 @@ describe('Homepage', () => {
     expect(screen.queryByText('Informaciones')).toBeNull()
   })
 
-  it('submits a question: stores chat_seed_message and navigates to /chatbot', () => {
+  it('navigates to /chatbot via "Hablar con asistente virtual" button', () => {
     sessionStorage.setItem('id_cama', '42')
 
     render(
@@ -62,14 +61,10 @@ describe('Homepage', () => {
       </MemoryRouter>
     )
 
-    const input = screen.getByPlaceholderText('Escribe una pregunta que quieras resolver')
-    const button = screen.getByRole('button', { name: /Enviar/i })
-
-    // Simular escritura y envío
-    fireEvent.change(input, { target: { value: '¿Dónde está la enfermera?' } })
+    const button = screen.getByRole('button', { name: /Hablar con asistente virtual/i })
     fireEvent.click(button)
 
-    expect(sessionStorage.getItem('chat_seed_message')).toBe('¿Dónde está la enfermera?')
     expect(mockNavigate).toHaveBeenCalledWith('/chatbot')
   })
 })
+

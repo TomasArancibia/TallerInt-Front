@@ -6,6 +6,7 @@ import {
   sectionStack,
   actionBlue,
   actionPurple,
+  actionWhite,
   Logo,
 } from "../components/ui.jsx";
 
@@ -29,13 +30,8 @@ export default function Homepage() {
     );
   }
 
-  function handleAskQuestion(e) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    const question = (data.get("q") || "").toString().trim();
-    if (!question) return;
-    sessionStorage.setItem("chat_seed_message", question);
+  // Interacción con asistente virtual pasa por un botón que navega a /chatbot
+  function goToChatbot() {
     navigate("/chatbot");
   }
 
@@ -86,22 +82,16 @@ export default function Homepage() {
           ACOMPAÑAMIENTO ESPIRITUAL
         </Link>
 
-        <form className="pregunta" onSubmit={handleAskQuestion}>
-          <input
-            id="q"
-            name="q"
-            type="search"
-            placeholder="Escribe una pregunta que quieras resolver"
-            className="flex-1 border-none bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-            required
-          />
-          <button
-            type="submit"
-            className="rounded-xl border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition-colors duration-150 hover:bg-slate-200"
-          >
-            Enviar
-          </button>
-        </form>
+        <h2 className="mt-6 text-center text-base font-semibold text-slate-900">
+          Asistente virtual
+        </h2>
+        <button
+          type="button"
+          onClick={goToChatbot}
+          className={`${actionWhite} mt-2`}
+        >
+          Hablar con asistente virtual
+        </button>
       </section>
     </main>
   );
