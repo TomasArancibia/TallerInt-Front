@@ -19,18 +19,66 @@ function Chatbot() {
     setMessages((prev) => [...prev, { role: 'user', content: trimmed }])
     setSending(true)
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed }),
-      })
-      const data = await res.json()
-      const reply = data?.reply ?? 'Lo siento, no pude obtener respuesta.'
+      // Construir base API desde variables de entorno (Vite) o usar origin
+      const BASE = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL ?? (typeof window !== 'undefined' ? window.location.origin : '')
+
+      // Candidate endpoints (probamos en orden hasta obtener respuesta OK)
+      const candidates = []
+      if (BASE) {
+        const baseClean = BASE.replace(/\/+$/, '')
+        candidates.push(`${baseClean}/chat`)
+        candidates.push(`${baseClean}/api/chat`)
+      }
+      // paths relativos (útiles en dev cuando frontend y backend corren same origin or proxy)
+      candidates.push('/chat')
+      candidates.push('/api/chat')
+
+      let lastErr = null
+      let res = null
+      for (const url of candidates) {
+        try {
+          console.debug('[Chatbot] intentando', url)
+          res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: trimmed }),
+          })
+          console.debug('[Chatbot] status', res.status, 'from', url)
+          if (!res.ok) {
+            // intentamos siguiente candidato
+            const text = await res.text().catch(() => res.statusText || '')
+            lastErr = new Error(`HTTP ${res.status} - ${text}`)
+            continue
+          }
+          // si OK, rompemos el loop
+          break
+        } catch (e) {
+          console.warn('[Chatbot] error fetch', e, 'url', url)
+          lastErr = e
+          // intentar siguiente candidato
+        }
+      }
+
+      if (!res) {
+        throw lastErr ?? new Error('No se pudo conectar a la API')
+      }
+
+      // parsear JSON con control
+      let data = null
+      try {
+        data = await res.json()
+      } catch (e) {
+        console.warn('[Chatbot] no se pudo parsear JSON', e)
+      }
+
+      const reply = (data && (data.reply || data.message)) ?? 'Lo siento, no pude obtener respuesta.'
       setMessages((prev) => [...prev, { role: 'assistant', content: reply }])
     } catch (err) {
+      console.error('[Chatbot] fallo final', err)
+      const msg = err && err.message ? `Error al contactar el servidor: ${err.message}` : 'Error al contactar el servidor.'
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Error al contactar el servidor.' },
+        { role: 'assistant', content: msg },
       ])
     } finally {
       setSending(false)
