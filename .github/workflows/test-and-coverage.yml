@@ -13,7 +13,8 @@ jobs:
     env:
       # try to prevent Rollup from loading optional native bindings
       ROLLUP_DISABLE_NATIVE: "true"
-      npm_config_optional: "false"
+      # ask npm to omit optional dependencies (newer npm supports --omit)
+      npm_config_omit: "optional"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,8 +25,15 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies (no optional deps)
-        run: npm install --no-optional
+      - name: Install dependencies (omit optional deps)
+        run: npm ci --omit=optional
+
+      - name: CI diagnostics
+        run: |
+          echo "node: $(node -v)"
+          echo "npm: $(npm -v)"
+          ls -la node_modules/rollup || true
+          node -e "console.log('ROLLUP_DISABLE_NATIVE=', process.env.ROLLUP_DISABLE_NATIVE, 'npm_config_omit=', process.env.npm_config_omit)"
 
       - name: Run tests with coverage
         run: npm run coverage
