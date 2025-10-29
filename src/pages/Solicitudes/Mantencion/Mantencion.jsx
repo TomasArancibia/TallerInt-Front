@@ -20,6 +20,19 @@ export default function Mantencion() {
     "OTRO TIPO DE MANTENCIÓN",
   ];
 
+  const hasContext = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
+
+  if (!hasContext) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Esta sección requiere un QR válido. Escanee el código en su cama para ingresar una solicitud.
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className={pageContainer}>
       <PageNav backHref="/" className="mb-4" />
