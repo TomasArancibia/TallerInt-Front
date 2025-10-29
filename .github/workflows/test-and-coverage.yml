@@ -1,0 +1,51 @@
+name: Test and coverage
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  test:
+    name: Run tests and upload coverage
+    runs-on: ubuntu-latest
+    env:
+      # try to prevent Rollup from loading optional native bindings
+      ROLLUP_DISABLE_NATIVE: "true"
+      # ask npm to omit optional dependencies (newer npm supports --omit)
+      npm_config_omit: "optional"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (omit optional deps)
+        run: npm ci --omit=optional
+
+      - name: Install Rollup native binding (workaround)
+        run: |
+          # install platform-specific optional binding so Rollup won't fail
+          # ignore errors so this step won't block non-linux runners
+          npm i @rollup/rollup-linux-x64-gnu --no-save || true
+
+      - name: CI diagnostics
+        run: |
+          echo "node: $(node -v)"
+          echo "npm: $(npm -v)"
+          ls -la node_modules/rollup || true
+          node -e "console.log('ROLLUP_DISABLE_NATIVE=', process.env.ROLLUP_DISABLE_NATIVE, 'npm_config_omit=', process.env.npm_config_omit)"
+
+      - name: Run tests with coverage
+        run: npm run coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
