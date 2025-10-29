@@ -1,6 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+// Mock the admin auth context before importing the component
+vi.mock('../../auth/AdminAuthContext.jsx', () => ({
+  useAdminAuth: () => ({
+    getAccessToken: async () => 'FAKE_TOKEN',
+    signOut: async () => {},
+  }),
+}))
+
 import Dashboard from '../Admin/Dashboard.jsx'
 
 // Mock fetch
