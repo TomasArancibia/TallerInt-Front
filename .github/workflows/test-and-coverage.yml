@@ -10,6 +10,10 @@ jobs:
   test:
     name: Run tests and upload coverage
     runs-on: ubuntu-latest
+    env:
+      # try to prevent Rollup from loading optional native bindings
+      ROLLUP_DISABLE_NATIVE: "true"
+      npm_config_optional: "false"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,12 +25,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies (no optional deps)
-        run: npm ci --no-optional
+        run: npm install --no-optional
 
       - name: Run tests with coverage
-        env:
-          # Disable Rollup native bindings lookup to avoid optional binary failures
-          ROLLUP_DISABLE_NATIVE: "true"
         run: npm run coverage
 
       - name: Upload coverage report
