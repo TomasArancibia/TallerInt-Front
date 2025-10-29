@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
 
 import Chatbot from '../Chatbot.jsx'
 
@@ -19,7 +20,11 @@ describe('Chatbot flows', () => {
       return Promise.resolve({ ok: true, json: async () => ({}) })
     })
 
-    render(<Chatbot />)
+    render(
+      <MemoryRouter>
+        <Chatbot />
+      </MemoryRouter>
+    )
 
     const input = screen.getByPlaceholderText(/Escribe tu mensaje/i)
     await userEvent.type(input, 'Hola prueba')
@@ -40,7 +45,11 @@ describe('Chatbot flows', () => {
       return Promise.resolve({ ok: true, json: async () => ({}) })
     })
 
-    render(<Chatbot />)
+    render(
+      <MemoryRouter>
+        <Chatbot />
+      </MemoryRouter>
+    )
 
     // seed should be removed and reply shown
     await waitFor(() => expect(sessionStorage.getItem('chat_seed_message')).toBeNull())
