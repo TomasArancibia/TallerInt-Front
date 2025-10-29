@@ -28,6 +28,12 @@ jobs:
       - name: Install dependencies (omit optional deps)
         run: npm ci --omit=optional
 
+      - name: Install Rollup native binding (workaround)
+        run: |
+          # install platform-specific optional binding so Rollup won't fail
+          # ignore errors so this step won't block non-linux runners
+          npm i @rollup/rollup-linux-x64-gnu --no-save || true
+
       - name: CI diagnostics
         run: |
           echo "node: $(node -v)"
