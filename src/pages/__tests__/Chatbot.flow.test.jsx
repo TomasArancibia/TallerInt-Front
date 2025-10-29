@@ -14,7 +14,8 @@ beforeEach(() => {
 describe('Chatbot flows', () => {
   it('sends a message and shows assistant reply', async () => {
     global.fetch = vi.fn((url, opts) => {
-      if (String(url).includes('/api/chat')) {
+      // accept either /chat or /api/chat (component may try different paths depending on env)
+      if (String(url).includes('/chat')) {
         return Promise.resolve({ ok: true, json: async () => ({ reply: 'Respuesta de prueba' }) })
       }
       return Promise.resolve({ ok: true, json: async () => ({}) })
@@ -39,7 +40,7 @@ describe('Chatbot flows', () => {
     sessionStorage.setItem('chat_seed_message', 'Pregunta sembrada')
 
     global.fetch = vi.fn((url, opts) => {
-      if (String(url).includes('/api/chat')) {
+      if (String(url).includes('/chat')) {
         return Promise.resolve({ ok: true, json: async () => ({ reply: 'Reply to seed' }) })
       }
       return Promise.resolve({ ok: true, json: async () => ({}) })
