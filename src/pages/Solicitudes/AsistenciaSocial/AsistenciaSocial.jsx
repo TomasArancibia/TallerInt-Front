@@ -1,25 +1,62 @@
 import React from "react";
-import "../../homepage.css";
-import logo from "../../../assets/logo-ucchristus.png";
 import { Link } from "react-router-dom";
+import {
+  pageContainer,
+  helperText,
+  sectionStack,
+  actionPurple,
+  actionWhite,
+  PageNav,
+  Logo,
+} from "../../../components/ui.jsx";
 
 export default function AsistenciaSocial() {
+  const opciones = [
+    "Necesito contacto con asistente social",
+    "Orientación sobre beneficios o redes de apoyo",
+    "Ayuda con documentos médicos o licencias",
+    "Otros",
+  ];
+
+  const hasContext = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
+
+  if (!hasContext) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Esta sección requiere un QR válido. Escanee el código en su cama para solicitar asistencia social.
+        </p>
+      </main>
+    );
+  }
+
   return (
-    <div className="app">
-      <img src={logo} alt="Logo UC Christus" className="logo" />
-      <p>Por favor indíquenos de qué área es su consulta</p>
-      <section className="botones">
-          <div className="bot botones_morados titulo-estatica"> ASISTENCIA SOCIAL </div>
-          <Link className="bot botones_blancos" to="/asistencia_social">
-            PREGUNTAR A CONI
+    <main className={pageContainer}>
+      <PageNav backHref="/" className="mb-4" />
+      <Logo />
+      <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
+      <section className={sectionStack}>
+        <div className={`${actionPurple} pointer-events-none`}>ASISTENCIA SOCIAL</div>
+
+        {opciones.map((nombre) => (
+          <Link
+            key={nombre}
+            className={`${actionWhite} border-purple-700 text-black`}
+            to="/solicitudes/nueva"
+            state={{
+              areaName: "Asistencia social",
+              apiAreaName: "Asistencia social",
+              tipo: nombre,
+              backHref: "/asistencia_social",
+              backLabel: "Menú asistencia social",
+              titulo: "ASISTENCIA SOCIAL",
+            }}
+          >
+            {nombre}
           </Link>
-          <Link className="bot botones_blancos" to="/asistencia_social">
-            PREGUNTAR A CONI
-          </Link>
-          <Link className="bot botones_azules" to="/">
-            Volver
-          </Link>
-        </section>
-    </div>
+        ))}
+      </section>
+    </main>
   );
 }

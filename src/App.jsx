@@ -6,11 +6,26 @@ import Landing from "./pages/Landing.jsx";
 
 // Info Procesos clinicos
 import ProcesosClinicos from "./pages/Info/InfoClinica/ProcesosClinicos.jsx";
+import ResultadosExamenes from "./pages/Info/InfoClinica/ResultadosExamenes";
+import DocumentacionClinica from "./pages/Info/InfoClinica/DocumentacionClinica";
+import InfoDiagnosticoTratamiento from "./pages/Info/InfoClinica/InfoDiagnosticoTratamiento";
+import CitaPostHospitalizacion from "./pages/Info/InfoClinica/CitaPostHospitalizacion";
+import HorariosVisitasBanco from "./pages/Info/InfoClinica/HorariosVisitasBanco";
+
 
 // Info administrativa
 import InfoAdministrativa from "./pages/Info/InfoAdministrativa/InfoAdministrativa.jsx";
 import BeneficiosSociales from "./pages/Info/InfoAdministrativa/BeneficiosSociales.jsx";
 import SegurosConvenios from "./pages/Info/InfoAdministrativa/SegurosConvenios.jsx";
+import InfoGesCaecLey from "./pages/Info/InfoAdministrativa/InfoGesCaecLey.jsx";
+import InfoGes from "./pages/Info/InfoAdministrativa/InfoGes.jsx";
+import InfoCaec from "./pages/Info/InfoAdministrativa/InfoCaec.jsx";
+import InfoLeyUrgencia from "./pages/Info/InfoAdministrativa/InfoLeyUrgencia.jsx";
+import InfoCostosPrestaciones from "./pages/Info/InfoAdministrativa/InfoCostosPrestaciones.jsx";
+import InfoPresupuestosCuenta from "./pages/Info/InfoAdministrativa/InfoPresupuestosCuenta.jsx";
+import InfoPresupuestos from "./pages/Info/InfoAdministrativa/InfoPresupuestos.jsx";
+import InfoCuentaPagos from "./pages/Info/InfoAdministrativa/InfoCuentaPagos.jsx";
+import InfoSugerencias from "./pages/Info/InfoAdministrativa/InfoSugerencias.jsx";
 
 
 // Info visitas
@@ -32,7 +47,7 @@ import InfoServiciosVisitas from "./pages/Info/InfoVisitas/InfoServiciosVisitas/
 import InfoComida from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosComida.jsx";
 import InfoReflexion from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServicioReflexion.jsx";
 import InfoInstalaciones from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosInstalaciones.jsx";
-
+import Chatbot from "./pages/Chatbot.jsx";
 
 // SOLICITUDES
 // Mantencion
@@ -41,6 +56,9 @@ import SolicitudMantencion from "./pages/Solicitudes/Mantencion/SolicitudMantenc
 
 // Nutricion y alimentacion
 import Nutricion from "./pages/Solicitudes/Nutricion/Nutricion.jsx";
+
+// Solicitudes compartidas
+import SolicitudGenerica from "./pages/Solicitudes/Shared/SolicitudGenerica.jsx";
 
 // Limpieza
 import Limpieza from "./pages/Solicitudes/Limpieza/Limpieza.jsx";
@@ -51,16 +69,22 @@ import AsistenciaSocial from "./pages/Solicitudes/AsistenciaSocial/AsistenciaSoc
 // Acompanamiento espiritual
 import AcompanamientoEspiritual from "./pages/Solicitudes/AcompanamientoEspiritual/AcompanamientoEspiritual.jsx";
 
-import "./App.css";
-
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/landing" element={<Landing />} />
-        <Route path="/procesosclinicos" element={<ProcesosClinicos />} />
         <Route path="/info_administrativa" element={<InfoAdministrativa />} />
+        <Route path="/info_administrativa/ges-caec-ley" element={<InfoGesCaecLey />} />
+        <Route path="/info_administrativa/ges" element={<InfoGes />} />
+        <Route path="/info_administrativa/caec" element={<InfoCaec />} />
+        <Route path="/info_administrativa/ley-de-urgencia" element={<InfoLeyUrgencia />} />
+        <Route path="/info_administrativa/costos-prestaciones" element={<InfoCostosPrestaciones />} />
+        <Route path="/info_administrativa/presupuestos-cuenta" element={<InfoPresupuestosCuenta />} />
+        <Route path="/info_administrativa/presupuestos" element={<InfoPresupuestos />} />
+        <Route path="/info_administrativa/cuenta-hospitalaria-pagos" element={<InfoCuentaPagos />} />
+        <Route path="/info_administrativa/sugerencias" element={<InfoSugerencias />} />
         <Route path="/info_visitas" element={<InfoVisitas />} />
         <Route path="/nutricion_y_alimentacion" element={<Nutricion />} />
         <Route path="/limpieza" element={<Limpieza />} />
@@ -68,6 +92,7 @@ function App() {
         <Route path="/solicitudmantencion" element={<SolicitudMantencion />} />
         <Route path="/beneficios_sociales" element={<BeneficiosSociales />} />
         <Route path="/acompanamiento_espiritual" element={<AcompanamientoEspiritual />} />
+        <Route path="/solicitudes/nueva" element={<SolicitudGenerica />} />
         <Route path="/asistencia_social" element={<AsistenciaSocial />} />
         <Route path="/seguros_convenios" element={<SegurosConvenios />} />
         <Route path="/info_general_visitas" element={<InfoGeneralVisita />} />
@@ -81,10 +106,16 @@ function App() {
         <Route path="/info_comida" element={<InfoComida />} />
         <Route path="/info_reflexion" element={<InfoReflexion />} />
         <Route path="/info_instalaciones" element={<InfoInstalaciones />} />
+        <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/procesosclinicos" element={<ProcesosClinicos />} />
+        <Route path="/procesosclinicos/resultados" element={<ResultadosExamenes />} />
+        <Route path="/procesosclinicos/documentacion" element={<DocumentacionClinica />} />
+        <Route path="/procesosclinicos/info-diagnostico" element={<InfoDiagnosticoTratamiento />} />
+        <Route path="/procesosclinicos/cita-post" element={<CitaPostHospitalizacion />} />
+        <Route path="/procesosclinicos/horarios-banco" element={<HorariosVisitasBanco />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

@@ -1,77 +1,98 @@
 import React from "react";
-import "./homepage.css";
-import logo from "../assets/logo-ucchristus.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  pageContainer,
+  helperText,
+  sectionStack,
+  actionBlue,
+  actionPurple,
+  actionWhite,
+  Logo,
+} from "../components/ui.jsx";
 
 export default function Homepage() {
+  const navigate = useNavigate();
+
   // Si vienes desde /landing con QR válido, estos valores existen
   const camaId = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
   const qrCode = typeof window !== "undefined" ? sessionStorage.getItem("qr_code") : null;
 
+  // 👉 Este bloque debe estar fuera de handleAskQuestion
+  if (!camaId) {
+    return (
+      <main className={pageContainer}>
+        <Logo />
+        <p className={helperText}>
+          Para continuar, escanee el código QR disponible en su habitación. Una vez validado,
+          verá aquí el menú de solicitudes e información.
+        </p>
+      </main>
+    );
+  }
+
+  // Interacción con asistente virtual pasa por un botón que navega a /chatbot
+  function goToChatbot() {
+    navigate("/chatbot");
+  }
+
   return (
-    <div className="app">
-      <img src={logo} alt="Logo UC Christus" className="logo" />
+    <main className={pageContainer}>
+      <Logo />
 
       {/* Aviso pequeño (solo se muestra si hay QR/cama en sesión) */}
       {camaId && (
-        <div
-          style={{
-            marginTop: 8,
-            marginBottom: 8,
-            fontSize: 12,
-            opacity: 0.8,
-            background: "#f4f4f7",
-            padding: "6px 10px",
-            borderRadius: 8,
-            display: "inline-block",
-          }}
-        >
-          Operando para <strong>cama ID {camaId}</strong>{qrCode ? ` (QR: ${qrCode})` : ""}
+        <div className="mt-2 mb-2 inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+          Operando para <strong>cama ID {camaId}</strong>
+          {qrCode ? ` (QR: ${qrCode})` : ""}
         </div>
       )}
 
-      <p>Por favor indíquenos de qué área es su consulta</p>
+      <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
 
-      <section className="botones">
-        <h2 className="titulo_seccion">Informaciones</h2>
-        <Link className="bot botones_azules" to="/procesosclinicos">
+      <section className={sectionStack}>
+        <h2 className="mt-0 text-center text-base font-semibold text-slate-900">
+          Informaciones
+        </h2>
+        <Link className={actionBlue} to="/procesosclinicos">
           INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE
         </Link>
-        <Link className="bot botones_azules" to="/info_administrativa">
+        <Link className={actionBlue} to="/info_administrativa">
           INFORMACIÓN ADMINISTRATIVA, PAGOS Y BENEFICIOS SOCIALES
         </Link>
-        <Link className="bot botones_azules" to="/info_visitas">
+        <Link className={actionBlue} to="/info_visitas">
           ACOMPAÑANTES, VISITAS Y SERVICIOS DISPONIBLES
         </Link>
 
-        <h2 className="titulo_seccion">Solicitudes</h2>
-        <Link className="bot botones_morados" to="/mantencion">
+        <h2 className="mt-6 text-center text-base font-semibold text-slate-900">
+          Solicitudes
+        </h2>
+        <Link className={actionPurple} to="/mantencion">
           SOLICITUDES DE MANTENCIÓN - COMODIDAD
         </Link>
-        <Link className="bot botones_morados" to="/nutricion_y_alimentacion">
+        <Link className={actionPurple} to="/nutricion_y_alimentacion">
           NUTRICIÓN Y ALIMENTACIÓN A PACIENTES
         </Link>
-        <Link className="bot botones_morados" to="/limpieza">
+        <Link className={actionPurple} to="/limpieza">
           LIMPIEZA DE HABITACIÓN, BAÑO O BOX
         </Link>
-        <Link className="bot botones_morados" to="/asistencia_social">
+        <Link className={actionPurple} to="/asistencia_social">
           ASISTENCIA SOCIAL
         </Link>
-        <Link className="bot botones_morados" to="/acompanamiento_espiritual">
+        <Link className={actionPurple} to="/acompanamiento_espiritual">
           ACOMPAÑAMIENTO ESPIRITUAL
         </Link>
 
-        <form className="pregunta" action="respuesta.html" method="get">
-          <input
-            id="q"
-            name="q"
-            type="search"
-            placeholder="Escribe una pregunta que quieras resolver"
-            required
-          />
-          <button type="submit">Enviar</button>
-        </form>
+        <h2 className="mt-6 text-center text-base font-semibold text-slate-900">
+          Asistente virtual
+        </h2>
+        <button
+          type="button"
+          onClick={goToChatbot}
+          className={`${actionWhite} mt-2`}
+        >
+          Hablar con asistente virtual
+        </button>
       </section>
-    </div>
+    </main>
   );
 }
