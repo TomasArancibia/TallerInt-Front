@@ -49,9 +49,9 @@ describe('Solicitudes pagination', () => {
     // page indicator should show 3 pages (25 items, 10 per page)
     expect(await screen.findByText(/Página 1 de 3/)).toBeInTheDocument()
 
-    // should show first page item (id 1) and not show item id 11
-    expect(await screen.findByText('1')).toBeInTheDocument()
-    const notOnFirst = screen.queryByText('11')
+  // should show first page item (User 1) and not show item User 11 (ids are not rendered directly)
+  expect(await screen.findByText('User 1')).toBeInTheDocument()
+  const notOnFirst = screen.queryByText('User 11')
     expect(notOnFirst).toBeNull()
 
     // click Siguiente
@@ -60,12 +60,12 @@ describe('Solicitudes pagination', () => {
 
     // now page 2 and item 11 should be visible
     expect(await screen.findByText(/Página 2 de 3/)).toBeInTheDocument()
-    expect(await screen.findByText('11')).toBeInTheDocument()
+  expect(await screen.findByText('User 11')).toBeInTheDocument()
 
     // click Siguiente again to page 3
     await userEvent.click(siguiente)
     expect(await screen.findByText(/Página 3 de 3/)).toBeInTheDocument()
-    // last page should show id 25
-    expect(await screen.findByText('25')).toBeInTheDocument()
+  // last page should show User 25
+  expect(await screen.findByText('User 25')).toBeInTheDocument()
   })
 })

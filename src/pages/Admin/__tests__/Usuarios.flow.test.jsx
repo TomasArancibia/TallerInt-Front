@@ -44,8 +44,12 @@ describe('Usuarios flows (create, toggle, delete)', () => {
     await waitFor(() => expect(global.fetch).toHaveBeenCalled())
 
   // fill form (use fireEvent.change to update React-controlled inputs)
+  const nombre = screen.getByLabelText(/Nombre/i)
+  const apellido = screen.getByLabelText(/Apellido/i)
   const email = screen.getByLabelText(/Correo institucional/i)
   fireEvent.change(email, { target: { value: 'new@uc.cl' } })
+  fireEvent.change(nombre, { target: { value: 'Test' } })
+  fireEvent.change(apellido, { target: { value: 'User' } })
   const areaSelect = screen.getByLabelText(/Área asignada/i)
   fireEvent.change(areaSelect, { target: { value: '1' } })
   const submit = screen.getByRole('button', { name: /Crear jefe de área/i })

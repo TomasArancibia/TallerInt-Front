@@ -82,8 +82,8 @@ describe('Solicitudes admin flows', () => {
     render(<Solicitudes />)
     await waitFor(() => expect(global.fetch).toHaveBeenCalled())
 
-    // find the row by ID text
-    const rowId = await screen.findByText('5')
+  // find the row by solicitante name (component no longer shows numeric id)
+  const rowId = await screen.findByText('Carlos')
     // click the row to expand
     await userEvent.click(rowId)
 
