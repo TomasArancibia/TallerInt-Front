@@ -101,7 +101,6 @@ export default function Areas() {
             <table className={tableClass}>
               <thead>
                 <tr>
-                  <th className={headerCell}>ID Área</th>
                   <th className={headerCell}>Nombre</th>
                   <th className={headerCell}>Encargados</th>
                 </tr>
@@ -109,7 +108,6 @@ export default function Areas() {
               <tbody>
                 {pageItems.map((a) => (
                   <tr key={a.id_area}>
-                    <td className={dataCell}>{a.id_area}</td>
                     <td className={dataCell}>{a.nombre}</td>
                     <td className={dataCell}>
                       {(usuariosPorArea[a.id_area] ?? []).length === 0 ? (

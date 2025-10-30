@@ -185,7 +185,6 @@ export default function UbicacionesCamas() {
             <div className={tableWrapper}>
               <table className={tableClass}>
                 <thead><tr>
-                  <th className={headerCell}>ID Cama</th>
                   <th className={headerCell}>Letra</th>
                   <th className={headerCell}>Identificador QR</th>
                   <th className={headerCell}>Habitación</th>
@@ -199,7 +198,6 @@ export default function UbicacionesCamas() {
                 <tbody>
                   {pageItems.map(c=>{ const h=habById[c.id_habitacion]; const p=h? pisoById[h.id_piso]:null; const e=p?edifById[p.id_edificio]:null; const inst=e? hospById[e.id_hospital]:null; return (
                     <tr key={c.id_cama}>
-                      <td className={dataCell}>{c.id_cama}</td>
                       <td className={dataCell}>{c.letra}</td>
                       <td className={dataCell}>{c.qr}</td>
                       <td className={dataCell}>{h?.nombre || '-'}</td>
@@ -244,3 +242,4 @@ export default function UbicacionesCamas() {
     </div>
   );
 }
+

@@ -79,22 +79,20 @@ export default function UbicacionesServicios() {
             Resultados: {servicios.length}
           </div>
           <div className={tableWrapper}>
-            <table className={tableClass}>
-              <thead>
-                <tr>
-                  <th className={headerCell}>ID Servicio</th>
-                  <th className={headerCell}>Nombre</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pageItems.map((s) => (
-                  <tr key={s.id_servicio}>
-                    <td className={dataCell}>{s.id_servicio}</td>
-                    <td className={dataCell}>{s.nombre}</td>
+              <table className={tableClass}>
+                <thead>
+                  <tr>
+                    <th className={headerCell}>Nombre</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {pageItems.map((s) => (
+                    <tr key={s.id_servicio}>
+                      <td className={dataCell}>{s.nombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
           </div>
           <div className="mt-3 flex items-center justify-between text-sm">
             <div className="text-slate-600">
