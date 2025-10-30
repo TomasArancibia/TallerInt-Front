@@ -79,22 +79,20 @@ export default function UbicacionesInstituciones() {
             Resultados: {hospitales.length}
           </div>
           <div className={tableWrapper}>
-            <table className={tableClass}>
-              <thead>
-                <tr>
-                  <th className={headerCell}>ID</th>
-                  <th className={headerCell}>Nombre</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pageItems.map((h) => (
-                  <tr key={h.id_hospital}>
-                    <td className={dataCell}>{h.id_hospital}</td>
-                    <td className={dataCell}>{h.nombre}</td>
+              <table className={tableClass}>
+                <thead>
+                  <tr>
+                    <th className={headerCell}>Nombre</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {pageItems.map((h) => (
+                    <tr key={h.id_hospital}>
+                      <td className={dataCell}>{h.nombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
           </div>
           <div className="mt-3 flex items-center justify-between text-sm">
             <div className="text-slate-600">

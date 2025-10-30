@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   pageContainer,
   sectionStack,
@@ -16,8 +16,26 @@ const API =
 
 export default function Perfil() {
   const { usuario, getAccessToken, refreshProfile } = useAdminAuth();
-  const [nombre, setNombre] = useState(usuario?.nombre ?? "");
-  const [apellido, setApellido] = useState(usuario?.apellido ?? "");
+  const pendingNames = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('admin-pending-user-names') || '{}'); } catch { return {}; }
+  }, []);
+  const isPlaceholder = (s) => {
+    const t = String(s || '').trim().toLowerCase();
+    return t === '' || t === 'pendiente' || t === 'pending';
+  };
+  const fallback = useMemo(() => {
+    const raw = pendingNames[usuario?.correo?.toLowerCase?.()] || null;
+    if (raw && typeof raw === 'object') return raw;
+    if (typeof raw === 'string') {
+      const [first = '', ...rest] = raw.split(' ').filter(Boolean);
+      return { nombre: first, apellido: rest.join(' ') };
+    }
+    return { nombre: '', apellido: '' };
+  }, [pendingNames, usuario?.correo]);
+  const initialNombre = !isPlaceholder(usuario?.nombre) ? (usuario?.nombre ?? '') : (fallback.nombre ?? '');
+  const initialApellido = !isPlaceholder(usuario?.apellido) ? (usuario?.apellido ?? '') : (fallback.apellido ?? '');
+  const [nombre, setNombre] = useState(initialNombre);
+  const [apellido, setApellido] = useState(initialApellido);
   const [telefono, setTelefono] = useState(usuario?.telefono ?? "");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");

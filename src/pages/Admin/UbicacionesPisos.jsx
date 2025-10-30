@@ -91,7 +91,7 @@ export default function UbicacionesPisos(){
           <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
             <h3 className="mb-3 text-sm font-semibold text-slate-700">Filtros</h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <MultiSelect label="Institución" options={hospitales.map(h=>({id:h.id_hospital,label:h.nombre}))} selected={instSel} setSelected={(vals)=>{ setInstSel(vals); setEdifSel([]); }} />
+              <MultiSelect label="Institucion" options={hospitales.map(h=>({id:h.id_hospital,label:h.nombre}))} selected={instSel} setSelected={(vals)=>{ setInstSel(vals); setEdifSel([]); }} />
               <MultiSelect label="Edificio" options={edificiosFiltrados.map(e=>({id:e.id_edificio,label:e.nombre}))} selected={edifSel} setSelected={setEdifSel} disabled={instSel.length===0} />
             </div>
           </section>
@@ -100,10 +100,16 @@ export default function UbicacionesPisos(){
             <div className="mb-2 text-sm text-slate-600">Resultados: {filtradas.length}</div>
             <div className={tableWrapper}>
               <table className={tableClass}>
-                <thead><tr><th className={headerCell}>ID Piso</th><th className={headerCell}>Número</th><th className={headerCell}>Edificio</th><th className={headerCell}>Institución</th></tr></thead>
+  <thead>
+    <tr>
+      <th className={headerCell}>Numero</th>
+      <th className={headerCell}>Edificio</th>
+      <th className={headerCell}>Institucion</th>
+    </tr>
+  </thead>
                 <tbody>
                   {filtradas.slice(startIdx, endIdx).map(p=>{ const e=edifById[p.id_edificio]; const inst=e? hospById[e.id_hospital]:null; return (
-                    <tr key={p.id_piso}><td className={dataCell}>{p.id_piso}</td><td className={dataCell}>{p.numero}</td><td className={dataCell}>{e?.nombre||'-'}</td><td className={dataCell}>{inst?.nombre||'-'}</td></tr>
+                    <tr key={p.id_piso}><td className={dataCell}>{p.numero}</td><td className={dataCell}>{e?.nombre||'-'}</td><td className={dataCell}>{inst?.nombre||'-'}</td></tr>
                   );})}
                 </tbody>
               </table>
@@ -112,7 +118,7 @@ export default function UbicacionesPisos(){
               <div className="text-slate-600">Mostrando {filtradas.length===0?0:(startIdx+1)}-{endIdx} de {filtradas.length}</div>
               <div className="flex items-center gap-2">
                 <button className="rounded-md border border-slate-300 px-3 py-1 disabled:opacity-50" disabled={page<=1} onClick={()=> setPage(p=>Math.max(1,p-1))}>Anterior</button>
-                <span>Página {page} de {totalPages}</span>
+                <span>Pagina {page} de {totalPages}</span>
                 <button className="rounded-md border border-slate-300 px-3 py-1 disabled:opacity-50" disabled={page>=totalPages} onClick={()=> setPage(p=>Math.min(totalPages,p+1))}>Siguiente</button>
               </div>
             </div>
@@ -122,4 +128,11 @@ export default function UbicacionesPisos(){
     </div>
   );
 }
+
+
+
+
+
+
+
 

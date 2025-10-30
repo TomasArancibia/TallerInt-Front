@@ -291,7 +291,6 @@ export default function Solicitudes() {
               <table className={tableClass}>
                 <thead>
                   <tr>
-                    <th className={headerCell}>ID</th>
                     <th className={headerCell}>Area</th>
                     <th className={headerCell}>Habitacion</th>
                     <th className={headerCell}>Cama</th>
@@ -319,7 +318,6 @@ export default function Solicitudes() {
                     return (
                       <React.Fragment key={s.id}>
                         <tr onClick={() => toggleRow(s.id)} className={isOpen ? 'bg-slate-50' : 'hover:bg-slate-50'} style={{cursor:'pointer'}}>
-                          <td className={dataCell}>{s.id}</td>
                           <td className={dataCell}>{areas.find(a => a.id_area === s.id_area)?.nombre || 'â€”'}</td>
                           <td className={dataCell}>{hab?.nombre || 'â€”'}</td>
                           <td className={dataCell}>{cama?.letra || 'â€”'}</td>
@@ -348,7 +346,7 @@ export default function Solicitudes() {
                         </tr>
                         {isOpen && (
                           <tr>
-                            <td className={dataCell} colSpan={10}>
+                            <td className={dataCell} colSpan={9}>
                               <div className="rounded-md bg-slate-50 p-3 text-sm text-slate-700">
                                 <div><span className="font-semibold">Subarea:</span> {s.tipo || '-'}</div>
                                 <div className="mt-1"><span className="font-semibold">Descripcion:</span> {s.descripcion || '-'}</div>

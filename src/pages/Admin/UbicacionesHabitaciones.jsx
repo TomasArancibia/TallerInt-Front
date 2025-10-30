@@ -134,7 +134,6 @@ export default function UbicacionesHabitaciones(){
               <table className={tableClass}>
                 <thead>
                   <tr>
-                    <th className={headerCell}>ID</th>
                     <th className={headerCell}>Nombre</th>
                     <th className={headerCell}>Piso</th>
                     <th className={headerCell}>Edificio</th>
@@ -149,7 +148,6 @@ export default function UbicacionesHabitaciones(){
                     const inst=e? hospById[e.id_hospital]:null;
                     return (
                       <tr key={h.id_habitacion}>
-                        <td className={dataCell}>{h.id_habitacion}</td>
                         <td className={dataCell}>{h.nombre}</td>
                         <td className={dataCell}>{p?.numero ?? '-'}</td>
                         <td className={dataCell}>{e?.nombre || '-'}</td>
@@ -175,4 +173,5 @@ export default function UbicacionesHabitaciones(){
     </div>
   );
 }
+
 

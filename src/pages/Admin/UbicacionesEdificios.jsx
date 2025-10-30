@@ -79,11 +79,10 @@ export default function UbicacionesEdificios(){
             <div className="mb-2 text-sm text-slate-600">Resultados: {filtradas.length}</div>
             <div className={tableWrapper}>
               <table className={tableClass}>
-                <thead><tr><th className={headerCell}>ID Edificio</th><th className={headerCell}>Nombre</th><th className={headerCell}>Institucion</th></tr></thead>
+                <thead><tr><th className={headerCell}>Nombre</th><th className={headerCell}>Institucion</th></tr></thead>
                 <tbody>
                   {filtradas.slice(startIdx, endIdx).map(e=> (
                     <tr key={e.id_edificio}>
-                      <td className={dataCell}>{e.id_edificio}</td>
                       <td className={dataCell}>{e.nombre}</td>
                       <td className={dataCell}>{hospById[e.id_hospital]?.nombre || '-'}</td>
                     </tr>
