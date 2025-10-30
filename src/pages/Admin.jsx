@@ -7,6 +7,26 @@ export default function Admin() {
   const navigate = useNavigate();
   const location = useLocation();
   const { usuario, signOut } = useAdminAuth();
+  const pendingNames = React.useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('admin-pending-user-names') || '{}'); } catch { return {}; }
+  }, []);
+  const isPlaceholder = React.useCallback((s) => {
+    const t = String(s || '').trim().toLowerCase();
+    return t === '' || t === 'pendiente' || t === 'pending';
+  }, []);
+  const displayName = React.useMemo(() => {
+    if (!usuario) return '';
+    const backendFull = [usuario.nombre, usuario.apellido].filter(Boolean).join(' ').trim();
+    const backendLooksValid = !(isPlaceholder(usuario.nombre) && isPlaceholder(usuario.apellido)) && backendFull !== '';
+    if (backendLooksValid) return backendFull;
+    const raw = pendingNames[usuario.correo?.toLowerCase?.()];
+    if (raw && typeof raw === 'object') {
+      return [raw.nombre, raw.apellido].filter(Boolean).join(' ').trim();
+    }
+    if (typeof raw === 'string') return raw;
+    return '';
+  }, [isPlaceholder, pendingNames, usuario]);
+  const displayInitial = React.useMemo(() => (displayName?.[0] || usuario?.nombre?.[0] || 'U').toUpperCase(), [displayName, usuario]);
   const [profileOpen, setProfileOpen] = React.useState(false);
   const [openMenu, setOpenMenu] = React.useState(null);
   const [openSubMenu, setOpenSubMenu] = React.useState(null);
@@ -165,10 +185,10 @@ export default function Admin() {
                 title="Opciones de perfil"
               >
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-sm font-semibold text-white">
-                  {(usuario?.nombre?.[0] || "U").toUpperCase()}
+                  {displayInitial}
                 </span>
                 <span className="text-left leading-tight">
-                  {usuario ? `${usuario.nombre} ${usuario.apellido}` : "Mi Perfil"}
+                  {usuario ? (displayName || `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim() || 'Mi Perfil') : "Mi Perfil"}
                 </span>
               </button>
               {profileOpen && (

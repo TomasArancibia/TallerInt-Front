@@ -13,6 +13,9 @@ export default function Areas() {
   const [usuarios, setUsuarios] = useState([]);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+  const [pendingNames] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('admin-pending-user-names') || '{}'); } catch { return {}; }
+  });
 
   useEffect(() => {
     let active = true;
@@ -115,7 +118,15 @@ export default function Areas() {
                       ) : (
                         <ul className="space-y-1">
                           {(usuariosPorArea[a.id_area] ?? []).map((u) => {
-                            const nombre = `${u.nombre || ''} ${u.apellido || ''}`.trim() || u.correo;
+                            const isPlaceholder = (s) => {
+                              const t = String(s || '').trim().toLowerCase();
+                              return t === '' || t === 'pendiente' || t === 'pending';
+                            };
+                            const backendFull = `${u.nombre || ''} ${u.apellido || ''}`.trim();
+                            const backendLooksValid = !(isPlaceholder(u.nombre) && isPlaceholder(u.apellido)) && backendFull !== '';
+                            const rawFallback = pendingNames[u.correo?.toLowerCase()];
+                            const fallback = rawFallback && typeof rawFallback === 'object' ? `${rawFallback.nombre || ''} ${rawFallback.apellido || ''}`.trim() : (typeof rawFallback === 'string' ? rawFallback : '');
+                            const nombre = backendLooksValid ? backendFull : (fallback || u.correo);
                             return (
                               <li key={u.id} className="text-sm text-slate-700">
                                 <span className="font-medium">{nombre}</span>
