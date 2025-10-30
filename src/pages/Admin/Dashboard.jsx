@@ -159,15 +159,20 @@ export default function Dashboard() {
 
   // Gráfico: últimos 15 días desde la fecha fin (incluida)
   const chartDays = useMemo(() => {
-    const end = new Date(fechaFin);
+    const start = parseYMD(fechaInicio);
+    const end = parseYMD(fechaFin);
+    // ventana: máximo 15 días hacia atrás desde fechaFin, pero no antes de fechaInicio
+    const windowStart = new Date(end);
+    windowStart.setDate(end.getDate() - 14);
+    const first = windowStart > start ? windowStart : start;
     const days = [];
-    for (let i = 14; i >= 0; i--) {
-      const d = new Date(end);
-      d.setDate(end.getDate() - i);
-      days.push(toYMD(d));
+    const cur = new Date(first);
+    while (cur <= end) {
+      days.push(toYMD(cur));
+      cur.setDate(cur.getDate() + 1);
     }
     return days;
-  }, [fechaFin]);
+  }, [fechaInicio, fechaFin]);
 
   const areaNames = useMemo(() => (
     isAdmin ? areas.map(a => a.nombre) : areas.filter(a => a.id_area === jefeAreaId).map(a => a.nombre)
