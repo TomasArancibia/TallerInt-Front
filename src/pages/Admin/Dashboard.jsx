@@ -100,8 +100,9 @@ export default function Dashboard() {
   const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
   const parseYMD = (s) => { const [y,m,d] = s.split("-").map(Number); return new Date(y,(m||1)-1,d||1); };
 
-  const isAdmin = usuario?.rol === 'ADMIN';
-  const jefeAreaId = !isAdmin ? usuario?.id_area : null;
+  // Todos los usuarios tienen vista de administrador
+  const isAdmin = true;
+  const jefeAreaId = null;
 
   function setPreset(preset) {
     const d = new Date();
@@ -318,7 +319,7 @@ export default function Dashboard() {
             <div>
               <h3 className="text-lg font-semibold text-slate-800">Tiempo promedio de resolución (cerradas)</h3>
               <div className="mt-4 grid gap-6 md:grid-cols-2">
-                {isAdmin && (
+                {
                 <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                   <h4 className="mb-3 text-base font-semibold text-slate-700">Por Área</h4>
                   <div className={tableWrapper}>
@@ -330,7 +331,7 @@ export default function Dashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {(isAdmin ? areas : areas.filter(a=> a.id_area===jefeAreaId)).map(a => {
+                        {areas.map(a => {
                           const found = promArea.find(p => p.nombre_area === a.nombre);
                           const horas = found ? found.horas : 0;
                           return (
@@ -344,7 +345,7 @@ export default function Dashboard() {
                     </table>
                   </div>
                 </div>
-                )}
+                }
 
                 <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                   <h4 className="mb-3 text-base font-semibold text-slate-700">Por Institución</h4>
@@ -383,7 +384,7 @@ export default function Dashboard() {
                     <XAxis dataKey="dia" />
                     <YAxis />
                     <Tooltip />
-                    {isAdmin && <Legend />}
+                    <Legend />
                     {[...new Set(areaNames)].map((area, index) => (
                       <Bar key={area} dataKey={area} name={area} stackId="a" fill={["#27ae60", "#e67e22", "#3498db", "#9b59b6", "#f1c40f"][index % 5]} />
                     ))}

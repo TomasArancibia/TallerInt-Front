@@ -51,16 +51,8 @@ export default function Admin() {
     { name: "Mi Perfil", path: "perfil", icon: ProfileIcon },
   ];
 
-  const menu = baseMenu.filter((item) => {
-    const isAdmin = usuario?.rol === "ADMIN";
-    if (!isAdmin) {
-      // Ocultar para JEFE_AREA: Areas, Ubicaciones y Usuarios
-      if (item.path === "usuarios" || item.path === "areas" || item.path === "ubicaciones") return false;
-    } else {
-      if (item.path === "usuarios") return true;
-    }
-    return true;
-  });
+  // Todos los usuarios ven el mismo menú con todas las secciones
+  const menu = baseMenu;
 
   return (
     <div className="admin-layout">

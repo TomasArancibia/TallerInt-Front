@@ -191,12 +191,8 @@ export default function Solicitudes() {
       if (edifSel.includes(NONE)) return false;
       if (pisoSel.includes(NONE)) return false;
       if (estadosSel.length && !estadosSel.includes(s.estado)) return false;
-      const isAdmin = (usuario?.rol === 'ADMIN');
-      if (isAdmin) {
-        if (areasSel.length && !areasSel.includes(String(s.id_area))) return false;
-      } else {
-        if (usuario?.id_area && s.id_area !== usuario.id_area) return false;
-      }
+      // Todos los usuarios pueden ver/filtrar por cualquier área
+      if (areasSel.length && !areasSel.includes(String(s.id_area))) return false;
       const cama = camasById[s.id_cama];
       const hab = cama ? habitById[cama.id_habitacion] : null;
       const piso = hab ? pisoById[hab.id_piso] : null;
@@ -329,18 +325,16 @@ export default function Solicitudes() {
                           <td className={dataCell}>
                             <div className="flex items-center gap-2" onClick={(e)=> e.stopPropagation()}>
                               <span className={estadoClass}>{(s.estado || '').replaceAll('_',' ')}</span>
-                              {usuario?.rol === 'JEFE_AREA' && (
-                                <select
-                                  value={s.estado || 'pendiente'}
-                                  disabled={changingId === s.id}
-                                  onChange={(e)=> handleCambiarEstado(s.id, e.target.value)}
-                                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700"
-                                >
-                                  <option value="pendiente">Pendiente</option>
-                                  <option value="en_proceso">En proceso</option>
-                                  <option value="cerrada">Cerrada</option>
-                                </select>
-                              )}
+                              <select
+                                value={s.estado || 'pendiente'}
+                                disabled={changingId === s.id}
+                                onChange={(e)=> handleCambiarEstado(s.id, e.target.value)}
+                                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700"
+                              >
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en_proceso">En proceso</option>
+                                <option value="cerrada">Cerrada</option>
+                              </select>
                             </div>
                           </td>
                         </tr>

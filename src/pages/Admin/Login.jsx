@@ -23,8 +23,8 @@ export default function AdminLogin() {
     setInfo(null);
     try {
       await signIn(email.trim(), password);
-      const redirectTo = location.state?.from?.pathname || "/";
-      navigate(redirectTo, { replace: true });
+      // Siempre aterrizar en Dashboard después de iniciar sesión
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       if (err.code === "invalid_grant" || err.status === 400) {
         setError("Correo o contraseña inválidos");
