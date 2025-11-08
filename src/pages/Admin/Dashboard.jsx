@@ -213,7 +213,7 @@ export default function Dashboard() {
             </button>
 
             {rangeOpen && (
-              <div className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
+              <div className="absolute right-4 z-50 mt-2 w-72 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
                 {!customMode ? (
                   <div className="py-1">
                     <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("today")}>Hoy</button>
@@ -228,9 +228,9 @@ export default function Dashboard() {
                 ) : (
                   <div className="p-3">
                     <div className="flex items-center gap-2">
-                      <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpStart} onChange={(e) => setTmpStart(e.target.value)} />
+                      <input type="date" className="w-[9.5rem] rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpStart} onChange={(e) => setTmpStart(e.target.value)} />
                       <span className="text-sm text-slate-500">a</span>
-                      <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpEnd} onChange={(e) => setTmpEnd(e.target.value)} />
+                      <input type="date" className="w-[9.5rem] rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpEnd} onChange={(e) => setTmpEnd(e.target.value)} />
                     </div>
                     <div className="mt-3 flex justify-end gap-2">
                       <button className="rounded-md px-3 py-1 text-sm text-slate-600 hover:bg-slate-50" onClick={() => setCustomMode(false)}>Volver</button>
