@@ -14,6 +14,9 @@ export default function Dashboard() {
   const [usuario, setUsuario] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+  // Popup pendientes hoy
+  const [showPendientesPopup, setShowPendientesPopup] = useState(false);
+  const [pendientesHoyCount, setPendientesHoyCount] = useState(0);
 
   // Rango por defecto: últimos 7 días
   const today = new Date();
@@ -21,6 +24,16 @@ export default function Dashboard() {
   start7.setDate(today.getDate() - 6);
   const pad2 = (n) => String(n).padStart(2, "0");
   const toYMD = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; // anclado a local
+  // helper: convierte fecha a YYYY-MM-DD en America/Santiago
+  const toYMD_CL = (dateLike) => {
+    try {
+      const d = new Date(dateLike);
+      const localCL = new Date(d.toLocaleString('en-US', { timeZone: 'America/Santiago' }));
+      return toYMD(localCL);
+    } catch {
+      return toYMD(new Date(dateLike));
+    }
+  };
   const [fechaInicio, setFechaInicio] = useState(toYMD(start7));
   const [fechaFin, setFechaFin] = useState(toYMD(today));
   const [rangeOpen, setRangeOpen] = useState(false);
@@ -56,6 +69,29 @@ export default function Dashboard() {
         setHospitales(data.hospitales || []);
         setAreas(data.areas || []);
         setStatus("ok");
+        // calcular pendientes de hoy y mostrar popup una sola vez por ingreso
+        try {
+          const hoyCL = toYMD_CL(new Date());
+          const solicitudes = Array.isArray(data.solicitudes) ? data.solicitudes : [];
+          const countHoyPend = solicitudes.filter((s) => {
+            if (!s || s.estado !== 'pendiente' || !s.fecha_creacion) return false;
+            const dStr = toYMD_CL(new Date(s.fecha_creacion));
+            return dStr === hoyCL;
+          }).length;
+          setPendientesHoyCount(countHoyPend);
+          // Mostrar solo una vez por login (por usuario)
+          const userId = (data.usuario && (data.usuario.id || data.usuario.correo)) || 'anon';
+          const sessionMarker = sessionStorage.getItem('admin-session-login-id') || 'unknown';
+          const storageKey = `admin-dashboard-pendientes:${userId}:${sessionMarker}`;
+          if (countHoyPend > 0 && !sessionStorage.getItem(storageKey)) {
+            setShowPendientesPopup(true);
+            sessionStorage.setItem(storageKey, '1');
+          }
+        } catch (e) {
+          // no bloquear el dashboard si falla el conteo
+          // eslint-disable-next-line no-console
+          console.debug('popup pendientes: no critico', e);
+        }
       } catch (err) {
         if (!active) return;
         setError(err.message);
@@ -198,6 +234,30 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-4">
+      {showPendientesPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-xl ring-1 ring-slate-200">
+            <h2 className="text-xl font-semibold text-slate-900">Solicitudes pendientes de hoy</h2>
+            <p className="mt-3 text-slate-700">
+              Hay <span className="font-bold">{pendientesHoyCount}</span> solicitudes realizadas hoy que aun estan pendientes.
+            </p>
+            <div className="mt-5 flex justify-center gap-3">
+              <button
+                onClick={() => setShowPendientesPopup(false)}
+                className="rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
+              >
+                Cerrar
+              </button>
+              <button
+                onClick={() => { setShowPendientesPopup(false); window.location.hash = '#/solicitudes'; }}
+                className="rounded-xl bg-[#3481E2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#2f73c9]"
+              >
+                Ver solicitudes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <header className="rounded-2xl bg-white px-6 py-4 text-slate-900 shadow-sm ring-1 ring-slate-200">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-lg font-semibold">Dashboard</h1>
