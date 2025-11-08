@@ -69,7 +69,7 @@ export default function Dashboard() {
         setHospitales(data.hospitales || []);
         setAreas(data.areas || []);
         setStatus("ok");
-        // calcular pendientes de hoy y mostrar popup una sola vez por ingreso
+        // calcular pendientes de hoy
         try {
           const hoyCL = toYMD_CL(new Date());
           const solicitudes = Array.isArray(data.solicitudes) ? data.solicitudes : [];
@@ -88,8 +88,6 @@ export default function Dashboard() {
             sessionStorage.setItem(storageKey, '1');
           }
         } catch (e) {
-          // no bloquear el dashboard si falla el conteo
-          // eslint-disable-next-line no-console
           console.debug('popup pendientes: no critico', e);
         }
       } catch (err) {
@@ -171,7 +169,6 @@ export default function Dashboard() {
     setFechaInicio(tmpStart); setFechaFin(tmpEnd); setCustomMode(false); setRangeOpen(false);
   }
 
-  // Agregar cero para áreas e instituciones sin datos
   const tarjetasArea = useMemo(() => {
     const lista = isAdmin ? areas : areas.filter(a => a.id_area === jefeAreaId);
     return lista.map(a => ({

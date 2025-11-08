@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Admin from "../pages/Admin.jsx";
 import Dashboard from "../pages/Admin/Dashboard.jsx";
 import Areas from "../pages/Admin/Areas.jsx";
+import Subareas from "../pages/Admin/Subareas.jsx";
 import Ubicaciones from "../pages/Admin/Ubicaciones.jsx";
 import UbicacionesHabitaciones from "../pages/Admin/UbicacionesHabitaciones.jsx";
 import UbicacionesPisos from "../pages/Admin/UbicacionesPisos.jsx";
@@ -30,6 +31,7 @@ export default function AdminApp() {
               <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="areas" element={<Areas />} />
+              <Route path="subareas" element={<Subareas />} />
               <Route path="ubicaciones" element={<Ubicaciones />} />
               <Route path="ubicaciones/habitaciones" element={<UbicacionesHabitaciones />} />
               <Route path="ubicaciones/pisos" element={<UbicacionesPisos />} />

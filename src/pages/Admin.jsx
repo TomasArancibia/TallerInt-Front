@@ -76,7 +76,7 @@ export default function Admin() {
               const pathname = location.pathname;
               const isActive =
                 pathname.endsWith(item.path) || (isDashboard && (pathname === "/" || pathname === "/admin" || pathname.endsWith("/admin")));
-              const hasDropdown = item.path !== "dashboard" && item.path !== "perfil";
+              const hasDropdown = item.path === "ubicaciones" || item.path === "areas";
               return (
                 <div key={item.path}>
                   <div className={`group admin-nav-item ${isActive ? "admin-nav-item--active" : "admin-nav-item--idle"}`}>
@@ -113,7 +113,6 @@ export default function Admin() {
                     <div className="admin-submenu" onClick={(e) => e.stopPropagation()}>
                       {item.path === 'ubicaciones' ? (
                         <>
-                          {/* Nivel 1: secciones */}
                           {[
                             { key: 'habitaciones', label: 'Habitaciones', route: 'ubicaciones/habitaciones' },
                             { key: 'camas', label: 'Camas', route: 'ubicaciones/camas' },
@@ -122,40 +121,29 @@ export default function Admin() {
                             { key: 'instituciones', label: 'Instituciones', route: 'ubicaciones/instituciones' },
                             { key: 'servicios', label: 'Servicios', route: 'ubicaciones/servicios' },
                           ].map((sec) => (
-                            <div key={sec.key}>
-                              <button
-                                className="admin-submenu-item"
-                                onClick={() => setOpenSubMenu((prev) => (prev === sec.key ? null : sec.key))}
-                              >
-                                <span className="inline-flex w-full items-center justify-between">
-                                  <span>{sec.label}</span>
-                                  <span className="admin-caret" aria-hidden>{openSubMenu === sec.key ? "▾" : "▸"}</span>
-                                </span>
-                              </button>
-                              {openSubMenu === sec.key && (
-                                <div className="admin-submenu" onClick={(e) => e.stopPropagation()}>
-                                  <button
-                                    className="admin-submenu-item"
-                                    onClick={() => {
-                                      setOpenSubMenu(null);
-                                      setOpenMenu(null);
-                                      navigate(sec.route);
-                                    }}
-                                  >
-                                    Listar
-                                  </button>
-                                </div>
-                              )}
-                            </div>
+                            <button
+                              key={sec.key}
+                              className="admin-submenu-item"
+                              onClick={() => { setOpenMenu(null); navigate(sec.route); }}
+                            >
+                              {sec.label}
+                            </button>
+                          ))}
+                        </>
+                      ) : item.path === 'areas' ? (
+                        <>
+                          {[{ key: 'areas', label: 'Áreas', route: 'areas' }, { key: 'subareas', label: 'Subáreas', route: 'subareas' }].map((opt) => (
+                            <button
+                              key={opt.key}
+                              className="admin-submenu-item"
+                              onClick={() => { setOpenMenu(null); navigate(opt.route); }}
+                            >
+                              {opt.label}
+                            </button>
                           ))}
                         </>
                       ) : (
-                        <button
-                          className="admin-submenu-item"
-                          onClick={() => { setOpenMenu(null); navigate(item.path); }}
-                        >
-                          Listar
-                        </button>
+                        null
                       )}
                     </div>
                   )}
