@@ -74,9 +74,14 @@ export default function Subareas() {
           <svg className="ml-auto h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd"/></svg>
         </button>
         {open && (
-          <div className="absolute z-20 mt-1 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
-            <div className="max-h-64 overflow-y-auto">
-              {[{id:NONE,label:'Ninguno'}, ...options].map((opt) => {
+          <div className="absolute z-20 mt-1 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+            <div className="sticky top-0 z-10 flex items-center gap-2 bg-white p-2 text-xs">
+              <button className="rounded-md border border-slate-300 px-2 py-1 hover:bg-slate-50" onClick={()=> setSelected([])}>Todos</button>
+              <button className="rounded-md border border-slate-300 px-2 py-1 hover:bg-slate-50" onClick={()=> setSelected([NONE])}>Ninguno</button>
+              <div className="ml-auto text-[11px] text-slate-500">{options.length} opciones</div>
+            </div>
+            <div className="max-h-64 overflow-y-auto p-2">
+              {options.map((opt) => {
                 const id = String(opt.id);
                 const isAll = selected.length === 0;
                 const isNone = selected.includes(NONE);
@@ -88,9 +93,6 @@ export default function Subareas() {
                       checked={checked}
                       onChange={() => {
                         setSelected((prev) => {
-                          if (id === NONE) {
-                            return prev.includes(NONE) ? [] : [NONE];
-                          }
                           if (prev.includes(NONE)) return [id];
                           if (prev.length === 0) return [id];
                           return prev.includes(id) ? prev.filter(v=>v!==id) : [...prev, id];
