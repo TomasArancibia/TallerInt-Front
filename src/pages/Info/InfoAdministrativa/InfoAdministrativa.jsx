@@ -29,9 +29,6 @@ export default function InfoAdministrativa() {
         <Link className={actionWhite} to="/info_administrativa/presupuestos-cuenta">
           PRESUPUESTOS, CUENTA HOSPITALARIA, PAGOS
         </Link>
-        <Link className={actionWhite} to="/info_administrativa">
-          BENEFICIOS SOCIALES / ASISTENCIA SOCIAL
-        </Link>
         <Link className={actionWhite} to="/info_administrativa/sugerencias">
           SUGERENCIAS, RECLAMOS Y FELICITACIONES
         </Link>
