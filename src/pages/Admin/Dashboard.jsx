@@ -14,6 +14,9 @@ export default function Dashboard() {
   const [usuario, setUsuario] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+  // Popup pendientes hoy
+  const [showPendientesPopup, setShowPendientesPopup] = useState(false);
+  const [pendientesHoyCount, setPendientesHoyCount] = useState(0);
 
   // Rango por defecto: últimos 7 días
   const today = new Date();
@@ -21,6 +24,16 @@ export default function Dashboard() {
   start7.setDate(today.getDate() - 6);
   const pad2 = (n) => String(n).padStart(2, "0");
   const toYMD = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; // anclado a local
+  // helper: convierte fecha a YYYY-MM-DD en America/Santiago
+  const toYMD_CL = (dateLike) => {
+    try {
+      const d = new Date(dateLike);
+      const localCL = new Date(d.toLocaleString('en-US', { timeZone: 'America/Santiago' }));
+      return toYMD(localCL);
+    } catch {
+      return toYMD(new Date(dateLike));
+    }
+  };
   const [fechaInicio, setFechaInicio] = useState(toYMD(start7));
   const [fechaFin, setFechaFin] = useState(toYMD(today));
   const [rangeOpen, setRangeOpen] = useState(false);
@@ -56,6 +69,27 @@ export default function Dashboard() {
         setHospitales(data.hospitales || []);
         setAreas(data.areas || []);
         setStatus("ok");
+        // calcular pendientes de hoy
+        try {
+          const hoyCL = toYMD_CL(new Date());
+          const solicitudes = Array.isArray(data.solicitudes) ? data.solicitudes : [];
+          const countHoyPend = solicitudes.filter((s) => {
+            if (!s || s.estado !== 'pendiente' || !s.fecha_creacion) return false;
+            const dStr = toYMD_CL(new Date(s.fecha_creacion));
+            return dStr === hoyCL;
+          }).length;
+          setPendientesHoyCount(countHoyPend);
+          // Mostrar solo una vez por login (por usuario)
+          const userId = (data.usuario && (data.usuario.id || data.usuario.correo)) || 'anon';
+          const sessionMarker = sessionStorage.getItem('admin-session-login-id') || 'unknown';
+          const storageKey = `admin-dashboard-pendientes:${userId}:${sessionMarker}`;
+          if (countHoyPend > 0 && !sessionStorage.getItem(storageKey)) {
+            setShowPendientesPopup(true);
+            sessionStorage.setItem(storageKey, '1');
+          }
+        } catch (e) {
+          console.debug('popup pendientes: no critico', e);
+        }
       } catch (err) {
         if (!active) return;
         setError(err.message);
@@ -100,8 +134,9 @@ export default function Dashboard() {
   const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
   const parseYMD = (s) => { const [y,m,d] = s.split("-").map(Number); return new Date(y,(m||1)-1,d||1); };
 
-  const isAdmin = usuario?.rol === 'ADMIN';
-  const jefeAreaId = !isAdmin ? usuario?.id_area : null;
+  // Todos los usuarios tienen vista de administrador
+  const isAdmin = true;
+  const jefeAreaId = null;
 
   function setPreset(preset) {
     const d = new Date();
@@ -134,7 +169,6 @@ export default function Dashboard() {
     setFechaInicio(tmpStart); setFechaFin(tmpEnd); setCustomMode(false); setRangeOpen(false);
   }
 
-  // Agregar cero para áreas e instituciones sin datos
   const tarjetasArea = useMemo(() => {
     const lista = isAdmin ? areas : areas.filter(a => a.id_area === jefeAreaId);
     return lista.map(a => ({
@@ -197,6 +231,30 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-4">
+      {showPendientesPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-xl ring-1 ring-slate-200">
+            <h2 className="text-xl font-semibold text-slate-900">Solicitudes pendientes de hoy</h2>
+            <p className="mt-3 text-slate-700">
+              Hay <span className="font-bold">{pendientesHoyCount}</span> solicitudes realizadas hoy que aun estan pendientes.
+            </p>
+            <div className="mt-5 flex justify-center gap-3">
+              <button
+                onClick={() => setShowPendientesPopup(false)}
+                className="rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
+              >
+                Cerrar
+              </button>
+              <button
+                onClick={() => { setShowPendientesPopup(false); window.location.hash = '#/solicitudes'; }}
+                className="rounded-xl bg-[#3481E2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#2f73c9]"
+              >
+                Ver solicitudes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <header className="rounded-2xl bg-white px-6 py-4 text-slate-900 shadow-sm ring-1 ring-slate-200">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-lg font-semibold">Dashboard</h1>
@@ -212,7 +270,7 @@ export default function Dashboard() {
             </button>
 
             {rangeOpen && (
-              <div className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
+              <div className="absolute right-4 z-50 mt-2 w-72 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
                 {!customMode ? (
                   <div className="py-1">
                     <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("today")}>Hoy</button>
@@ -227,9 +285,9 @@ export default function Dashboard() {
                 ) : (
                   <div className="p-3">
                     <div className="flex items-center gap-2">
-                      <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpStart} onChange={(e) => setTmpStart(e.target.value)} />
+                      <input type="date" className="w-[9.5rem] rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpStart} onChange={(e) => setTmpStart(e.target.value)} />
                       <span className="text-sm text-slate-500">a</span>
-                      <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpEnd} onChange={(e) => setTmpEnd(e.target.value)} />
+                      <input type="date" className="w-[9.5rem] rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpEnd} onChange={(e) => setTmpEnd(e.target.value)} />
                     </div>
                     <div className="mt-3 flex justify-end gap-2">
                       <button className="rounded-md px-3 py-1 text-sm text-slate-600 hover:bg-slate-50" onClick={() => setCustomMode(false)}>Volver</button>
@@ -318,7 +376,7 @@ export default function Dashboard() {
             <div>
               <h3 className="text-lg font-semibold text-slate-800">Tiempo promedio de resolución (cerradas)</h3>
               <div className="mt-4 grid gap-6 md:grid-cols-2">
-                {isAdmin && (
+                {
                 <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                   <h4 className="mb-3 text-base font-semibold text-slate-700">Por Área</h4>
                   <div className={tableWrapper}>
@@ -330,7 +388,7 @@ export default function Dashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {(isAdmin ? areas : areas.filter(a=> a.id_area===jefeAreaId)).map(a => {
+                        {areas.map(a => {
                           const found = promArea.find(p => p.nombre_area === a.nombre);
                           const horas = found ? found.horas : 0;
                           return (
@@ -344,7 +402,7 @@ export default function Dashboard() {
                     </table>
                   </div>
                 </div>
-                )}
+                }
 
                 <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                   <h4 className="mb-3 text-base font-semibold text-slate-700">Por Institución</h4>
@@ -383,7 +441,7 @@ export default function Dashboard() {
                     <XAxis dataKey="dia" />
                     <YAxis />
                     <Tooltip />
-                    {isAdmin && <Legend />}
+                    <Legend />
                     {[...new Set(areaNames)].map((area, index) => (
                       <Bar key={area} dataKey={area} name={area} stackId="a" fill={["#27ae60", "#e67e22", "#3498db", "#9b59b6", "#f1c40f"][index % 5]} />
                     ))}

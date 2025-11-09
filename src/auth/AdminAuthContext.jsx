@@ -75,6 +75,12 @@ export function AdminAuthProvider({ children }) {
       usuario: profile.usuario,
     };
     updateSession(nextSession);
+    // marca de ingreso (solo una vez por login)
+    try {
+      const uid = (nextSession.usuario && (nextSession.usuario.id || nextSession.usuario.correo)) || 'anon';
+      const marker = `${uid}:${Date.now()}`;
+      window.sessionStorage.setItem('admin-session-login-id', marker);
+    } catch {}
     return nextSession;
   }, [updateSession]);
 
@@ -83,6 +89,7 @@ export function AdminAuthProvider({ children }) {
       await supabaseSignOut(session.access_token);
     }
     clearSession();
+    try { window.sessionStorage.removeItem('admin-session-login-id'); } catch {}
   }, [clearSession, session]);
 
   const refreshIfNeeded = useCallback(async () => {

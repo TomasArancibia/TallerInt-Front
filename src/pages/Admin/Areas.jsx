@@ -10,6 +10,7 @@ const API =
 export default function Areas() {
   const { getAccessToken, signOut } = useAdminAuth();
   const [areas, setAreas] = useState([]);
+  const [solicitudes, setSolicitudes] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
@@ -24,19 +25,14 @@ export default function Areas() {
       try {
         const token = await getAccessToken();
         if (!token) throw new Error("Sesión expirada");
-        const res = await fetch(`${API}/admin/bootstrap`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.status === 401 || res.status === 403) {
-          await signOut();
-          return;
-        }
-        if (!res.ok) throw new Error("No se pudo cargar áreas");
+        const res = await fetch(`${API}/admin/bootstrap`, { headers: { Authorization: `Bearer ${token}` } });
+        if (res.status === 401 || res.status === 403) { await signOut(); return; }
+        if (!res.ok) throw new Error("No se pudieron cargar áreas");
         const data = await res.json();
         if (!active) return;
         setAreas(data.areas || []);
+        setSolicitudes(data.solicitudes || []);
 
-        // Cargar jefes de área para poder mostrarlos por área
         const usersRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` } });
         if (usersRes.ok) {
           const users = await usersRes.json();
@@ -50,17 +46,12 @@ export default function Areas() {
       }
     }
     fetchAll();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [getAccessToken, signOut]);
 
-  const tableWrapper =
-    "mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm";
-  const tableClass =
-    "min-w-full border-collapse text-left text-sm text-slate-700";
-  const headerCell =
-    "border border-slate-200 bg-slate-100 px-4 py-2 font-semibold text-slate-700";
+  const tableWrapper = "mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm";
+  const tableClass = "min-w-full border-collapse text-left text-sm text-slate-700";
+  const headerCell = "border border-slate-200 bg-slate-100 px-4 py-2 font-semibold text-slate-700";
   const dataCell = "border border-slate-200 px-4 py-2";
 
   // Paginación 10 por página
@@ -75,7 +66,7 @@ export default function Areas() {
     const map = {};
     for (const u of usuarios) {
       if (u.id_area == null) continue;
-      if (!u.activo) continue; // solo encargados activos
+      if (!u.activo) continue;
       if (!map[u.id_area]) map[u.id_area] = [];
       map[u.id_area].push(u);
     }
@@ -85,18 +76,24 @@ export default function Areas() {
     return map;
   }, [usuarios]);
 
+  const pendientesPorArea = useMemo(() => {
+    const map = {};
+    for (const s of solicitudes) {
+      if (!s || s.estado !== 'pendiente') continue;
+      const id = s.id_area;
+      map[id] = (map[id] || 0) + 1;
+    }
+    return map;
+  }, [solicitudes]);
+
   return (
     <div className="flex flex-col gap-4">
       <header className="rounded-2xl bg-white px-6 py-4 text-slate-900 shadow-sm ring-1 ring-slate-200">
         <h1 className="text-lg font-semibold">Áreas de Solicitudes</h1>
       </header>
 
-      {status === "loading" && (
-        <p className="text-sm text-slate-600">Cargando...</p>
-      )}
-      {status === "error" && (
-        <p className="text-sm font-semibold text-red-600">{error}</p>
-      )}
+      {status === "loading" && <p className="text-sm text-slate-600">Cargando...</p>}
+      {status === "error" && <p className="text-sm font-semibold text-red-600">{error}</p>}
       {status === "ok" && (
         <section>
           <div className="mb-2 text-sm text-slate-600">Resultados: {areas.length}</div>
@@ -106,6 +103,7 @@ export default function Areas() {
                 <tr>
                   <th className={headerCell}>Nombre</th>
                   <th className={headerCell}>Encargados</th>
+                  <th className={headerCell}>Solicitudes pendientes</th>
                 </tr>
               </thead>
               <tbody>
@@ -117,27 +115,17 @@ export default function Areas() {
                         <span className="text-slate-500">Sin encargados</span>
                       ) : (
                         <ul className="space-y-1">
-                          {(usuariosPorArea[a.id_area] ?? []).map((u) => {
-                            const isPlaceholder = (s) => {
-                              const t = String(s || '').trim().toLowerCase();
-                              return t === '' || t === 'pendiente' || t === 'pending';
-                            };
-                            const backendFull = `${u.nombre || ''} ${u.apellido || ''}`.trim();
-                            const backendLooksValid = !(isPlaceholder(u.nombre) && isPlaceholder(u.apellido)) && backendFull !== '';
-                            const rawFallback = pendingNames[u.correo?.toLowerCase()];
-                            const fallback = rawFallback && typeof rawFallback === 'object' ? `${rawFallback.nombre || ''} ${rawFallback.apellido || ''}`.trim() : (typeof rawFallback === 'string' ? rawFallback : '');
-                            const nombre = backendLooksValid ? backendFull : (fallback || u.correo);
-                            return (
-                              <li key={u.id} className="text-sm text-slate-700">
-                                <span className="font-medium">{nombre}</span>
-                                <span className="text-slate-500"> · {u.correo}</span>
-                                {u.telefono ? <span className="text-slate-500"> · {u.telefono}</span> : null}
-                              </li>
-                            );
-                          })}
+                          {(usuariosPorArea[a.id_area] ?? []).map((u) => (
+                            <li key={u.id} className="text-sm text-slate-700">
+                              <span className="font-medium">{`${u.nombre || ''} ${u.apellido || ''}`.trim() || u.correo}</span>
+                              <span className="text-slate-500"> · {u.correo}</span>
+                              {u.telefono ? <span className="text-slate-500"> · {u.telefono}</span> : null}
+                            </li>
+                          ))}
                         </ul>
                       )}
                     </td>
+                    <td className={dataCell}>{pendientesPorArea[a.id_area] || 0}</td>
                   </tr>
                 ))}
               </tbody>

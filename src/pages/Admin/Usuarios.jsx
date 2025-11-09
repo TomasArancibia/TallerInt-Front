@@ -18,7 +18,7 @@ const savePendingNames = (map) => {
 
 export default function Usuarios() {
   const { usuario, getAccessToken } = useAdminAuth();
-  const isAdmin = usuario?.rol === "ADMIN";
+  const isAdmin = true;
 
   const [areas, setAreas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
@@ -38,7 +38,6 @@ export default function Usuarios() {
   const areasOrdenadas = useMemo(() => [...areas].sort((a,b)=> a.nombre.localeCompare(b.nombre)), [areas]);
 
   useEffect(() => {
-    if (!isAdmin) { setStatus("ok"); return; }
     (async () => {
       setStatus("loading"); setError(null);
       try {
@@ -57,7 +56,7 @@ export default function Usuarios() {
         setStatus("ok");
       } catch (e) { setError(e.message); setStatus("error"); }
     })();
-  }, [getAccessToken, isAdmin]);
+  }, [getAccessToken]);
 
   async function handleCreateUser(ev){
     ev.preventDefault(); setError(null); setTempPassword(null);
@@ -107,16 +106,7 @@ export default function Usuarios() {
     }catch(e){ setError(e.message);} finally{ setTogglingId(null); }
   }
 
-  if(!isAdmin){
-    return (
-      <main className={pageContainer}>
-        <div className={sectionStack}>
-          <div className={`${actionPurple} pointer-events-none uppercase`}>Gestión de usuarios</div>
-          <p className={helperText}>Solo los administradores pueden acceder a esta sección.</p>
-        </div>
-      </main>
-    );
-  }
+  // Todos los usuarios pueden gestionar usuarios
 
   if(status==='loading'){
     return (
@@ -133,7 +123,7 @@ export default function Usuarios() {
     <main className={pageContainer}>
       <section className={`${sectionStack} max-w-4xl`}>
         <div className={`${actionPurple} pointer-events-none uppercase`}>Gestión de jefes de área</div>
-        <p className={helperText}>Crea o elimina cuentas de jefes de área. Al crear una nueva cuenta se genera una contraseña temporal.</p>
+        <p className={helperText}>Crea o elimina cuentas de jefes de área. Al crear una nueva cuenta se genera una contraseña por defecto.</p>
 
         <form onSubmit={handleCreateUser} className="w-full rounded-2xl border border-purple-200 bg-white px-6 py-6 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-800">Nuevo jefe de área</h2>
@@ -165,8 +155,8 @@ export default function Usuarios() {
             <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
               <p className="font-semibold text-emerald-800">Usuario creado correctamente.</p>
               <p>Correo: <strong>{tempPassword.correo}</strong></p>
-              <p>Contraseña temporal: <strong className="font-mono">{tempPassword.password}</strong></p>
-              <p className="mt-2 text-xs text-emerald-700">Comparte esta contraseña temporal con el jefe de área. Deberá cambiarla al iniciar sesión.</p>
+              <p>Contraseña por defecto: <strong className="font-mono">{tempPassword.password}</strong></p>
+              <p className="mt-2 text-xs text-emerald-700">Esta es la contraseña por defecto del usuario. Si desea cambiarla más adelante, puede hacerlo desde el perfil del nuevo usuario.</p>
             </div>
           )}
 
