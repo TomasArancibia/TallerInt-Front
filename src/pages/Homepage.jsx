@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments } from "@fortawesome/free-solid-svg-icons";
 import {
   pageContainer,
   helperText,
@@ -16,7 +18,17 @@ export default function Homepage() {
 
   return (
     <main className={pageContainer}>
-      <Logo />
+      <div className="flex w-full max-w-3xl items-center justify-between">
+        <Logo />
+        <a
+          href="respuesta.html"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-700 text-white shadow-md transition hover:bg-purple-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+          aria-label="Abrir chatbot"
+          title="Abrir chatbot"
+        >
+          <FontAwesomeIcon icon={faComments} />
+        </a>
+      </div>
 
       {/* Aviso pequeño (solo se muestra si hay QR/cama en sesión) */}
       {camaId && (
@@ -56,26 +68,6 @@ export default function Homepage() {
           ACOMPAÑAMIENTO ESPIRITUAL
         </Link>
 
-        <form
-          className="mx-auto mt-4 flex w-full max-w-2xl items-center gap-3 rounded-2xl border-2 border-purple-700 bg-white px-4 py-3 shadow-md"
-          action="respuesta.html"
-          method="get"
-        >
-          <input
-            id="q"
-            name="q"
-            type="search"
-            placeholder="Escribe una pregunta que quieras resolver"
-            className="flex-1 border-none bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-            required
-          />
-          <button
-            type="submit"
-            className="rounded-xl border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition-colors duration-150 hover:bg-slate-200"
-          >
-            Enviar
-          </button>
-        </form>
       </section>
     </main>
   );
