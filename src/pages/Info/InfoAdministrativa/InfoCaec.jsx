@@ -7,6 +7,7 @@ import {
   infoText,
   PageNav,
   Logo,
+  actionBlue,
 } from "../../../components/ui.jsx";
 
 export default function InfoCaec() {
@@ -18,6 +19,10 @@ export default function InfoCaec() {
         backLabel="Volver a GES · CAEC · Ley de Urgencia"
       />
       <Logo />
+
+      <div className="mx-auto mt-4 w-full max-w-3xl">
+        <div className={`${actionBlue} pointer-events-none`}>INFORMACIÓN CAEC</div>
+      </div>
 
       <section className={infoText}>
         <h1 className="text-lg font-semibold uppercase tracking-wide text-purple-700 sm:text-xl">
