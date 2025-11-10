@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   actionBlue,
@@ -24,39 +23,89 @@ export default function ResultadosExamenes() {
           ¿Dónde puedo ver mis exámenes?
         </h2>
 
-        <div className={`${contentCard} space-y-4`}>
-          <h3 className="text-base font-semibold text-purple-700">Laboratorio</h3>
-          <p>
-            Los resultados se publican en línea cuando han sido validados por el laboratorio.
-            Puedes revisarlos con tus datos personales.
-          </p>
-          <div className="flex justify-start">
-            <Link
-              className={inlineCta}
-              to="/procesosclinicos/resultados"
-              aria-label="Revisar resultados de Laboratorio"
-            >
-              Revisar laboratorio
-            </Link>
+        <article className={`${contentCard} space-y-4`}>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Opción A · Desde la página web
+            </p>
+            <p className="mt-1 text-base font-semibold text-purple-700">
+              Consulta directa en Laboratorio o Imágenes
+            </p>
           </div>
-        </div>
+          <ol className="list-decimal space-y-2 pl-5">
+            <li>
+              Selecciona “Laboratorio” o “Imágenes” según el tipo de estudio que quieras revisar.
+            </li>
+            <li>Ingresa tu RUT y el número de episodio (SP o Folio) de 10 dígitos.</li>
+            <li>Acepta los términos para ver, descargar o imprimir los resultados disponibles.</li>
+          </ol>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a
+              className={inlineCta}
+              href="https://laboratorio.ucchristus.cl/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Laboratorio
+            </a>
+            <a
+              className={inlineCta}
+              href="https://imagenologia.ucchristus.cl/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Imágenes
+            </a>
+          </div>
+        </article>
 
-        <div className={`${contentCard} space-y-4`}>
-          <h3 className="text-base font-semibold text-purple-700">Imágenes</h3>
-          <p>
-            Incluye radiografías, TAC, RM y otros. Podrás ver el informe e imágenes una vez
-            liberados. Algunos portales solicitan RUT y el folio u orden de atención del examen.
-          </p>
-          <div className="flex justify-start">
-            <Link
-              className={inlineCta}
-              to="/procesosclinicos/resultados"
-              aria-label="Revisar resultados de Imágenes"
-            >
-              Revisar imágenes
-            </Link>
+        <article className={`${contentCard} space-y-4`}>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Opción B · Desde Portal Paciente
+            </p>
+            <p className="mt-1 text-base font-semibold text-purple-700">
+              Plataforma integral para revisar tus antecedentes clínicos
+            </p>
           </div>
-        </div>
+          <p>
+            Portal Paciente permite acceder a exámenes, órdenes médicas, recetas, atenciones y más,
+            todo en un mismo lugar y con distintos periodos de tiempo.
+          </p>
+          <ol className="list-decimal space-y-2 pl-5">
+            <li>
+              Ingresa a{" "}
+              <a
+                className="text-purple-700 underline"
+                href="https://mi.ucchristus.cl/Usuarios/Login?ReturnUrl=%2F"
+                target="_blank"
+                rel="noreferrer"
+              >
+                mi.ucchristus.cl
+              </a>{" "}
+              y selecciona “Portal Paciente”.
+            </li>
+            <li>
+              Crea tu cuenta completando los datos solicitados, valida con el código enviado a tu
+              correo y define una contraseña.
+            </li>
+            <li>
+              Dentro de “Mis Resultados” ingresa tu número de episodio (SP o Folio) la primera vez
+              para verificar tu identidad. Luego podrás ver, descargar o imprimir exámenes de
+              laboratorio, imágenes, biopsias o PAP.
+            </li>
+          </ol>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a
+              className={inlineCta}
+              href="https://mi.ucchristus.cl/Usuarios/Login?ReturnUrl=%2F"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Portal Paciente
+            </a>
+          </div>
+        </article>
       </div>
 
     </main>

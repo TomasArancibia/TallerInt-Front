@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -38,9 +37,14 @@ export default function InfoCostosPrestaciones() {
             actualizados de nuestros servicios y procedimientos.
           </p>
           <div className="flex justify-start">
-            <Link className={inlineCta} to="/info_administrativa/costos-prestaciones">
+            <a
+              className={inlineCta}
+              href="https://www.ucchristus.cl/informacion-al-paciente/aranceles"
+              target="_blank"
+              rel="noreferrer"
+            >
               Aranceles
-            </Link>
+            </a>
           </div>
         </div>
       </section>

@@ -6,6 +6,7 @@ import Landing from "./pages/Landing.jsx";
 
 // Info Procesos clinicos
 import ProcesosClinicos from "./pages/Info/InfoClinica/ProcesosClinicos.jsx";
+import NumeroEpisodio from "./pages/Info/InfoClinica/NumeroEpisodio.jsx";
 import ResultadosExamenes from "./pages/Info/InfoClinica/ResultadosExamenes";
 import DocumentacionClinica from "./pages/Info/InfoClinica/DocumentacionClinica";
 import InfoDiagnosticoTratamiento from "./pages/Info/InfoClinica/InfoDiagnosticoTratamiento";
@@ -108,6 +109,7 @@ function App() {
         <Route path="/info_instalaciones" element={<InfoInstalaciones />} />
         <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/procesosclinicos" element={<ProcesosClinicos />} />
+        <Route path="/procesosclinicos/numero-episodio" element={<NumeroEpisodio />} />
         <Route path="/procesosclinicos/resultados" element={<ResultadosExamenes />} />
         <Route path="/procesosclinicos/documentacion" element={<DocumentacionClinica />} />
         <Route path="/procesosclinicos/info-diagnostico" element={<InfoDiagnosticoTratamiento />} />

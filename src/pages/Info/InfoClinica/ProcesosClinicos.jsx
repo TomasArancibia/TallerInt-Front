@@ -20,8 +20,11 @@ export default function ProcesosClinicos() {
         <div className={`${actionBlue} pointer-events-none`}>
           INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE
         </div>
+        <Link className={actionWhite} to="/procesosclinicos/numero-episodio">
+          NÚMERO DE EPISODIO
+        </Link>
         <Link className={actionWhite} to="/procesosclinicos/resultados">
-          RESULTADOS DE EXÁMENES (LABORATORIO E IMÁGENES)
+          RESULTADOS DE EXÁMENES, RECETAS, ÓRDENES MÉDICAS
         </Link>
         <Link className={actionWhite} to="/procesosclinicos/documentacion">
           DOCUMENTACIÓN CLINICA (FICHA CLÍNICA, EPICRISIS, PROTOCOLOS OPERATORIOS, ETC)
@@ -34,9 +37,6 @@ export default function ProcesosClinicos() {
         </Link>
         <Link className={actionWhite} to="/procesosclinicos/horarios-banco">
           HORARIO VISITAS Y BANCO SANGRE
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PROCESOS DE ALTA
         </Link>
       </section>
     </main>
