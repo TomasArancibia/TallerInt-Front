@@ -15,6 +15,9 @@ export default function Limpieza() {
     "Despapelado (retiro basura)",
     "Limpieza diaria (falta aseo)",
     "Derrame de líquidos",
+    "Reposición de insumos (papel higiénico, jabón, etc)",
+    "Horario de aseo",
+    "Otro",
   ];
 
   return (
