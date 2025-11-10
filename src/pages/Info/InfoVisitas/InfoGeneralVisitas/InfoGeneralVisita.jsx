@@ -6,6 +6,7 @@ import {
   sectionStack,
   actionBlue,
   actionWhite,
+  actionPurple,
   PageNav,
   Logo,
 } from "../../../../components/ui.jsx";
@@ -27,7 +28,16 @@ export default function InfoGeneralVisita() {
           ROL Y RESPONSABILIDADES DEL ACOMPAÑANTE RESPONSABLE
         </Link>
         <Link className={actionWhite} to="/info_rol_pagare">
-          DIFERENCIA ENTRE RESPONSABLE DE PAGARÉ Y ACOMPAÑANTE
+          ROL DEL RESPONSABLE DEL PAGARÉ
+        </Link>
+        <Link className={actionWhite} to="/info_visitas/cuidador-externo">
+          CUIDADOR DE EMPRESA EXTERNA
+        </Link>
+        <Link className={actionWhite} to="/info_visitas/ley-mila">
+          LEY MILA N°21.372
+        </Link>
+        <Link className={actionWhite} to="/info_visitas/perros-mascotas">
+          INGRESO PERROS DE ASISTENCIA / MASCOTAS
         </Link>
       </section>
     </main>

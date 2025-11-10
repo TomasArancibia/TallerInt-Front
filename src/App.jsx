@@ -34,6 +34,11 @@ import InfoVisitas from "./pages/Info/InfoVisitas/InfoVisitas.jsx";
 
 // Subpaginas Info General Visitas
 import InfoGeneralVisita from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoGeneralVisita.jsx";
+import InfoCuidadorExterno from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoCuidadorExterno.jsx";
+import InfoLeyMila from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoLeyMila.jsx";
+import InfoPerrosMascotas from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoPerrosMascotas.jsx";
+import InfoIngresoPerros from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoIngresoPerros.jsx";
+import InfoIngresoMascotas from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoIngresoMascotas.jsx";
 import InfoDifVisAco from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoDifVisAco.jsx";
 import InfoRolResp from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoRolResp.jsx";
 import InfoRolPagare from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoRolPagare.jsx";
@@ -41,7 +46,8 @@ import InfoRolPagare from "./pages/Info/InfoVisitas/InfoGeneralVisitas/InfoRolPa
 // Subpaginas Info Horarios y Condiciones
 import InfoHorariosCon from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoHorariosCon.jsx";
 import InfoHoriariosVisitas from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoHorariosVisitas.jsx";
-import InfoHorariosEntrada from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoHoriosEntrada.jsx";
+import InfoHorariosEntrada from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoHorariosEntrada.jsx";
+import InfoElementosIngreso from "./pages/Info/InfoVisitas/InfoHorariosCon/InfoElementosIngreso.jsx";
 
 // Subpaginas Info Servicios para visitas
 import InfoServiciosVisitas from "./pages/Info/InfoVisitas/InfoServiciosVisitas/InfoServiciosVisitas.jsx";
@@ -105,12 +111,18 @@ function App() {
         <Route path="/asistencia_social" element={<AsistenciaSocial />} />
         <Route path="/seguros_convenios" element={<SegurosConvenios />} />
         <Route path="/info_general_visitas" element={<InfoGeneralVisita />} />
+        <Route path="/info_visitas/cuidador-externo" element={<InfoCuidadorExterno />} />
+        <Route path="/info_visitas/perros-mascotas" element={<InfoPerrosMascotas />} />
+        <Route path="/info_visitas/ingreso-perros-asistencia" element={<InfoIngresoPerros />} />
+        <Route path="/info_visitas/ingreso-mascotas" element={<InfoIngresoMascotas />} />
+        <Route path="/info_visitas/ley-mila" element={<InfoLeyMila />} />
         <Route path="/info_dif_vis_aco" element={<InfoDifVisAco />} />
         <Route path="/info_rol_resp" element={<InfoRolResp />} />
         <Route path="/info_rol_pagare" element={<InfoRolPagare />} />
         <Route path="/info_horarios_condiciones" element={<InfoHorariosCon />} />
         <Route path="/info_horarios_visitas" element={<InfoHoriariosVisitas />} />
         <Route path="/info_horarios_entrada" element={<InfoHorariosEntrada />} />
+        <Route path="/info_visitas/elementos-permitidos" element={<InfoElementosIngreso />} />
         <Route path="/info_servicios_visitas" element={<InfoServiciosVisitas />} />
         <Route path="/info_comida" element={<InfoComida />} />
         <Route path="/info_reflexion" element={<InfoReflexion />} />
