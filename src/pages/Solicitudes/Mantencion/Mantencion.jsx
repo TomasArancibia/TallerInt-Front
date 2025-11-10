@@ -17,6 +17,8 @@ export default function Mantencion() {
     "CLIMATIZACIÓN",
     "TELEVISOR Y CONTROL REMOTO",
     "MOBILIARIO DENTRO DE LA HABITACIÓN",
+    "SUPERFICIES Y/O PARED",
+    "TIMBRE DEFECTUOSO",
     "OTRO TIPO DE MANTENCIÓN",
   ];
 
