@@ -1,12 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments } from "@fortawesome/free-solid-svg-icons";
 import {
   pageContainer,
   helperText,
   sectionStack,
   actionBlue,
   actionPurple,
-  actionWhite,
   Logo,
 } from "../components/ui.jsx";
 
@@ -37,7 +38,19 @@ export default function Homepage() {
 
   return (
     <main className={pageContainer}>
-      <Logo />
+      <div className="relative w-full max-w-3xl">
+        <div className="flex justify-center">
+          <Logo />
+        </div>
+        <button
+          type="button"
+          onClick={goToChatbot}
+          className="absolute -right-6 top-2 inline-flex items-center gap-2 rounded-full border border-purple-700 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-purple-700 shadow-sm transition hover:bg-purple-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 sm:-right-8"
+        >
+          <FontAwesomeIcon icon={faComments} className="text-sm" />
+          <span>Asistente virtual</span>
+        </button>
+      </div>
 
       {/* Aviso pequeño (solo se muestra si hay QR/cama en sesión) */}
       {camaId && (
@@ -82,16 +95,6 @@ export default function Homepage() {
           ACOMPAÑAMIENTO ESPIRITUAL
         </Link>
 
-        <h2 className="mt-6 text-center text-base font-semibold text-slate-900">
-          Asistente virtual
-        </h2>
-        <button
-          type="button"
-          onClick={goToChatbot}
-          className={`${actionWhite} mt-2`}
-        >
-          Hablar con asistente virtual
-        </button>
       </section>
     </main>
   );
