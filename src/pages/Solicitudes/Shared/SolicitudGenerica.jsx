@@ -63,11 +63,15 @@ export default function SolicitudGenerica() {
       });
   }, [camaId]);
 
-  const handleVolver = () => {
+  useEffect(() => {
     if (resultadoEnvio === "success") {
-      navigate("/");
-      return;
+      const timer = setTimeout(() => navigate("/"), 2000);
+      return () => clearTimeout(timer);
     }
+    return undefined;
+  }, [resultadoEnvio, navigate]);
+
+  const handleVolver = () => {
     if (step === "contacto") {
       navigate(backHref);
     } else {
@@ -302,7 +306,7 @@ export default function SolicitudGenerica() {
             )}
             {resultadoEnvio === "success" && (
               <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                Solicitud enviada correctamente
+                Solicitud enviada correctamente. Redirigiendo al inicio…
               </div>
             )}
             {resultadoEnvio === "fail" && (

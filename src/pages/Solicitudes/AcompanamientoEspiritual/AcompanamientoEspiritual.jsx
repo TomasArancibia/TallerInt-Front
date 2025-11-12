@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function AcompanamientoEspiritual() {
   const opciones = [
@@ -44,11 +44,13 @@ export default function AcompanamientoEspiritual() {
           (Independiente de su credo o visión de la vida)
         </p>
 
-        {opciones.map((nombre) => (
-          <Link
+        {opciones.map((nombre, index) => (
+          <PortalTrackedLink
             key={nombre}
             className={`${actionWhite} border-purple-700 text-black`}
             to="/solicitudes/nueva"
+            trackingCategory="solicitud_acompanamiento"
+            trackingCode={`acompanamiento-${index + 1}`}
             state={{
               areaName: "Acompañamiento espiritual",
               apiAreaName: "Acompañamiento espiritual",
@@ -59,7 +61,7 @@ export default function AcompanamientoEspiritual() {
             }}
           >
             {nombre}
-          </Link>
+          </PortalTrackedLink>
         ))}
       </section>
     </main>
