@@ -61,7 +61,8 @@ describe('Homepage', () => {
       </MemoryRouter>
     )
 
-    const button = screen.getByRole('button', { name: /Hablar con asistente virtual/i })
+  // The rendered button's accessible name is "Asistente virtual"
+  const button = screen.getByRole('button', { name: /Asistente virtual/i })
     fireEvent.click(button)
 
     expect(mockNavigate).toHaveBeenCalledWith('/chatbot')
