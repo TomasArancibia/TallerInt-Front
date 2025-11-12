@@ -12,7 +12,7 @@ import imagen1 from "../../../assets/imagen1.png";
 import imagen2 from "../../../assets/imagen2.png";
 import imagen3 from "../../../assets/imagen3.png";
 
-const sectionTitle = "text-base font-semibold text-purple-700 uppercase tracking-wide";
+const sectionTitle = "text-base font-semibold text-purple-700";
 const sectionDescription = "text-sm leading-normal text-slate-700 sm:text-base";
 
 export default function NumeroEpisodio() {
@@ -28,12 +28,17 @@ export default function NumeroEpisodio() {
       </div>
 
       <div className={`${infoText} mt-4`}>
-        <p>
-          El número de episodio es un identificador único de 10 dígitos asociado a una atención de
-          salud. Con este número puedes revisar en línea los resultados de exámenes (imágenes,
-          laboratorios, biopsias y PAP) desde la web de UC CHRISTUS o el Portal Paciente. A
-          continuación, te mostramos dónde encontrar este N° en distintos documentos.
-        </p>
+        <div className={`${contentCard} space-y-2 text-left`}>
+          <p className="text-base font-semibold text-purple-700">
+            Número de episodio
+          </p>
+          <p>
+            El número de episodio es un identificador único de 10 dígitos asociado a una atención de
+            salud. Con este número puedes revisar en línea los resultados de exámenes (imágenes,
+            laboratorios, biopsias y PAP) desde la web de UC CHRISTUS o el Portal Paciente. A
+            continuación, te mostramos dónde encontrar este N° en distintos documentos.
+          </p>
+        </div>
       </div>
 
       <section className="mx-auto mt-6 flex w-full max-w-3xl flex-col gap-5">

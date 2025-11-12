@@ -21,24 +21,30 @@ export default function InfoCuentaPagos() {
         backLabel="Volver a presupuestos y pagos"
       />
       <Logo />
-      <div className="mt-4 inline-flex items-center justify-center rounded-full bg-slate-200 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 sm:text-sm">
+      <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border-2 border-[#3481E2] bg-[#3481E2] px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white sm:text-base">
         Cuenta hospitalaria y pagos
       </div>
 
       <section className={infoText}>
-        <h1 className="text-lg font-semibold text-purple-700 sm:text-xl">
-          ¿Dónde puedo revisar mi cuenta hospitalaria y hacer mis pagos?
-        </h1>
-        <p className={`${helperText} sm:text-base`}>
-          Si necesitas conocer el estado de tu cuenta, revisar el detalle de las prestaciones
-          cobradas o pagarla, puedes realizarlo a través de nuestra página web.
-        </p>
-
         <div className={`${contentCard} space-y-5`}>
+          <div>
+            <h1 className="text-lg font-semibold text-purple-700 sm:text-xl">
+              ¿Dónde puedo revisar mi cuenta hospitalaria y hacer mis pagos?
+            </h1>
+            <p className={`${helperText} sm:text-base`}>
+              Si necesitas conocer el estado de tu cuenta, revisar el detalle de las prestaciones
+              cobradas o pagarla, puedes realizarlo a través de nuestra página web.
+            </p>
+          </div>
           <div className="flex justify-start">
-            <Link className={inlineCta} to="/info_administrativa/cuenta-hospitalaria-pagos">
+            <a
+              className={inlineCta}
+              href="https://pagos.ucchristus.cl/"
+              target="_blank"
+              rel="noreferrer"
+            >
               Paga aquí
-            </Link>
+            </a>
           </div>
 
           <div className="space-y-3">
@@ -67,9 +73,9 @@ export default function InfoCuentaPagos() {
               llamar al siguiente número:
             </p>
             <div className="flex justify-start">
-              <Link className={inlineCta} to="/info_administrativa/cuenta-hospitalaria-pagos">
+              <a className={inlineCta} href="tel:6003814200">
                 Llamar aquí
-              </Link>
+              </a>
             </div>
           </div>
         </div>

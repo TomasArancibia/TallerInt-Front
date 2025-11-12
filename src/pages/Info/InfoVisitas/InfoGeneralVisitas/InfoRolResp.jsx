@@ -22,37 +22,33 @@ export default function InfoRolResp() {
       </div>
       <section className={infoText}>
         <div className={`${contentCard} space-y-4`}>
+          <h3 className="text-base font-semibold text-purple-700">Rol del acompañante responsable</h3>
           <p>
             El acompañante responsable tiene un rol clave en su atención médica. Sus funciones
             incluyen:
           </p>
           <ul className="list-disc space-y-2 pl-5">
             <li>Recibir información clínica del equipo tratante.</li>
-            <li>Tomar decisiones médicas en caso de que el paciente no pueda hacerlo.</li>
+            <li>Tomar decisiones clínicas si el paciente no puede hacerlo.</li>
             <li>Gestionar las visitas del paciente.</li>
             <li>
-              Acompañar al paciente 24/7 durante su estadía, si el médico lo indica, o coordinar a
-              alguien que lo haga.
+              Acompañar al paciente 24/7 si lo indica el médico, o coordinar a alguien que lo haga.
             </li>
             <li>Apoyar en el alta, retirando al paciente con sus pertenencias.</li>
           </ul>
           <h3 className="text-base font-semibold text-purple-700">Casos especiales</h3>
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              Menores de edad: hasta 2 acompañantes, deben ser padres o representantes legales y
-              estar disponibles las 24 horas mientras dure la atención.
+              Menores de edad: hasta 2 acompañantes, deben ser padres o representantes legales.
+              Deben estar disponibles las 24 horas mientras dure la atención.
             </li>
             <li>
-              Adultos con condiciones de neurodesarrollo: debe ser su representante legal y estar
-              disponible permanentemente.
+              Adultos con condiciones de neurodesarrollo: debe ser su representante legal. Pueden o
+              deben estar disponibles las 24 horas mientras dure la atención.
             </li>
             <li>
-              Adultos con discapacidad cognitiva o demencia: se prioriza a un familiar cercano que
-              acompañe durante toda la estadía.
-            </li>
-            <li>
-              Pacientes inconscientes o sin capacidad: se prioriza a cónyuge, padres o hijos
-              mayores.
+              Pacientes inconscientes o sin capacidad: se prioriza a cónyuge, padres, hijos mayores,
+              etc.
             </li>
           </ul>
           <p>

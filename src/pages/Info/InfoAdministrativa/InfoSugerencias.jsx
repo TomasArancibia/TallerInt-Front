@@ -19,45 +19,72 @@ export default function InfoSugerencias() {
         backLabel="Menú información administrativa"
       />
       <Logo />
-      <div className="mt-4 inline-flex items-center justify-center rounded-full bg-slate-200 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 sm:text-sm">
+      <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border-2 border-[#3481E2] bg-[#3481E2] px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white sm:text-base">
         Sugerencias, reclamos y felicitaciones
       </div>
 
       <section className={infoText}>
-        <h1 className="text-lg font-semibold text-purple-700 sm:text-xl">
-          ¿Tienes alguna sugerencia, reclamo o felicitación?
-        </h1>
-        <p className={`${helperText} sm:text-base`}>
-          Nos importa tu opinión. Si deseas enviarnos un comentario, expresar una felicitación o
-          compartir alguna situación que requiera atención, puedes hacerlo fácilmente aquí.
-        </p>
-
         <div className={`${contentCard} space-y-4`}>
+          <div>
+            <h1 className="text-lg font-semibold text-purple-700 sm:text-xl">
+              ¿Tienes alguna sugerencia, reclamo o felicitación?
+            </h1>
+            <p className={`${helperText} sm:text-base`}>
+              Nos importa tu opinión. Si deseas enviarnos un comentario, expresar una felicitación o
+              compartir alguna situación que requiera atención, puedes hacerlo fácilmente aquí.
+            </p>
+          </div>
           <div className="flex justify-start">
-            <Link className={inlineCta} to="/info_administrativa/sugerencias">
+            <a
+              className={inlineCta}
+              href="https://contactenos.ucchristus.cl/"
+              target="_blank"
+              rel="noreferrer"
+            >
               Contáctanos
-            </Link>
+            </a>
           </div>
           <div className="space-y-2 text-sm sm:text-base">
             <p className="font-semibold text-purple-700">
               Solo debes seguir estos pasos:
             </p>
-            <ol className="list-decimal space-y-1 pl-5">
-              <li>Accede al formulario.</li>
+            <ol className="list-decimal space-y-2 pl-5">
               <li>
-                Completa tus datos: ingresa tu nombre, correo electrónico y cualquier otro dato
-                requerido.
+                Selecciona el tipo de caso: elige si deseas registrar un Reclamo, Sugerencia,
+                Solicitud o Felicitación.
               </li>
-              <li>Selecciona el motivo del mensaje.</li>
-              <li>Escribe tu mensaje y cuéntanos tu experiencia.</li>
-              <li>Envía el formulario. ¡Tu mensaje llegará directamente a nuestro equipo!</li>
+              <li>
+                Ingresa tus datos personales: escribe tu nombre, apellidos, RUT/DNI/pasaporte (sin
+                puntos ni guion), teléfono y correo electrónico.
+              </li>
+              <li>
+                Selecciona la información del caso: elige el Centro, Ubicación, Área, Sector,
+                Categoría y Subcategoría según corresponda.
+              </li>
+              <li>
+                Describe tu caso: explica brevemente el motivo del mensaje y cuál es tu solicitud o
+                comentario específico.
+              </li>
+              <li>
+                Indica si eres el paciente: marca “Sí” o “No”.
+                <ul className="list-disc pl-5">
+                  <li>
+                    Si no eres el paciente, completa también los datos del paciente (nombre,
+                    apellidos, RUT, teléfono y correo).
+                  </li>
+                </ul>
+              </li>
+              <li>Adjunta documentos si es que corresponde.</li>
+              <li>
+                Revisa y envía el formulario una vez que toda la información esté completa.
+              </li>
             </ol>
           </div>
-        </div>
 
-        <p className="text-sm font-semibold text-purple-700 sm:text-base">
-          ¡Tu retroalimentación nos ayuda a mejorar día a día!
-        </p>
+          <p className="text-sm font-semibold text-purple-700 sm:text-base">
+            ¡Tu retroalimentación nos ayuda a mejorar día a día!
+          </p>
+        </div>
       </section>
     </main>
   );

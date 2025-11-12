@@ -26,10 +26,11 @@ export default function InfoResPagare() {
         <div className={`${contentCard} space-y-5`}>
           <h3 className="text-base font-semibold text-purple-700">¿Sabías que...?</h3>
           <p>
-            El responsable del pagaré es quien firma la cuenta hospitalaria. Puede ser el paciente,
-            un acompañante, el representante legal u otra persona. Tiene responsabilidad financiera
-            con la institución y solo accederá a información clínica si cuenta con la autorización
-            correspondiente.
+            El responsable del pagaré es la persona que firma el pagaré de cuenta hospitalaria.
+            Puede ser el mismo paciente, acompañante, representante legal, o tercera persona. Tiene
+            responsabilidad financiera con la institución sobre la cuenta hospitalaria del paciente.
+            La institución no está obligada a entregar información clínica al responsable del
+            pagaré, sino es el mismo paciente o acompañante responsable declarado.
           </p>
           <h3 className="text-base font-semibold text-purple-700">
             ¿Dónde puedo recibir mayor orientación?

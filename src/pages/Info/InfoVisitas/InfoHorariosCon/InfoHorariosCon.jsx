@@ -24,6 +24,9 @@ export default function InfoHorariosCon() {
         <Link className={actionWhite} to="/info_horarios_entrada">
           CONDICIONES DE ENTRADA DE VISITAS AL HOSPITAL
         </Link>
+        <Link className={actionWhite} to="/info_visitas/elementos-permitidos">
+          ELEMENTOS NO PERMITIDOS AL INGRESO DEL HOSPITAL
+        </Link>
       </section>
     </main>
   );

@@ -24,7 +24,7 @@ export default function InfoVisitas() {
           INFORMACIÓN GENERAL DE ACOMPAÑANTES Y VISITAS
         </Link>
         <Link className={actionWhite} to="/info_horarios_condiciones">
-          HORARIOS Y CONDICIONES
+          HORARIOS, CONDICIONES, ELEMENTOS NO PERMITIDOS
         </Link>
         <Link className={actionWhite} to="/info_servicios_visitas">
           SERVICIOS Y APOYO DISPONIBLES PARA VISITAS
