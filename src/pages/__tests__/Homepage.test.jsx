@@ -6,6 +6,11 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate }
 })
 
+// Evitar que los tests hagan llamadas de red reales al trackeo
+vi.mock('../../utils/portalTracking', () => {
+  return { trackPortalButtonClick: vi.fn() }
+})
+
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Homepage from '../Homepage.jsx'
@@ -61,8 +66,7 @@ describe('Homepage', () => {
       </MemoryRouter>
     )
 
-  // The rendered button's accessible name is "Asistente virtual"
-  const button = screen.getByRole('button', { name: /Asistente virtual/i })
+  const button = screen.getByRole('button', { name: /asistente virtual/i })
     fireEvent.click(button)
 
     expect(mockNavigate).toHaveBeenCalledWith('/chatbot')
