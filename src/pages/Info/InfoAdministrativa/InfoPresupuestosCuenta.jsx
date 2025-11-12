@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -8,6 +7,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function InfoPresupuestosCuenta() {
   return (
@@ -26,12 +26,22 @@ export default function InfoPresupuestosCuenta() {
       </p>
 
       <section className={sectionStack}>
-        <Link className={actionPurple} to="/info_administrativa/presupuestos">
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/presupuestos"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-presupuestos"
+        >
           Presupuestos
-        </Link>
-        <Link className={actionPurple} to="/info_administrativa/cuenta-hospitalaria-pagos">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/cuenta-hospitalaria-pagos"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-cuenta-hospitalaria"
+        >
           Cuenta hospitalaria y pagos
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

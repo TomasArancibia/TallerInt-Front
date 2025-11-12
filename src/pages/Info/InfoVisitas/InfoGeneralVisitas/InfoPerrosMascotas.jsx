@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../../components/ui.jsx";
+import PortalTrackedLink from "../../../../components/PortalTrackedLink.jsx";
 
 export default function InfoPerrosMascotas() {
   return (
@@ -20,12 +20,22 @@ export default function InfoPerrosMascotas() {
         <div className={`${actionBlue} pointer-events-none`}>
           INGRESO PERROS DE ASISTENCIA / MASCOTAS
         </div>
-        <Link className={actionWhite} to="/info_visitas/ingreso-perros-asistencia">
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_visitas/ingreso-perros-asistencia"
+          trackingCategory="info_visitas_mascotas"
+          trackingCode="info-visitas-ingreso-perros-asistencia"
+        >
           INGRESO PERROS DE ASISTENCIA
-        </Link>
-        <Link className={actionWhite} to="/info_visitas/ingreso-mascotas">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_visitas/ingreso-mascotas"
+          trackingCategory="info_visitas_mascotas"
+          trackingCode="info-visitas-ingreso-mascotas"
+        >
           INGRESO DE MASCOTAS
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

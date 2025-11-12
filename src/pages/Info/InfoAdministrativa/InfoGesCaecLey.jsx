@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -8,6 +7,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function InfoGesCaecLey() {
   return (
@@ -26,15 +26,30 @@ export default function InfoGesCaecLey() {
       </p>
 
       <section className={sectionStack}>
-        <Link className={actionPurple} to="/info_administrativa/ges">
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/ges"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-ges"
+        >
           GES
-        </Link>
-        <Link className={actionPurple} to="/info_administrativa/caec">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/caec"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-caec"
+        >
           CAEC
-        </Link>
-        <Link className={actionPurple} to="/info_administrativa/ley-de-urgencia">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/ley-de-urgencia"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-ley-urgencia"
+        >
           Ley de Urgencia
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

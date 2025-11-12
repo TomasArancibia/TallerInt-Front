@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../../components/ui.jsx";
+import PortalTrackedLink from "../../../../components/PortalTrackedLink.jsx";
 
 export default function InfoHorariosCon() {
   return (
@@ -18,15 +18,30 @@ export default function InfoHorariosCon() {
       <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
       <section className={sectionStack}>
         <div className={`${actionBlue} pointer-events-none`}>HORARIOS Y CONDICIONES</div>
-        <Link className={actionWhite} to="/info_horarios_visitas">
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_horarios_visitas"
+          trackingCategory="info_visitas_horarios"
+          trackingCode="info-visitas-horarios-visitas"
+        >
           HORARIOS VISITAS
-        </Link>
-        <Link className={actionWhite} to="/info_horarios_entrada">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_horarios_entrada"
+          trackingCategory="info_visitas_horarios"
+          trackingCode="info-visitas-horarios-entrada"
+        >
           CONDICIONES DE ENTRADA DE VISITAS AL HOSPITAL
-        </Link>
-        <Link className={actionWhite} to="/info_visitas/elementos-permitidos">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_visitas/elementos-permitidos"
+          trackingCategory="info_visitas_horarios"
+          trackingCode="info-visitas-horarios-elementos"
+        >
           ELEMENTOS NO PERMITIDOS AL INGRESO DEL HOSPITAL
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -10,6 +10,8 @@ import {
   actionPurple,
   Logo,
 } from "../components/ui.jsx";
+import PortalTrackedLink from "../components/PortalTrackedLink.jsx";
+import { trackPortalButtonClick } from "../utils/portalTracking";
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -33,6 +35,13 @@ export default function Homepage() {
 
   // Interacción con asistente virtual pasa por un botón que navega a /chatbot
   function goToChatbot() {
+    trackPortalButtonClick({
+      buttonCode: "homepage-asistente-virtual",
+      buttonLabel: "Asistente virtual",
+      categoria: "asistente_virtual",
+      targetPath: "/chatbot",
+      sourcePath: window.location?.pathname,
+    });
     navigate("/chatbot");
   }
 
@@ -45,7 +54,7 @@ export default function Homepage() {
         <button
           type="button"
           onClick={goToChatbot}
-          className="absolute -right-6 top-2 inline-flex items-center gap-2 rounded-full border border-purple-700 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-purple-700 shadow-sm transition hover:bg-purple-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 sm:-right-8"
+          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-purple-700 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-purple-700 shadow-sm transition hover:bg-purple-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 sm:absolute sm:mt-0 sm:w-auto sm:-right-8 sm:top-2"
         >
           <FontAwesomeIcon icon={faComments} className="text-sm" />
           <span>Asistente virtual</span>
@@ -66,34 +75,74 @@ export default function Homepage() {
         <h2 className="mt-0 text-center text-base font-semibold text-slate-900">
           Informaciones
         </h2>
-        <Link className={actionBlue} to="/procesosclinicos">
+        <PortalTrackedLink
+          className={actionBlue}
+          to="/procesosclinicos"
+          trackingCategory="info"
+          trackingCode="homepage-info-procesosclinicos"
+        >
           INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE
-        </Link>
-        <Link className={actionBlue} to="/info_administrativa">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionBlue}
+          to="/info_administrativa"
+          trackingCategory="info"
+          trackingCode="homepage-info-administrativa"
+        >
           INFORMACIÓN ADMINISTRATIVA, PAGOS Y BENEFICIOS SOCIALES
-        </Link>
-        <Link className={actionBlue} to="/info_visitas">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionBlue}
+          to="/info_visitas"
+          trackingCategory="info"
+          trackingCode="homepage-info-visitas"
+        >
           ACOMPAÑANTES, VISITAS Y SERVICIOS DISPONIBLES
-        </Link>
+        </PortalTrackedLink>
 
         <h2 className="mt-6 text-center text-base font-semibold text-slate-900">
           Solicitudes
         </h2>
-        <Link className={actionPurple} to="/mantencion">
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/mantencion"
+          trackingCategory="solicitud"
+          trackingCode="homepage-solicitud-mantencion"
+        >
           SOLICITUDES DE MANTENCIÓN - COMODIDAD
-        </Link>
-        <Link className={actionPurple} to="/nutricion_y_alimentacion">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/nutricion_y_alimentacion"
+          trackingCategory="solicitud"
+          trackingCode="homepage-solicitud-nutricion"
+        >
           NUTRICIÓN Y ALIMENTACIÓN A PACIENTES
-        </Link>
-        <Link className={actionPurple} to="/limpieza">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/limpieza"
+          trackingCategory="solicitud"
+          trackingCode="homepage-solicitud-limpieza"
+        >
           LIMPIEZA DE HABITACIÓN, BAÑO O BOX
-        </Link>
-        <Link className={actionPurple} to="/asistencia_social">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/asistencia_social"
+          trackingCategory="solicitud"
+          trackingCode="homepage-solicitud-asistencia-social"
+        >
           ASISTENCIA SOCIAL
-        </Link>
-        <Link className={actionPurple} to="/acompanamiento_espiritual">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/acompanamiento_espiritual"
+          trackingCategory="solicitud"
+          trackingCode="homepage-solicitud-acompanamiento-espiritual"
+        >
           ACOMPAÑAMIENTO ESPIRITUAL
-        </Link>
+        </PortalTrackedLink>
 
       </section>
     </main>

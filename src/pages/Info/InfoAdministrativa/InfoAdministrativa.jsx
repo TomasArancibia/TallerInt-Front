@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function InfoAdministrativa() {
   return (
@@ -20,18 +20,38 @@ export default function InfoAdministrativa() {
         <div className={`${actionBlue} pointer-events-none`}>
           INFORMACIÓN ADMINISTRATIVA A PACIENTES
         </div>
-        <Link className={actionWhite} to="/info_administrativa/ges-caec-ley">
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_administrativa/ges-caec-ley"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-ges-caec-ley"
+        >
           INFORMACIÓN GES-CAEC-LEY DE URGENCIA
-        </Link>
-        <Link className={actionWhite} to="/info_administrativa/costos-prestaciones">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_administrativa/costos-prestaciones"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-costos-prestaciones"
+        >
           COSTO DE PRESTACIONES
-        </Link>
-        <Link className={actionWhite} to="/info_administrativa/presupuestos-cuenta">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_administrativa/presupuestos-cuenta"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-presupuestos-cuenta"
+        >
           PRESUPUESTOS, CUENTA HOSPITALARIA, PAGOS
-        </Link>
-        <Link className={actionWhite} to="/info_administrativa/sugerencias">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_administrativa/sugerencias"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-sugerencias"
+        >
           SUGERENCIAS, RECLAMOS Y FELICITACIONES
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

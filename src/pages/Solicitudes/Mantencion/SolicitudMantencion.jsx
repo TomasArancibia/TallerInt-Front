@@ -60,6 +60,14 @@ export default function SolicitudMantencion() {
       });
   }, [camaId]);
 
+  useEffect(() => {
+    if (resultadoEnvio === "success") {
+      const timer = setTimeout(() => navigate("/"), 1000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [resultadoEnvio, navigate]);
+
   const validarEmail = (value) => /\S+@\S+\.\S+/.test(value);
 
   const handleSubmitContacto = (event) => {
@@ -86,10 +94,6 @@ export default function SolicitudMantencion() {
   };
 
   const handleVolver = () => {
-    if (resultadoEnvio === "success") {
-      navigate("/");
-      return;
-    }
     if (step === "contacto") {
       navigate(backHref);
       return;
@@ -296,7 +300,7 @@ export default function SolicitudMantencion() {
             )}
             {resultadoEnvio === "success" && (
               <div className="w-full max-w-2xl rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm text-emerald-600 shadow-sm">
-                Solicitud enviada correctamente
+                Solicitud enviada correctamente. Redirigiendo al inicio…
               </div>
             )}
             {resultadoEnvio === "fail" && (
