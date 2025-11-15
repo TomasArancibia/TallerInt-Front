@@ -558,7 +558,7 @@ function colorForPercentage(value) {
                                 {(() => {
                                   const pct = sec.porcentaje || 0;
                                   const color = colorForPercentage(pct);
-                                  return <p className="text-[11px] font-semibold" style={{ color }}>{pct.toFixed(1)}%</p>;
+                                  return <p className="text-base font-bold" style={{ color }}>{pct.toFixed(1)}%</p>;
                                 })()}
                               </div>
                             </div>
@@ -606,8 +606,8 @@ function colorForPercentage(value) {
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="text-lg font-bold text-slate-900">{cama.total_sesiones}</p>
-                              <p className="text-[11px] text-slate-500">sesiones</p>
+                              <p className="text-2xl font-extrabold text-slate-900">{cama.total_sesiones}</p>
+                              <p className="text-[13px] font-semibold text-slate-500">Ingresos desde QR</p>
                             </div>
                           </li>
                         );
@@ -628,9 +628,9 @@ function colorForPercentage(value) {
                           {topChatTopics.map((topic) => (
                             <li key={topic.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2">
                               <div className="text-sm font-semibold text-slate-800">{topic.label}</div>
-                              <div className="text-right text-xs text-slate-500">
-                                <div className="font-semibold text-slate-900">{topic.total}</div>
-                                <div>{(topic.porcentaje || 0).toFixed(1)}%</div>
+                              <div className="text-right text-sm text-slate-500">
+                                <div className="text-xl font-bold text-slate-900">{topic.total}</div>
+                                <div className="text-base font-bold text-slate-700">{(topic.porcentaje || 0).toFixed(1)}%</div>
                               </div>
                             </li>
                           ))}
@@ -647,9 +647,9 @@ function colorForPercentage(value) {
                           {topChatBigrams.map((bg, idx) => (
                             <li key={`${bg.frase}-${idx}`} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
                               <div className="text-sm text-slate-800">{bg.frase}</div>
-                              <div className="text-right text-xs text-slate-500">
-                                <div className="font-semibold text-slate-900">{bg.total} menciones</div>
-                                <div>{(bg.porcentaje || 0).toFixed(1)}%</div>
+                              <div className="text-right text-sm text-slate-500">
+                                <div className="text-lg font-bold text-slate-900">{bg.total} menciones</div>
+                                <div className="text-base font-bold text-slate-700">{(bg.porcentaje || 0).toFixed(1)}%</div>
                               </div>
                             </li>
                           ))}
@@ -666,9 +666,9 @@ function colorForPercentage(value) {
                           {topChatKeywords.map((kw) => (
                             <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
                               <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
-                              <div className="text-right text-xs text-slate-500">
-                                <div className="font-semibold text-slate-800">{kw.total} menciones</div>
-                                <div>{(kw.porcentaje || 0).toFixed(1)}%</div>
+                              <div className="text-right text-sm text-slate-500">
+                                <div className="text-lg font-bold text-slate-900">{kw.total} menciones</div>
+                                <div className="text-base font-bold text-slate-700">{(kw.porcentaje || 0).toFixed(1)}%</div>
                               </div>
                             </li>
                           ))}
