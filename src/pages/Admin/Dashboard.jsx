@@ -755,62 +755,80 @@ function colorForPercentage(value) {
           {dashboardView === "chatbot" && (
             <section className="mt-6 flex flex-col gap-8">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h4 className="text-base font-semibold text-slate-800">Preguntas frecuentes a la IA</h4>
-                <div className="mt-4 space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
+                    <h4 className="text-base font-semibold text-slate-800">Uso del chatbot</h4>
+                    <p className="text-xs text-slate-500">Qué temas, frases y palabras se repiten en las conversaciones.</p>
+                  </div>
+                  <div className="flex gap-6 text-sm text-slate-600">
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-slate-400">Temas distintos</p>
+                      <p className="text-xl font-semibold text-slate-900">{topChatTopics.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-slate-400">Frases detectadas</p>
+                      <p className="text-xl font-semibold text-slate-900">{topChatBigrams.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-slate-400">Palabras clave</p>
+                      <p className="text-xl font-semibold text-slate-900">{topChatKeywords.length}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 grid gap-6 md:grid-cols-2">
+                  <div className="rounded-xl border border-slate-100 p-4">
                     <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Temas recurrentes</h5>
                     {topChatTopics.length === 0 ? (
                       <p className="mt-2 text-sm text-slate-500">Sin datos para este rango.</p>
                     ) : (
-                      <ul className="mt-2 space-y-2">
+                      <ul className="mt-3 space-y-2">
                         {topChatTopics.map((topic) => (
                           <li key={topic.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2">
                             <div className="text-sm font-semibold text-slate-800">{topic.label}</div>
-                            <div className="text-right text-sm text-slate-500">
-                              <div className="text-xl font-bold text-slate-900">{topic.total}</div>
-                              <div className="text-base font-bold text-slate-700">{(topic.porcentaje || 0).toFixed(1)}%</div>
+                            <div className="text-right text-xs text-slate-500">
+                              <div className="text-lg font-bold text-slate-900">{topic.total}</div>
+                              <div>{(topic.porcentaje || 0).toFixed(1)}%</div>
                             </div>
                           </li>
                         ))}
                       </ul>
                     )}
                   </div>
-
-                  <div>
-                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Frases frecuentes</h5>
-                    {topChatBigrams.length === 0 ? (
-                      <p className="mt-2 text-sm text-slate-500">Sin frases repetidas todavía.</p>
+                  <div className="rounded-xl border border-slate-100 p-4">
+                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Frases & palabras destacadas</h5>
+                    {topChatBigrams.length === 0 && topChatKeywords.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">Sin registros para este rango.</p>
                     ) : (
-                      <ul className="mt-2 space-y-2">
-                        {topChatBigrams.map((bg, idx) => (
-                          <li key={`${bg.frase}-${idx}`} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
-                            <div className="text-sm text-slate-800">{bg.frase}</div>
-                            <div className="text-right text-sm text-slate-500">
-                              <div className="text-lg font-bold text-slate-900">{bg.total} menciones</div>
-                              <div className="text-base font-bold text-slate-700">{(bg.porcentaje || 0).toFixed(1)}%</div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-
-                  <div>
-                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Palabras destacadas</h5>
-                    {topChatKeywords.length === 0 ? (
-                      <p className="mt-2 text-sm text-slate-500">Aún no hay mensajes en este rango.</p>
-                    ) : (
-                      <ul className="mt-2 space-y-2">
-                        {topChatKeywords.map((kw) => (
-                          <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
-                            <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
-                            <div className="text-right text-sm text-slate-500">
-                              <div className="text-lg font-bold text-slate-900">{kw.total} menciones</div>
-                              <div className="text-base font-bold text-slate-700">{(kw.porcentaje || 0).toFixed(1)}%</div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="mt-3 grid gap-4 lg:grid-cols-2">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase text-slate-400">Frases</p>
+                          <ul className="mt-2 space-y-2">
+                            {topChatBigrams.slice(0, 6).map((bg, idx) => (
+                              <li key={`${bg.frase}-${idx}`} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                                <div className="text-sm text-slate-800">{bg.frase}</div>
+                                <div className="text-right text-xs text-slate-500">
+                                  <div className="font-semibold text-slate-900">{bg.total}</div>
+                                  <div>{(bg.porcentaje || 0).toFixed(1)}%</div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase text-slate-400">Palabras</p>
+                          <ul className="mt-2 space-y-2">
+                            {topChatKeywords.slice(0, 6).map((kw) => (
+                              <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                                <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
+                                <div className="text-right text-xs text-slate-500">
+                                  <div className="font-semibold text-slate-900">{kw.total}</div>
+                                  <div>{(kw.porcentaje || 0).toFixed(1)}%</div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
