@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
@@ -63,6 +63,8 @@ export default function Dashboard() {
   const [promHospital, setPromHospital] = useState([]);
   const [portalSecciones, setPortalSecciones] = useState([]);
   const [portalCamas, setPortalCamas] = useState([]);
+  const [portalSesionesDia, setPortalSesionesDia] = useState([]);
+  const [portalSesionesResumen, setPortalSesionesResumen] = useState(null);
   const [portalChatKeywords, setPortalChatKeywords] = useState([]);
   const [portalChatTopics, setPortalChatTopics] = useState([]);
   const [portalChatBigrams, setPortalChatBigrams] = useState([]);
@@ -143,6 +145,8 @@ export default function Dashboard() {
         const portal = data.portal_analytics || {};
         setPortalSecciones(portal.secciones_mas_visitadas || []);
         setPortalCamas(portal.camas_con_mas_sesiones || []);
+        setPortalSesionesDia(portal.sesiones_por_dia || []);
+        setPortalSesionesResumen(portal.sesiones_resumen || null);
         setPortalChatKeywords(portal.chat_keywords || []);
         setPortalChatTopics(portal.chat_topics || []);
         setPortalChatBigrams(portal.chat_bigrams || []);
@@ -158,8 +162,14 @@ export default function Dashboard() {
   useEffect(() => { setTmpStart(fechaInicio); setTmpEnd(fechaFin); }, [fechaInicio, fechaFin]);
 
   function normalizeCategoriaSlug(slug) {
-    const trimmed = (slug || "").trim();
+    const trimmed = (slug || "").trim().toLowerCase();
     return trimmed ? trimmed : "otros";
+  }
+  function categoriaMatches(base, slug) {
+    const normalized = normalizeCategoriaSlug(slug);
+    if (base === "otros") return !normalized || normalized === "otros";
+    if (base === "info") return normalized === "info";
+    return normalized === base || normalized.startsWith(`${base}_`);
   }
 function formatCategoriaLabel(slug) {
   if (!slug || slug === "otros") return "Otras secciones";
@@ -175,7 +185,16 @@ function colorForPercentage(value) {
 
   useEffect(() => {
     if (selectedCategoria === "__all__") return;
-    const available = new Set(portalSecciones.map((sec) => normalizeCategoriaSlug(sec.categoria)));
+    const available = new Set();
+    for (const sec of portalSecciones) {
+      const normalized = normalizeCategoriaSlug(sec.categoria);
+      for (const cat of CATEGORY_ORDER) {
+        if (cat === "otros") continue;
+        if (normalized === cat || normalized.startsWith(`${cat}_`)) {
+          available.add(cat);
+        }
+      }
+    }
     if (!available.has(selectedCategoria)) {
       setSelectedCategoria("__all__");
     }
@@ -281,8 +300,17 @@ function colorForPercentage(value) {
   }, [chartDays, areaNames, metricasAreaDia]);
 
   const categoriaOptions = useMemo(() => {
-    const available = new Set(portalSecciones.map((sec) => normalizeCategoriaSlug(sec.categoria)));
-    return CATEGORY_ORDER.filter((slug) => available.has(slug)).map((slug) => ({
+    const available = new Set();
+    for (const sec of portalSecciones) {
+      const normalized = normalizeCategoriaSlug(sec.categoria);
+      for (const cat of CATEGORY_ORDER) {
+        if (cat === "otros") continue;
+        if (normalized === cat || normalized.startsWith(`${cat}_`)) {
+          available.add(cat);
+        }
+      }
+    }
+    return CATEGORY_ORDER.filter((slug) => slug !== "otros" && available.has(slug)).map((slug) => ({
       slug,
       label: formatCategoriaLabel(slug),
     }));
@@ -292,11 +320,39 @@ function colorForPercentage(value) {
     const base =
       selectedCategoria === "__all__"
         ? portalSecciones
-        : portalSecciones.filter((sec) => normalizeCategoriaSlug(sec.categoria) === selectedCategoria);
+        : portalSecciones.filter((sec) => categoriaMatches(selectedCategoria, sec.categoria));
     return base.slice(0, 10);
   }, [portalSecciones, selectedCategoria]);
 
   const topCamas = useMemo(() => portalCamas.slice(0, 10), [portalCamas]);
+  const sesionesPorDiaData = useMemo(() => {
+    if (!portalSesionesDia || portalSesionesDia.length === 0) return [];
+    return portalSesionesDia
+      .map((item) => ({
+        dia: item.dia,
+        total_sesiones: item.total_sesiones || 0,
+      }))
+      .sort((a, b) => (a.dia || "").localeCompare(b.dia || ""));
+  }, [portalSesionesDia]);
+  const sesionesPorDiaChartData = useMemo(() => {
+    if (sesionesPorDiaData.length <= 15) return sesionesPorDiaData;
+    return sesionesPorDiaData.slice(-15);
+  }, [sesionesPorDiaData]);
+  const sesionesPorDiaTieneDatos = useMemo(
+    () => sesionesPorDiaData.some((item) => (item.total_sesiones || 0) > 0),
+    [sesionesPorDiaData]
+  );
+  const sesionesResumen = useMemo(() => {
+    if (!portalSesionesResumen) {
+      return { total: 0, promedio: 0, dias: 0 };
+    }
+    return {
+      total: portalSesionesResumen.total_sesiones || 0,
+      promedio: portalSesionesResumen.promedio_diario || 0,
+      dias: portalSesionesResumen.dias_medidos || 0,
+    };
+  }, [portalSesionesResumen]);
+  const numberFormatter = useMemo(() => new Intl.NumberFormat("es-CL"), []);
   const topChatTopics = useMemo(() => portalChatTopics.slice(0, 10), [portalChatTopics]);
   const topChatBigrams = useMemo(() => portalChatBigrams.slice(0, 10), [portalChatBigrams]);
   const topChatKeywords = useMemo(() => portalChatKeywords.slice(0, 10), [portalChatKeywords]);
@@ -548,8 +604,48 @@ function colorForPercentage(value) {
           {dashboardView === "sesiones" && (
             <section className="mt-6 flex flex-col gap-8">
               <div>
+                <h3 className="text-lg font-semibold text-slate-800">Sesiones registradas</h3>
+                <p className="mt-1 text-xs text-slate-500">Estas cifras muestran el total y el promedio de ingresos QR en el rango elegido.</p>
+                <div className="mt-4 grid gap-6 lg:grid-cols-3">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[220px]">
+                    <p className="text-sm text-slate-500">Sesiones únicas</p>
+                    <p className="mt-2 text-4xl font-bold text-slate-900">{numberFormatter.format(sesionesResumen.total)}</p>
+                    <p className="mt-5 text-sm text-slate-500">Promedio diario</p>
+                    <p className="text-3xl font-semibold text-indigo-600">{sesionesResumen.promedio.toFixed(1)}</p>
+                    <p className="mt-2 text-xs text-slate-400">
+                      Basado en {sesionesResumen.dias || Math.max(1, sesionesPorDiaData.length)} día(s)
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-base font-semibold text-slate-800">Sesiones diarias (últimos 15 días máx.)</h4>
+                      <span className="text-xs text-slate-500">{fechaInicio} – {fechaFin}</span>
+                    </div>
+                    {!sesionesPorDiaTieneDatos ? (
+                      <p className="mt-4 text-sm text-slate-500">Sin registros de sesiones para este rango de fechas.</p>
+                    ) : (
+                      <div className="mt-4 h-64 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={sesionesPorDiaChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="dia" />
+                            <YAxis allowDecimals={false} />
+                            <Tooltip />
+                            <Bar dataKey="total_sesiones" name="Sesiones" fill="#2563eb" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div>
                 <h3 className="text-lg font-semibold text-slate-800">Uso del portal QR</h3>
-                <p className="mt-1 text-xs text-slate-500">Consolidado de clics e ingresos registrados en el rango seleccionado.</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Consolidado de clics e ingresos dentro del rango seleccionado. Cada % indica qué proporción de sesiones únicas
+                  accedió al botón durante su visita.
+                </p>
                 <div className="mt-4 grid gap-6 lg:grid-cols-2">
                   <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                     <div className="flex flex-wrap items-center gap-3">
@@ -574,37 +670,42 @@ function colorForPercentage(value) {
                     ) : filteredSecciones.length === 0 ? (
                       <p className="mt-4 text-sm text-slate-500">No hay datos para esta categoría.</p>
                     ) : (
-                      <ul className="mt-4 space-y-3">
-                        {filteredSecciones.map((sec) => (
-                          <li key={`${sec.seccion}-${sec.label || "label"}`}>
-                            <div className="flex items-center justify-between gap-3">
-                              <div>
-                                <p className="text-sm font-semibold text-slate-800">{sec.label || sec.seccion}</p>
-                                <p className="text-xs text-slate-500">
-                                  {sec.categoria ? formatCategoriaLabel(normalizeCategoriaSlug(sec.categoria)) : "Sin categoría"}
-                                </p>
+                      <>
+                        <ul className="mt-4 space-y-3">
+                          {filteredSecciones.map((sec) => (
+                            <li key={`${sec.seccion}-${sec.label || "label"}`}>
+                              <div className="flex items-center justify-between gap-3">
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-800">{sec.label || sec.seccion}</p>
+                                  <p className="text-xs text-slate-500">
+                                    {sec.categoria ? formatCategoriaLabel(normalizeCategoriaSlug(sec.categoria)) : "Sin categoría"}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-sm font-bold text-slate-900">{sec.total_clicks}</p>
+                                  {(() => {
+                                    const pct = sec.porcentaje || 0;
+                                    const color = colorForPercentage(pct);
+                                    return <p className="text-base font-bold" style={{ color }}>{pct.toFixed(1)}%</p>;
+                                  })()}
+                                </div>
                               </div>
-                              <div className="text-right">
-                                <p className="text-sm font-bold text-slate-900">{sec.total_clicks}</p>
-                                {(() => {
-                                  const pct = sec.porcentaje || 0;
-                                  const color = colorForPercentage(pct);
-                                  return <p className="text-base font-bold" style={{ color }}>{pct.toFixed(1)}%</p>;
-                                })()}
+                              <div className="mt-2 h-2 rounded-full bg-slate-100">
+                                <div
+                                  className="h-2 rounded-full bg-indigo-500"
+                                  style={{
+                                    width: `${Math.min(100, sec.porcentaje || 0)}%`,
+                                    backgroundColor: colorForPercentage(sec.porcentaje || 0),
+                                  }}
+                                />
                               </div>
-                            </div>
-                            <div className="mt-2 h-2 rounded-full bg-slate-100">
-                              <div
-                                className="h-2 rounded-full bg-indigo-500"
-                                style={{
-                                  width: `${Math.min(100, sec.porcentaje || 0)}%`,
-                                  backgroundColor: colorForPercentage(sec.porcentaje || 0),
-                                }}
-                              />
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-3 text-[11px] text-slate-400">
+                          Los porcentajes indican qué fracción de las sesiones únicas abrió cada botón en el rango seleccionado.
+                        </p>
+                      </>
                     )}
                   </div>
 
