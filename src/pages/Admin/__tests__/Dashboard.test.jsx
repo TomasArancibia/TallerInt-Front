@@ -36,6 +36,8 @@ describe('Dashboard page', () => {
               secciones_mas_visitadas: [{ seccion: '/inicio', label: 'Inicio', categoria: 'info', total_clicks: 3, porcentaje: 60 }],
               camas_con_mas_sesiones: [{ id_cama: 7, cama: 'A', habitacion: 'H-101', institucion: 'H1', total_sesiones: 4 }],
               chat_keywords: [{ keyword: 'visita', total: 2, porcentaje: 50 }],
+              chat_topics: [{ id: 'visitas', label: 'Visitas', total: 2, porcentaje: 40 }],
+              chat_bigrams: [{ frase: 'horario visitas', total: 2, porcentaje: 30 }],
             },
           }),
         })

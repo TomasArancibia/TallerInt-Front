@@ -59,6 +59,8 @@ export default function Dashboard() {
   const [portalSecciones, setPortalSecciones] = useState([]);
   const [portalCamas, setPortalCamas] = useState([]);
   const [portalChatKeywords, setPortalChatKeywords] = useState([]);
+  const [portalChatTopics, setPortalChatTopics] = useState([]);
+  const [portalChatBigrams, setPortalChatBigrams] = useState([]);
   const [selectedCategoria, setSelectedCategoria] = useState("__all__");
   const { getAccessToken, signOut } = useAdminAuth();
 
@@ -136,6 +138,8 @@ export default function Dashboard() {
         setPortalSecciones(portal.secciones_mas_visitadas || []);
         setPortalCamas(portal.camas_con_mas_sesiones || []);
         setPortalChatKeywords(portal.chat_keywords || []);
+        setPortalChatTopics(portal.chat_topics || []);
+        setPortalChatBigrams(portal.chat_bigrams || []);
       } catch (err) {
         if (!active) return;
         console.error("Error cargando métricas:", err);
@@ -281,6 +285,8 @@ export default function Dashboard() {
   }, [portalSecciones, selectedCategoria]);
 
   const topCamas = useMemo(() => portalCamas.slice(0, 10), [portalCamas]);
+  const topChatTopics = useMemo(() => portalChatTopics.slice(0, 10), [portalChatTopics]);
+  const topChatBigrams = useMemo(() => portalChatBigrams.slice(0, 10), [portalChatBigrams]);
   const topChatKeywords = useMemo(() => portalChatKeywords.slice(0, 10), [portalChatKeywords]);
 
   return (
@@ -588,21 +594,64 @@ export default function Dashboard() {
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <h4 className="text-base font-semibold text-slate-800">Preguntas frecuentes a la IA</h4>
-                  {topChatKeywords.length === 0 ? (
-                    <p className="mt-4 text-sm text-slate-500">Aún no hay mensajes en este rango.</p>
-                  ) : (
-                    <ul className="mt-4 space-y-3">
-                      {topChatKeywords.map((kw) => (
-                        <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
-                          <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
-                          <div className="text-right text-xs text-slate-500">
-                            <div className="font-semibold text-slate-800">{kw.total} menciones</div>
-                            <div>{(kw.porcentaje || 0).toFixed(1)}%</div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <div className="mt-4 space-y-5">
+                    <div>
+                      <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Temas recurrentes</h5>
+                      {topChatTopics.length === 0 ? (
+                        <p className="mt-2 text-sm text-slate-500">Sin datos para este rango.</p>
+                      ) : (
+                        <ul className="mt-2 space-y-2">
+                          {topChatTopics.map((topic) => (
+                            <li key={topic.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2">
+                              <div className="text-sm font-semibold text-slate-800">{topic.label}</div>
+                              <div className="text-right text-xs text-slate-500">
+                                <div className="font-semibold text-slate-900">{topic.total}</div>
+                                <div>{(topic.porcentaje || 0).toFixed(1)}%</div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    <div>
+                      <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Frases frecuentes</h5>
+                      {topChatBigrams.length === 0 ? (
+                        <p className="mt-2 text-sm text-slate-500">Sin frases repetidas todavía.</p>
+                      ) : (
+                        <ul className="mt-2 space-y-2">
+                          {topChatBigrams.map((bg, idx) => (
+                            <li key={`${bg.frase}-${idx}`} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                              <div className="text-sm text-slate-800">{bg.frase}</div>
+                              <div className="text-right text-xs text-slate-500">
+                                <div className="font-semibold text-slate-900">{bg.total} menciones</div>
+                                <div>{(bg.porcentaje || 0).toFixed(1)}%</div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    <div>
+                      <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Palabras destacadas</h5>
+                      {topChatKeywords.length === 0 ? (
+                        <p className="mt-2 text-sm text-slate-500">Aún no hay mensajes en este rango.</p>
+                      ) : (
+                        <ul className="mt-2 space-y-2">
+                          {topChatKeywords.map((kw) => (
+                            <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                              <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
+                              <div className="text-right text-xs text-slate-500">
+                                <div className="font-semibold text-slate-800">{kw.total} menciones</div>
+                                <div>{(kw.porcentaje || 0).toFixed(1)}%</div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
