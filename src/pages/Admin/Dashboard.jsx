@@ -155,11 +155,17 @@ export default function Dashboard() {
     const trimmed = (slug || "").trim();
     return trimmed ? trimmed : "otros";
   }
-  function formatCategoriaLabel(slug) {
-    if (!slug || slug === "otros") return "Otras secciones";
-    if (CATEGORY_LABELS[slug]) return CATEGORY_LABELS[slug];
-    return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  }
+function formatCategoriaLabel(slug) {
+  if (!slug || slug === "otros") return "Otras secciones";
+  if (CATEGORY_LABELS[slug]) return CATEGORY_LABELS[slug];
+  return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function colorForPercentage(value) {
+  if (value >= 50) return "#059669"; // verde
+  if (value >= 10) return "#f59e0b"; // amarillo
+  return "#dc2626"; // rojo
+}
 
   useEffect(() => {
     if (selectedCategoria === "__all__") return;
@@ -537,29 +543,35 @@ export default function Dashboard() {
                   ) : filteredSecciones.length === 0 ? (
                     <p className="mt-4 text-sm text-slate-500">No hay datos para esta categoría.</p>
                   ) : (
-                    <ul className="mt-4 space-y-3">
-                      {filteredSecciones.map((sec) => (
-                        <li key={`${sec.seccion}-${sec.label || "label"}`}>
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <p className="text-sm font-semibold text-slate-800">{sec.label || sec.seccion}</p>
-                              <p className="text-xs text-slate-500">
-                                {sec.seccion}
-                                {sec.categoria ? ` · ${formatCategoriaLabel(normalizeCategoriaSlug(sec.categoria))}` : ""}
-                              </p>
+                      <ul className="mt-4 space-y-3">
+                        {filteredSecciones.map((sec) => (
+                          <li key={`${sec.seccion}-${sec.label || "label"}`}>
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-semibold text-slate-800">{sec.label || sec.seccion}</p>
+                                <p className="text-xs text-slate-500">
+                                  {sec.categoria ? formatCategoriaLabel(normalizeCategoriaSlug(sec.categoria)) : "Sin categoría"}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm font-bold text-slate-900">{sec.total_clicks}</p>
+                                {(() => {
+                                  const pct = sec.porcentaje || 0;
+                                  const color = colorForPercentage(pct);
+                                  return <p className="text-[11px] font-semibold" style={{ color }}>{pct.toFixed(1)}%</p>;
+                                })()}
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <p className="text-sm font-bold text-slate-900">{sec.total_clicks}</p>
-                              <p className="text-[11px] text-slate-500">{(sec.porcentaje || 0).toFixed(1)}%</p>
+                            <div className="mt-2 h-2 rounded-full bg-slate-100">
+                              <div
+                                className="h-2 rounded-full bg-indigo-500"
+                                style={{
+                                  width: `${Math.min(100, sec.porcentaje || 0)}%`,
+                                  backgroundColor: colorForPercentage(sec.porcentaje || 0),
+                                }}
+                              />
                             </div>
-                          </div>
-                          <div className="mt-2 h-2 rounded-full bg-slate-100">
-                            <div
-                              className="h-2 rounded-full bg-indigo-500"
-                              style={{ width: `${Math.min(100, sec.porcentaje || 0)}%` }}
-                            />
-                          </div>
-                        </li>
+                          </li>
                       ))}
                     </ul>
                   )}
