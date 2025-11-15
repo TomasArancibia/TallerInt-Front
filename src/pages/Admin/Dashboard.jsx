@@ -16,6 +16,11 @@ const CATEGORY_LABELS = {
   info_visitas: "Info Visitas",
 };
 const CATEGORY_ORDER = ["asistente_virtual", "info", "info_procesos_clinicos", "info_administrativa", "info_visitas"];
+const DASHBOARD_TABS = [
+  { key: "solicitudes", label: "Métricas de solicitudes" },
+  { key: "sesiones", label: "Métricas de sesiones QR" },
+  { key: "chatbot", label: "Métricas del chatbot" },
+];
 
 export default function Dashboard() {
   const [hospitales, setHospitales] = useState([]);
@@ -62,6 +67,7 @@ export default function Dashboard() {
   const [portalChatTopics, setPortalChatTopics] = useState([]);
   const [portalChatBigrams, setPortalChatBigrams] = useState([]);
   const [selectedCategoria, setSelectedCategoria] = useState("__all__");
+  const [dashboardView, setDashboardView] = useState("solicitudes");
   const { getAccessToken, signOut } = useAdminAuth();
 
   useEffect(() => {
@@ -367,11 +373,31 @@ function colorForPercentage(value) {
         </div>
       </header>
 
+      <div className="mt-4 flex flex-wrap gap-2">
+        {DASHBOARD_TABS.map((tab) => {
+          const isActive = dashboardView === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setDashboardView(tab.key)}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                isActive
+                  ? "border-slate-900 bg-slate-900 text-white shadow-sm"
+                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       {status === "loading" && <p className="text-sm text-slate-600">Cargando datos...</p>}
       {status === "error" && <p className="text-sm font-semibold text-red-600">Error: {error}</p>}
       {status === "ok" && (
         <>
-          <section className="mt-6 flex flex-col gap-8">
+          {dashboardView === "solicitudes" && (
+            <section className="mt-6 flex flex-col gap-8">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Métricas</h2>
             </div>
@@ -516,33 +542,38 @@ function colorForPercentage(value) {
               </div>
             </div>
 
-            <div>
-              <h3 className="text-lg font-semibold text-slate-800">Uso del portal QR y asistente</h3>
-              <p className="mt-1 text-xs text-slate-500">Consolidado de clics y consultas registrados en el rango seleccionado.</p>
-              <div className="mt-4 grid gap-6 lg:grid-cols-3">
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h4 className="text-base font-semibold text-slate-800">Secciones más visitadas</h4>
-                    {categoriaOptions.length > 1 && (
-                      <select
-                        className="ml-auto min-w-[160px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-sm text-slate-700"
-                        value={selectedCategoria}
-                        onChange={(e) => setSelectedCategoria(e.target.value)}
-                      >
-                        <option value="__all__">Todas las categorías</option>
-                        {categoriaOptions.map((opt) => (
-                          <option key={opt.slug} value={opt.slug}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                  </div>
-                  {portalSecciones.length === 0 ? (
-                    <p className="mt-4 text-sm text-slate-500">Sin registros en el periodo.</p>
-                  ) : filteredSecciones.length === 0 ? (
-                    <p className="mt-4 text-sm text-slate-500">No hay datos para esta categoría.</p>
-                  ) : (
+            </section>
+          )}
+
+          {dashboardView === "sesiones" && (
+            <section className="mt-6 flex flex-col gap-8">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800">Uso del portal QR</h3>
+                <p className="mt-1 text-xs text-slate-500">Consolidado de clics e ingresos registrados en el rango seleccionado.</p>
+                <div className="mt-4 grid gap-6 lg:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h4 className="text-base font-semibold text-slate-800">Secciones más visitadas</h4>
+                      {categoriaOptions.length > 1 && (
+                        <select
+                          className="ml-auto min-w-[160px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-sm text-slate-700"
+                          value={selectedCategoria}
+                          onChange={(e) => setSelectedCategoria(e.target.value)}
+                        >
+                          <option value="__all__">Todas las categorías</option>
+                          {categoriaOptions.map((opt) => (
+                            <option key={opt.slug} value={opt.slug}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                    {portalSecciones.length === 0 ? (
+                      <p className="mt-4 text-sm text-slate-500">Sin registros en el periodo.</p>
+                    ) : filteredSecciones.length === 0 ? (
+                      <p className="mt-4 text-sm text-slate-500">No hay datos para esta categoría.</p>
+                    ) : (
                       <ul className="mt-4 space-y-3">
                         {filteredSecciones.map((sec) => (
                           <li key={`${sec.seccion}-${sec.label || "label"}`}>
@@ -572,114 +603,119 @@ function colorForPercentage(value) {
                               />
                             </div>
                           </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <h4 className="text-base font-semibold text-slate-800">Camas con más sesiones</h4>
-                  {topCamas.length === 0 ? (
-                    <p className="mt-4 text-sm text-slate-500">Sin actividad registrada.</p>
-                  ) : (
-                    <ul className="mt-4 space-y-3">
-                      {topCamas.map((cama, index) => {
-                        const habitacionLabel = cama.habitacion ? `Hab. ${cama.habitacion}` : "Habitacion N/D";
-                        const camaLabel = `Cama ${cama.cama || cama.id_cama}`;
-                        const hospitalLabel = cama.institucion || cama.hospital || cama.nombre_hospital || cama.hospital_nombre || "";
-                        const servicioLabel =
-                          cama.servicio ||
-                          cama.nombre_servicio ||
-                          cama.servicio_nombre ||
-                          cama.servicioNombre ||
-                          cama.nombreServicio ||
-                          "";
-                        return (
-                          <li key={`${cama.id_cama}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2">
-                            <div>
-                              <p className="text-sm font-semibold text-slate-800">
-                                #{index + 1} {habitacionLabel} - {camaLabel}
-                              </p>
-                              <p className="text-xs text-slate-500">
-                                {hospitalLabel || "Hospital N/D"}
-                                {servicioLabel ? ` - ${servicioLabel}` : " - Servicio N/D"}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-2xl font-extrabold text-slate-900">{cama.total_sesiones}</p>
-                              <p className="text-[13px] font-semibold text-slate-500">Ingresos desde QR</p>
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <h4 className="text-base font-semibold text-slate-800">Preguntas frecuentes a la IA</h4>
-                  <div className="mt-4 space-y-5">
-                    <div>
-                      <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Temas recurrentes</h5>
-                      {topChatTopics.length === 0 ? (
-                        <p className="mt-2 text-sm text-slate-500">Sin datos para este rango.</p>
-                      ) : (
-                        <ul className="mt-2 space-y-2">
-                          {topChatTopics.map((topic) => (
-                            <li key={topic.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2">
-                              <div className="text-sm font-semibold text-slate-800">{topic.label}</div>
-                              <div className="text-right text-sm text-slate-500">
-                                <div className="text-xl font-bold text-slate-900">{topic.total}</div>
-                                <div className="text-base font-bold text-slate-700">{(topic.porcentaje || 0).toFixed(1)}%</div>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <h4 className="text-base font-semibold text-slate-800">Camas con más sesiones</h4>
+                    {topCamas.length === 0 ? (
+                      <p className="mt-4 text-sm text-slate-500">Sin actividad registrada.</p>
+                    ) : (
+                      <ul className="mt-4 space-y-3">
+                        {topCamas.map((cama, index) => {
+                          const habitacionLabel = cama.habitacion ? `Hab. ${cama.habitacion}` : "Habitacion N/D";
+                          const camaLabel = `Cama ${cama.cama || cama.id_cama}`;
+                          const hospitalLabel = cama.institucion || cama.hospital || cama.nombre_hospital || cama.hospital_nombre || "";
+                          const servicioLabel =
+                            cama.servicio ||
+                            cama.nombre_servicio ||
+                            cama.servicio_nombre ||
+                            cama.servicioNombre ||
+                            cama.nombreServicio ||
+                            "";
+                          return (
+                            <li key={`${cama.id_cama}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2">
+                              <div>
+                                <p className="text-sm font-semibold text-slate-800">
+                                  #{index + 1} {habitacionLabel} - {camaLabel}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                  {hospitalLabel || "Hospital N/D"}
+                                  {servicioLabel ? ` - ${servicioLabel}` : " - Servicio N/D"}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-2xl font-extrabold text-slate-900">{cama.total_sesiones}</p>
+                                <p className="text-[13px] font-semibold text-slate-500">Ingresos desde QR</p>
                               </div>
                             </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-
-                    <div>
-                      <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Frases frecuentes</h5>
-                      {topChatBigrams.length === 0 ? (
-                        <p className="mt-2 text-sm text-slate-500">Sin frases repetidas todavía.</p>
-                      ) : (
-                        <ul className="mt-2 space-y-2">
-                          {topChatBigrams.map((bg, idx) => (
-                            <li key={`${bg.frase}-${idx}`} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
-                              <div className="text-sm text-slate-800">{bg.frase}</div>
-                              <div className="text-right text-sm text-slate-500">
-                                <div className="text-lg font-bold text-slate-900">{bg.total} menciones</div>
-                                <div className="text-base font-bold text-slate-700">{(bg.porcentaje || 0).toFixed(1)}%</div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-
-                    <div>
-                      <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Palabras destacadas</h5>
-                      {topChatKeywords.length === 0 ? (
-                        <p className="mt-2 text-sm text-slate-500">Aún no hay mensajes en este rango.</p>
-                      ) : (
-                        <ul className="mt-2 space-y-2">
-                          {topChatKeywords.map((kw) => (
-                            <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
-                              <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
-                              <div className="text-right text-sm text-slate-500">
-                                <div className="text-lg font-bold text-slate-900">{kw.total} menciones</div>
-                                <div className="text-base font-bold text-slate-700">{(kw.porcentaje || 0).toFixed(1)}%</div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
+
+          {dashboardView === "chatbot" && (
+            <section className="mt-6 flex flex-col gap-8">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h4 className="text-base font-semibold text-slate-800">Preguntas frecuentes a la IA</h4>
+                <div className="mt-4 space-y-5">
+                  <div>
+                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Temas recurrentes</h5>
+                    {topChatTopics.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">Sin datos para este rango.</p>
+                    ) : (
+                      <ul className="mt-2 space-y-2">
+                        {topChatTopics.map((topic) => (
+                          <li key={topic.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2">
+                            <div className="text-sm font-semibold text-slate-800">{topic.label}</div>
+                            <div className="text-right text-sm text-slate-500">
+                              <div className="text-xl font-bold text-slate-900">{topic.total}</div>
+                              <div className="text-base font-bold text-slate-700">{(topic.porcentaje || 0).toFixed(1)}%</div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <div>
+                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Frases frecuentes</h5>
+                    {topChatBigrams.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">Sin frases repetidas todavía.</p>
+                    ) : (
+                      <ul className="mt-2 space-y-2">
+                        {topChatBigrams.map((bg, idx) => (
+                          <li key={`${bg.frase}-${idx}`} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                            <div className="text-sm text-slate-800">{bg.frase}</div>
+                            <div className="text-right text-sm text-slate-500">
+                              <div className="text-lg font-bold text-slate-900">{bg.total} menciones</div>
+                              <div className="text-base font-bold text-slate-700">{(bg.porcentaje || 0).toFixed(1)}%</div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <div>
+                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Palabras destacadas</h5>
+                    {topChatKeywords.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">Aún no hay mensajes en este rango.</p>
+                    ) : (
+                      <ul className="mt-2 space-y-2">
+                        {topChatKeywords.map((kw) => (
+                          <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                            <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
+                            <div className="text-right text-sm text-slate-500">
+                              <div className="text-lg font-bold text-slate-900">{kw.total} menciones</div>
+                              <div className="text-base font-bold text-slate-700">{(kw.porcentaje || 0).toFixed(1)}%</div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
         </>
       )}
     </div>
