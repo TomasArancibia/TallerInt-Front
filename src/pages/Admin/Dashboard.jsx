@@ -8,6 +8,15 @@ const API =
     ? "https://tallerintegracion-back.onrender.com"
     : "http://127.0.0.1:8000");
 
+const CATEGORY_LABELS = {
+  asistente_virtual: "Chatbot",
+  info: "Info General",
+  info_procesos_clinicos: "Info Procesos Clínicos",
+  info_administrativa: "Info Administrativa",
+  info_visitas: "Info Visitas",
+};
+const CATEGORY_ORDER = ["asistente_virtual", "info", "info_procesos_clinicos", "info_administrativa", "info_visitas"];
+
 export default function Dashboard() {
   const [hospitales, setHospitales] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -50,6 +59,7 @@ export default function Dashboard() {
   const [portalSecciones, setPortalSecciones] = useState([]);
   const [portalCamas, setPortalCamas] = useState([]);
   const [portalChatKeywords, setPortalChatKeywords] = useState([]);
+  const [selectedCategoria, setSelectedCategoria] = useState("__all__");
   const { getAccessToken, signOut } = useAdminAuth();
 
   useEffect(() => {
@@ -136,6 +146,24 @@ export default function Dashboard() {
   }, [fechaFin, fechaInicio, getAccessToken, signOut]);
 
   useEffect(() => { setTmpStart(fechaInicio); setTmpEnd(fechaFin); }, [fechaInicio, fechaFin]);
+
+  function normalizeCategoriaSlug(slug) {
+    const trimmed = (slug || "").trim();
+    return trimmed ? trimmed : "otros";
+  }
+  function formatCategoriaLabel(slug) {
+    if (!slug || slug === "otros") return "Otras secciones";
+    if (CATEGORY_LABELS[slug]) return CATEGORY_LABELS[slug];
+    return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  useEffect(() => {
+    if (selectedCategoria === "__all__") return;
+    const available = new Set(portalSecciones.map((sec) => normalizeCategoriaSlug(sec.categoria)));
+    if (!available.has(selectedCategoria)) {
+      setSelectedCategoria("__all__");
+    }
+  }, [portalSecciones, selectedCategoria]);
 
   const tableWrapper = "mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm";
   const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
@@ -235,6 +263,25 @@ export default function Dashboard() {
     }
     return base;
   }, [chartDays, areaNames, metricasAreaDia]);
+
+  const categoriaOptions = useMemo(() => {
+    const available = new Set(portalSecciones.map((sec) => normalizeCategoriaSlug(sec.categoria)));
+    return CATEGORY_ORDER.filter((slug) => available.has(slug)).map((slug) => ({
+      slug,
+      label: formatCategoriaLabel(slug),
+    }));
+  }, [portalSecciones]);
+
+  const filteredSecciones = useMemo(() => {
+    const base =
+      selectedCategoria === "__all__"
+        ? portalSecciones
+        : portalSecciones.filter((sec) => normalizeCategoriaSlug(sec.categoria) === selectedCategoria);
+    return base.slice(0, 10);
+  }, [portalSecciones, selectedCategoria]);
+
+  const topCamas = useMemo(() => portalCamas.slice(0, 10), [portalCamas]);
+  const topChatKeywords = useMemo(() => portalChatKeywords.slice(0, 10), [portalChatKeywords]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -462,19 +509,37 @@ export default function Dashboard() {
               <p className="mt-1 text-xs text-slate-500">Consolidado de clics y consultas registrados en el rango seleccionado.</p>
               <div className="mt-4 grid gap-6 lg:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <h4 className="text-base font-semibold text-slate-800">Secciones más visitadas</h4>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h4 className="text-base font-semibold text-slate-800">Secciones más visitadas</h4>
+                    {categoriaOptions.length > 1 && (
+                      <select
+                        className="ml-auto min-w-[160px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-sm text-slate-700"
+                        value={selectedCategoria}
+                        onChange={(e) => setSelectedCategoria(e.target.value)}
+                      >
+                        <option value="__all__">Todas las categorías</option>
+                        {categoriaOptions.map((opt) => (
+                          <option key={opt.slug} value={opt.slug}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
                   {portalSecciones.length === 0 ? (
                     <p className="mt-4 text-sm text-slate-500">Sin registros en el periodo.</p>
+                  ) : filteredSecciones.length === 0 ? (
+                    <p className="mt-4 text-sm text-slate-500">No hay datos para esta categoría.</p>
                   ) : (
                     <ul className="mt-4 space-y-3">
-                      {portalSecciones.map((sec) => (
+                      {filteredSecciones.map((sec) => (
                         <li key={`${sec.seccion}-${sec.label || "label"}`}>
                           <div className="flex items-center justify-between gap-3">
                             <div>
                               <p className="text-sm font-semibold text-slate-800">{sec.label || sec.seccion}</p>
                               <p className="text-xs text-slate-500">
                                 {sec.seccion}
-                                {sec.categoria ? ` · ${sec.categoria}` : ""}
+                                {sec.categoria ? ` · ${formatCategoriaLabel(normalizeCategoriaSlug(sec.categoria))}` : ""}
                               </p>
                             </div>
                             <div className="text-right">
@@ -496,11 +561,11 @@ export default function Dashboard() {
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <h4 className="text-base font-semibold text-slate-800">Camas con más sesiones</h4>
-                  {portalCamas.length === 0 ? (
+                  {topCamas.length === 0 ? (
                     <p className="mt-4 text-sm text-slate-500">Sin actividad registrada.</p>
                   ) : (
                     <ul className="mt-4 space-y-3">
-                      {portalCamas.map((cama, index) => (
+                      {topCamas.map((cama, index) => (
                         <li key={`${cama.id_cama}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2">
                           <div>
                             <p className="text-sm font-semibold text-slate-800">
@@ -523,11 +588,11 @@ export default function Dashboard() {
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <h4 className="text-base font-semibold text-slate-800">Preguntas frecuentes a la IA</h4>
-                  {portalChatKeywords.length === 0 ? (
+                  {topChatKeywords.length === 0 ? (
                     <p className="mt-4 text-sm text-slate-500">Aún no hay mensajes en este rango.</p>
                   ) : (
                     <ul className="mt-4 space-y-3">
-                      {portalChatKeywords.map((kw) => (
+                      {topChatKeywords.map((kw) => (
                         <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
                           <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
                           <div className="text-right text-xs text-slate-500">

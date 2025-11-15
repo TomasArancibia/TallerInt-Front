@@ -49,7 +49,7 @@ describe('Dashboard page', () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalled())
 
-    const matches = await screen.findAllByText(/Totales por �?rea/i)
+    const matches = await screen.findAllByText(/Totales por/i)
     expect(matches.length).toBeGreaterThanOrEqual(1)
     const areaMatches = await screen.findAllByText('Area1')
     expect(areaMatches.length).toBeGreaterThanOrEqual(1)
@@ -57,6 +57,6 @@ describe('Dashboard page', () => {
     expect(totalMatches.length).toBeGreaterThanOrEqual(1)
 
     expect(await screen.findByText(/Uso del portal QR/i)).toBeInTheDocument()
-    expect(await screen.findByText(/Secciones mǭs visitadas/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Secciones m(?:\u00E1|a)s visitadas/i)).toBeInTheDocument()
   })
 })
