@@ -583,23 +583,35 @@ function colorForPercentage(value) {
                     <p className="mt-4 text-sm text-slate-500">Sin actividad registrada.</p>
                   ) : (
                     <ul className="mt-4 space-y-3">
-                      {topCamas.map((cama, index) => (
-                        <li key={`${cama.id_cama}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2">
-                          <div>
-                            <p className="text-sm font-semibold text-slate-800">
-                              #{index + 1} Cama {cama.cama || cama.id_cama}
-                            </p>
-                            <p className="text-xs text-slate-500">
-                              {cama.habitacion ? `Hab. ${cama.habitacion}` : "Habitaci��n N/D"}
-                              {cama.institucion ? ` · ${cama.institucion}` : ""}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-lg font-bold text-slate-900">{cama.total_sesiones}</p>
-                            <p className="text-[11px] text-slate-500">sesiones</p>
-                          </div>
-                        </li>
-                      ))}
+                      {topCamas.map((cama, index) => {
+                        const habitacionLabel = cama.habitacion ? `Hab. ${cama.habitacion}` : "Habitacion N/D";
+                        const camaLabel = `Cama ${cama.cama || cama.id_cama}`;
+                        const hospitalLabel = cama.institucion || cama.hospital || cama.nombre_hospital || cama.hospital_nombre || "";
+                        const servicioLabel =
+                          cama.servicio ||
+                          cama.nombre_servicio ||
+                          cama.servicio_nombre ||
+                          cama.servicioNombre ||
+                          cama.nombreServicio ||
+                          "";
+                        return (
+                          <li key={`${cama.id_cama}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2">
+                            <div>
+                              <p className="text-sm font-semibold text-slate-800">
+                                #{index + 1} {habitacionLabel} - {camaLabel}
+                              </p>
+                              <p className="text-xs text-slate-500">
+                                {hospitalLabel || "Hospital N/D"}
+                                {servicioLabel ? ` - ${servicioLabel}` : " - Servicio N/D"}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-lg font-bold text-slate-900">{cama.total_sesiones}</p>
+                              <p className="text-[11px] text-slate-500">sesiones</p>
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
