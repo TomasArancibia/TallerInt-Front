@@ -47,6 +47,9 @@ export default function Dashboard() {
   const [metricasAreaDia, setMetricasAreaDia] = useState([]);
   const [promArea, setPromArea] = useState([]);
   const [promHospital, setPromHospital] = useState([]);
+  const [portalSecciones, setPortalSecciones] = useState([]);
+  const [portalCamas, setPortalCamas] = useState([]);
+  const [portalChatKeywords, setPortalChatKeywords] = useState([]);
   const { getAccessToken, signOut } = useAdminAuth();
 
   useEffect(() => {
@@ -119,6 +122,10 @@ export default function Dashboard() {
         setMetricasAreaDia(data.por_area_dia || []);
         setPromArea(data.promedio_resolucion_area || []);
         setPromHospital(data.promedio_resolucion_hospital || []);
+        const portal = data.portal_analytics || {};
+        setPortalSecciones(portal.secciones_mas_visitadas || []);
+        setPortalCamas(portal.camas_con_mas_sesiones || []);
+        setPortalChatKeywords(portal.chat_keywords || []);
       } catch (err) {
         if (!active) return;
         console.error("Error cargando métricas:", err);
@@ -447,6 +454,91 @@ export default function Dashboard() {
                     ))}
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800">Uso del portal QR y asistente</h3>
+              <p className="mt-1 text-xs text-slate-500">Consolidado de clics y consultas registrados en el rango seleccionado.</p>
+              <div className="mt-4 grid gap-6 lg:grid-cols-3">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <h4 className="text-base font-semibold text-slate-800">Secciones más visitadas</h4>
+                  {portalSecciones.length === 0 ? (
+                    <p className="mt-4 text-sm text-slate-500">Sin registros en el periodo.</p>
+                  ) : (
+                    <ul className="mt-4 space-y-3">
+                      {portalSecciones.map((sec) => (
+                        <li key={`${sec.seccion}-${sec.label || "label"}`}>
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-slate-800">{sec.label || sec.seccion}</p>
+                              <p className="text-xs text-slate-500">
+                                {sec.seccion}
+                                {sec.categoria ? ` · ${sec.categoria}` : ""}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-bold text-slate-900">{sec.total_clicks}</p>
+                              <p className="text-[11px] text-slate-500">{(sec.porcentaje || 0).toFixed(1)}%</p>
+                            </div>
+                          </div>
+                          <div className="mt-2 h-2 rounded-full bg-slate-100">
+                            <div
+                              className="h-2 rounded-full bg-indigo-500"
+                              style={{ width: `${Math.min(100, sec.porcentaje || 0)}%` }}
+                            />
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <h4 className="text-base font-semibold text-slate-800">Camas con más sesiones</h4>
+                  {portalCamas.length === 0 ? (
+                    <p className="mt-4 text-sm text-slate-500">Sin actividad registrada.</p>
+                  ) : (
+                    <ul className="mt-4 space-y-3">
+                      {portalCamas.map((cama, index) => (
+                        <li key={`${cama.id_cama}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2">
+                          <div>
+                            <p className="text-sm font-semibold text-slate-800">
+                              #{index + 1} Cama {cama.cama || cama.id_cama}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {cama.habitacion ? `Hab. ${cama.habitacion}` : "Habitaci��n N/D"}
+                              {cama.institucion ? ` · ${cama.institucion}` : ""}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-slate-900">{cama.total_sesiones}</p>
+                            <p className="text-[11px] text-slate-500">sesiones</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <h4 className="text-base font-semibold text-slate-800">Preguntas frecuentes a la IA</h4>
+                  {portalChatKeywords.length === 0 ? (
+                    <p className="mt-4 text-sm text-slate-500">Aún no hay mensajes en este rango.</p>
+                  ) : (
+                    <ul className="mt-4 space-y-3">
+                      {portalChatKeywords.map((kw) => (
+                        <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                          <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
+                          <div className="text-right text-xs text-slate-500">
+                            <div className="font-semibold text-slate-800">{kw.total} menciones</div>
+                            <div>{(kw.porcentaje || 0).toFixed(1)}%</div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
           </section>
