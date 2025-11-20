@@ -8,6 +8,14 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: './src/setupTests.js',
     css: true,
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true
+      }
+    },
+    testTimeout: 10000,
+    hookTimeout: 10000,
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [

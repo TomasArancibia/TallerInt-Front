@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../../../auth/AdminAuthContext.jsx', () => ({
@@ -45,12 +46,14 @@ describe('Dashboard page', () => {
       return Promise.resolve({ status: 200, ok: true, json: async () => ({}) })
     })
 
+    const user = userEvent.setup()
     render(<Dashboard />)
 
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument()
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalled())
 
+    // Test default view (solicitudes)
     const matches = await screen.findAllByText(/Totales por/i)
     expect(matches.length).toBeGreaterThanOrEqual(1)
     const areaMatches = await screen.findAllByText('Area1')
@@ -58,6 +61,11 @@ describe('Dashboard page', () => {
     const totalMatches = await screen.findAllByText('5')
     expect(totalMatches.length).toBeGreaterThanOrEqual(1)
 
+    // Switch to sesiones tab to test QR portal usage
+    const sesionesTab = screen.getByRole('button', { name: /Métricas de sesiones QR/i })
+    await user.click(sesionesTab)
+
+    // Wait for the content to appear and test QR portal elements
     expect(await screen.findByText(/Uso del portal QR/i)).toBeInTheDocument()
     expect(await screen.findByText(/Secciones m(?:\u00E1|a)s visitadas/i)).toBeInTheDocument()
   })
