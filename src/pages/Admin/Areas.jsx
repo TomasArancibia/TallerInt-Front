@@ -17,6 +17,30 @@ export default function Areas() {
   const [pendingNames] = useState(() => {
     try { return JSON.parse(localStorage.getItem('admin-pending-user-names') || '{}'); } catch { return {}; }
   });
+  const resolveDisplayName = useMemo(() => {
+    const isPlaceholder = (value) => {
+      const t = String(value || '').trim().toLowerCase();
+      return t === '' || t === 'pendiente' || t === 'pending';
+    };
+    return (user) => {
+      if (!user) return 'Pendiente';
+      const backendFull = [user.nombre, user.apellido].filter(Boolean).join(' ').trim();
+      const backendLooksValid = !(isPlaceholder(user.nombre) && isPlaceholder(user.apellido)) && backendFull !== '';
+      if (backendLooksValid) return backendFull;
+      const pendingKey = user.correo?.toLowerCase?.();
+      if (pendingKey) {
+        const raw = pendingNames[pendingKey];
+        if (raw && typeof raw === 'object') {
+          const pendingFull = [raw.nombre, raw.apellido].filter(Boolean).join(' ').trim();
+          if (pendingFull) return pendingFull;
+        } else if (typeof raw === 'string') {
+          const pendingFull = raw.trim();
+          if (pendingFull) return pendingFull;
+        }
+      }
+      return user.correo || 'Pendiente';
+    };
+  }, [pendingNames]);
 
   useEffect(() => {
     let active = true;
@@ -68,13 +92,13 @@ export default function Areas() {
       if (u.id_area == null) continue;
       if (!u.activo) continue;
       if (!map[u.id_area]) map[u.id_area] = [];
-      map[u.id_area].push(u);
+      map[u.id_area].push({ ...u, displayName: resolveDisplayName(u) });
     }
     for (const k of Object.keys(map)) {
-      map[k] = map[k].sort((a,b)=> (a.nombre||'').localeCompare(b.nombre||'') || (a.apellido||'').localeCompare(b.apellido||''));
+      map[k] = map[k].sort((a,b)=> (a.displayName||'').localeCompare(b.displayName||''));
     }
     return map;
-  }, [usuarios]);
+  }, [resolveDisplayName, usuarios]);
 
   const pendientesPorArea = useMemo(() => {
     const map = {};
@@ -117,7 +141,7 @@ export default function Areas() {
                         <ul className="space-y-1">
                           {(usuariosPorArea[a.id_area] ?? []).map((u) => (
                             <li key={u.id} className="text-sm text-slate-700">
-                              <span className="font-medium">{`${u.nombre || ''} ${u.apellido || ''}`.trim() || u.correo}</span>
+                              <span className="font-medium">{u.displayName}</span>
                               <span className="text-slate-500"> · {u.correo}</span>
                               {u.telefono ? <span className="text-slate-500"> · {u.telefono}</span> : null}
                             </li>

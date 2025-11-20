@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAdminAuth } from "../../auth/AdminAuthContext.jsx";
 
 const API =
@@ -7,6 +7,20 @@ const API =
   (import.meta.env.MODE === "production"
     ? "https://tallerintegracion-back.onrender.com"
     : "http://127.0.0.1:8000");
+
+const CATEGORY_LABELS = {
+  asistente_virtual: "Chatbot",
+  info: "Info General",
+  info_procesos_clinicos: "Info Procesos Clínicos",
+  info_administrativa: "Info Administrativa",
+  info_visitas: "Info Visitas",
+};
+const CATEGORY_ORDER = ["asistente_virtual", "info", "info_procesos_clinicos", "info_administrativa", "info_visitas"];
+const DASHBOARD_TABS = [
+  { key: "solicitudes", label: "Métricas de solicitudes" },
+  { key: "sesiones", label: "Métricas de sesiones QR" },
+  { key: "chatbot", label: "Métricas del chatbot" },
+];
 
 export default function Dashboard() {
   const [hospitales, setHospitales] = useState([]);
@@ -47,6 +61,15 @@ export default function Dashboard() {
   const [metricasAreaDia, setMetricasAreaDia] = useState([]);
   const [promArea, setPromArea] = useState([]);
   const [promHospital, setPromHospital] = useState([]);
+  const [portalSecciones, setPortalSecciones] = useState([]);
+  const [portalCamas, setPortalCamas] = useState([]);
+  const [portalSesionesDia, setPortalSesionesDia] = useState([]);
+  const [portalSesionesResumen, setPortalSesionesResumen] = useState(null);
+  const [portalChatKeywords, setPortalChatKeywords] = useState([]);
+  const [portalChatTopics, setPortalChatTopics] = useState([]);
+  const [portalChatBigrams, setPortalChatBigrams] = useState([]);
+  const [selectedCategoria, setSelectedCategoria] = useState("__all__");
+  const [dashboardView, setDashboardView] = useState("solicitudes");
   const { getAccessToken, signOut } = useAdminAuth();
 
   useEffect(() => {
@@ -119,6 +142,14 @@ export default function Dashboard() {
         setMetricasAreaDia(data.por_area_dia || []);
         setPromArea(data.promedio_resolucion_area || []);
         setPromHospital(data.promedio_resolucion_hospital || []);
+        const portal = data.portal_analytics || {};
+        setPortalSecciones(portal.secciones_mas_visitadas || []);
+        setPortalCamas(portal.camas_con_mas_sesiones || []);
+        setPortalSesionesDia(portal.sesiones_por_dia || []);
+        setPortalSesionesResumen(portal.sesiones_resumen || null);
+        setPortalChatKeywords(portal.chat_keywords || []);
+        setPortalChatTopics(portal.chat_topics || []);
+        setPortalChatBigrams(portal.chat_bigrams || []);
       } catch (err) {
         if (!active) return;
         console.error("Error cargando métricas:", err);
@@ -129,6 +160,45 @@ export default function Dashboard() {
   }, [fechaFin, fechaInicio, getAccessToken, signOut]);
 
   useEffect(() => { setTmpStart(fechaInicio); setTmpEnd(fechaFin); }, [fechaInicio, fechaFin]);
+
+  function normalizeCategoriaSlug(slug) {
+    const trimmed = (slug || "").trim().toLowerCase();
+    return trimmed ? trimmed : "otros";
+  }
+  function categoriaMatches(base, slug) {
+    const normalized = normalizeCategoriaSlug(slug);
+    if (base === "otros") return !normalized || normalized === "otros";
+    if (base === "info") return normalized === "info";
+    return normalized === base || normalized.startsWith(`${base}_`);
+  }
+function formatCategoriaLabel(slug) {
+  if (!slug || slug === "otros") return "Otras secciones";
+  if (CATEGORY_LABELS[slug]) return CATEGORY_LABELS[slug];
+  return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function colorForPercentage(value) {
+  if (value >= 50) return "#059669"; // verde
+  if (value >= 10) return "#f59e0b"; // amarillo
+  return "#dc2626"; // rojo
+}
+
+  useEffect(() => {
+    if (selectedCategoria === "__all__") return;
+    const available = new Set();
+    for (const sec of portalSecciones) {
+      const normalized = normalizeCategoriaSlug(sec.categoria);
+      for (const cat of CATEGORY_ORDER) {
+        if (cat === "otros") continue;
+        if (normalized === cat || normalized.startsWith(`${cat}_`)) {
+          available.add(cat);
+        }
+      }
+    }
+    if (!available.has(selectedCategoria)) {
+      setSelectedCategoria("__all__");
+    }
+  }, [portalSecciones, selectedCategoria]);
 
   const tableWrapper = "mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm";
   const fmtLong = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "long", year: "numeric" });
@@ -229,6 +299,64 @@ export default function Dashboard() {
     return base;
   }, [chartDays, areaNames, metricasAreaDia]);
 
+  const categoriaOptions = useMemo(() => {
+    const available = new Set();
+    for (const sec of portalSecciones) {
+      const normalized = normalizeCategoriaSlug(sec.categoria);
+      for (const cat of CATEGORY_ORDER) {
+        if (cat === "otros") continue;
+        if (normalized === cat || normalized.startsWith(`${cat}_`)) {
+          available.add(cat);
+        }
+      }
+    }
+    return CATEGORY_ORDER.filter((slug) => slug !== "otros" && available.has(slug)).map((slug) => ({
+      slug,
+      label: formatCategoriaLabel(slug),
+    }));
+  }, [portalSecciones]);
+
+  const filteredSecciones = useMemo(() => {
+    const base =
+      selectedCategoria === "__all__"
+        ? portalSecciones
+        : portalSecciones.filter((sec) => categoriaMatches(selectedCategoria, sec.categoria));
+    return base.slice(0, 10);
+  }, [portalSecciones, selectedCategoria]);
+
+  const topCamas = useMemo(() => portalCamas.slice(0, 10), [portalCamas]);
+  const sesionesPorDiaData = useMemo(() => {
+    if (!portalSesionesDia || portalSesionesDia.length === 0) return [];
+    return portalSesionesDia
+      .map((item) => ({
+        dia: item.dia,
+        total_sesiones: item.total_sesiones || 0,
+      }))
+      .sort((a, b) => (a.dia || "").localeCompare(b.dia || ""));
+  }, [portalSesionesDia]);
+  const sesionesPorDiaChartData = useMemo(() => {
+    if (sesionesPorDiaData.length <= 15) return sesionesPorDiaData;
+    return sesionesPorDiaData.slice(-15);
+  }, [sesionesPorDiaData]);
+  const sesionesPorDiaTieneDatos = useMemo(
+    () => sesionesPorDiaData.some((item) => (item.total_sesiones || 0) > 0),
+    [sesionesPorDiaData]
+  );
+  const sesionesResumen = useMemo(() => {
+    if (!portalSesionesResumen) {
+      return { total: 0, promedio: 0, dias: 0 };
+    }
+    return {
+      total: portalSesionesResumen.total_sesiones || 0,
+      promedio: portalSesionesResumen.promedio_diario || 0,
+      dias: portalSesionesResumen.dias_medidos || 0,
+    };
+  }, [portalSesionesResumen]);
+  const numberFormatter = useMemo(() => new Intl.NumberFormat("es-CL"), []);
+  const topChatTopics = useMemo(() => portalChatTopics.slice(0, 10), [portalChatTopics]);
+  const topChatBigrams = useMemo(() => portalChatBigrams.slice(0, 10), [portalChatBigrams]);
+  const topChatKeywords = useMemo(() => portalChatKeywords.slice(0, 10), [portalChatKeywords]);
+
   return (
     <div className="flex flex-col gap-4">
       {showPendientesPopup && (
@@ -301,11 +429,31 @@ export default function Dashboard() {
         </div>
       </header>
 
+      <div className="mt-4 flex flex-wrap gap-2">
+        {DASHBOARD_TABS.map((tab) => {
+          const isActive = dashboardView === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setDashboardView(tab.key)}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                isActive
+                  ? "border-slate-900 bg-slate-900 text-white shadow-sm"
+                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       {status === "loading" && <p className="text-sm text-slate-600">Cargando datos...</p>}
       {status === "error" && <p className="text-sm font-semibold text-red-600">Error: {error}</p>}
       {status === "ok" && (
         <>
-          <section className="mt-6 flex flex-col gap-8">
+          {dashboardView === "solicitudes" && (
+            <section className="mt-6 flex flex-col gap-8">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Métricas</h2>
             </div>
@@ -449,7 +597,244 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               </div>
             </div>
-          </section>
+
+            </section>
+          )}
+
+          {dashboardView === "sesiones" && (
+            <section className="mt-6 flex flex-col gap-8">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800">Sesiones registradas</h3>
+                <p className="mt-1 text-xs text-slate-500">Estas cifras muestran el total y el promedio de ingresos QR en el rango elegido.</p>
+                <div className="mt-4 grid gap-6 lg:grid-cols-3">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[220px]">
+                    <p className="text-sm text-slate-500">Sesiones únicas</p>
+                    <p className="mt-2 text-4xl font-bold text-slate-900">{numberFormatter.format(sesionesResumen.total)}</p>
+                    <p className="mt-5 text-sm text-slate-500">Promedio diario</p>
+                    <p className="text-3xl font-semibold text-indigo-600">{sesionesResumen.promedio.toFixed(1)}</p>
+                    <p className="mt-2 text-xs text-slate-400">
+                      Basado en {sesionesResumen.dias || Math.max(1, sesionesPorDiaData.length)} día(s)
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-base font-semibold text-slate-800">Sesiones diarias (últimos 15 días máx.)</h4>
+                      <span className="text-xs text-slate-500">{fechaInicio} – {fechaFin}</span>
+                    </div>
+                    {!sesionesPorDiaTieneDatos ? (
+                      <p className="mt-4 text-sm text-slate-500">Sin registros de sesiones para este rango de fechas.</p>
+                    ) : (
+                      <div className="mt-4 h-64 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={sesionesPorDiaChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="dia" />
+                            <YAxis allowDecimals={false} />
+                            <Tooltip />
+                            <Bar dataKey="total_sesiones" name="Sesiones" fill="#2563eb" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800">Uso del portal QR</h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Consolidado de clics e ingresos dentro del rango seleccionado. Cada % indica qué proporción de sesiones únicas
+                  accedió al botón durante su visita.
+                </p>
+                <div className="mt-4 grid gap-6 lg:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h4 className="text-base font-semibold text-slate-800">Secciones más visitadas</h4>
+                      {categoriaOptions.length > 1 && (
+                        <select
+                          className="ml-auto min-w-[160px] rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-sm text-slate-700"
+                          value={selectedCategoria}
+                          onChange={(e) => setSelectedCategoria(e.target.value)}
+                        >
+                          <option value="__all__">Todas las categorías</option>
+                          {categoriaOptions.map((opt) => (
+                            <option key={opt.slug} value={opt.slug}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                    {portalSecciones.length === 0 ? (
+                      <p className="mt-4 text-sm text-slate-500">Sin registros en el periodo.</p>
+                    ) : filteredSecciones.length === 0 ? (
+                      <p className="mt-4 text-sm text-slate-500">No hay datos para esta categoría.</p>
+                    ) : (
+                      <>
+                        <ul className="mt-4 space-y-3">
+                          {filteredSecciones.map((sec) => (
+                            <li key={`${sec.seccion}-${sec.label || "label"}`}>
+                              <div className="flex items-center justify-between gap-3">
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-800">{sec.label || sec.seccion}</p>
+                                  <p className="text-xs text-slate-500">
+                                    {sec.categoria ? formatCategoriaLabel(normalizeCategoriaSlug(sec.categoria)) : "Sin categoría"}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-sm font-bold text-slate-900">{sec.total_clicks}</p>
+                                  {(() => {
+                                    const pct = sec.porcentaje || 0;
+                                    const color = colorForPercentage(pct);
+                                    return <p className="text-base font-bold" style={{ color }}>{pct.toFixed(1)}%</p>;
+                                  })()}
+                                </div>
+                              </div>
+                              <div className="mt-2 h-2 rounded-full bg-slate-100">
+                                <div
+                                  className="h-2 rounded-full bg-indigo-500"
+                                  style={{
+                                    width: `${Math.min(100, sec.porcentaje || 0)}%`,
+                                    backgroundColor: colorForPercentage(sec.porcentaje || 0),
+                                  }}
+                                />
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-3 text-[11px] text-slate-400">
+                          Los porcentajes indican qué fracción de las sesiones únicas abrió cada botón en el rango seleccionado.
+                        </p>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <h4 className="text-base font-semibold text-slate-800">Camas con más sesiones</h4>
+                    {topCamas.length === 0 ? (
+                      <p className="mt-4 text-sm text-slate-500">Sin actividad registrada.</p>
+                    ) : (
+                      <ul className="mt-4 space-y-3">
+                        {topCamas.map((cama, index) => {
+                          const habitacionLabel = cama.habitacion ? `Hab. ${cama.habitacion}` : "Habitacion N/D";
+                          const camaLabel = `Cama ${cama.cama || cama.id_cama}`;
+                          const hospitalLabel = cama.institucion || cama.hospital || cama.nombre_hospital || cama.hospital_nombre || "";
+                          const servicioLabel =
+                            cama.servicio ||
+                            cama.nombre_servicio ||
+                            cama.servicio_nombre ||
+                            cama.servicioNombre ||
+                            cama.nombreServicio ||
+                            "";
+                          return (
+                            <li key={`${cama.id_cama}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2">
+                              <div>
+                                <p className="text-sm font-semibold text-slate-800">
+                                  #{index + 1} {habitacionLabel} - {camaLabel}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                  {hospitalLabel || "Hospital N/D"}
+                                  {servicioLabel ? ` - ${servicioLabel}` : " - Servicio N/D"}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-2xl font-extrabold text-slate-900">{cama.total_sesiones}</p>
+                                <p className="text-[13px] font-semibold text-slate-500">Ingresos desde QR</p>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {dashboardView === "chatbot" && (
+            <section className="mt-6 flex flex-col gap-8">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-base font-semibold text-slate-800">Uso del chatbot</h4>
+                    <p className="text-xs text-slate-500">Qué temas, frases y palabras se repiten en las conversaciones.</p>
+                  </div>
+                  <div className="flex gap-6 text-sm text-slate-600">
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-slate-400">Temas distintos</p>
+                      <p className="text-xl font-semibold text-slate-900">{topChatTopics.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-slate-400">Frases detectadas</p>
+                      <p className="text-xl font-semibold text-slate-900">{topChatBigrams.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-slate-400">Palabras clave</p>
+                      <p className="text-xl font-semibold text-slate-900">{topChatKeywords.length}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 grid gap-6 md:grid-cols-2">
+                  <div className="rounded-xl border border-slate-100 p-4">
+                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Temas recurrentes</h5>
+                    {topChatTopics.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">Sin datos para este rango.</p>
+                    ) : (
+                      <ul className="mt-3 space-y-2">
+                        {topChatTopics.map((topic) => (
+                          <li key={topic.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2">
+                            <div className="text-sm font-semibold text-slate-800">{topic.label}</div>
+                            <div className="text-right text-xs text-slate-500">
+                              <div className="text-lg font-bold text-slate-900">{topic.total}</div>
+                              <div>{(topic.porcentaje || 0).toFixed(1)}%</div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="rounded-xl border border-slate-100 p-4">
+                    <h5 className="text-xs font-semibold uppercase text-slate-500 tracking-wide">Frases & palabras destacadas</h5>
+                    {topChatBigrams.length === 0 && topChatKeywords.length === 0 ? (
+                      <p className="mt-2 text-sm text-slate-500">Sin registros para este rango.</p>
+                    ) : (
+                      <div className="mt-3 grid gap-4 lg:grid-cols-2">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase text-slate-400">Frases</p>
+                          <ul className="mt-2 space-y-2">
+                            {topChatBigrams.slice(0, 6).map((bg, idx) => (
+                              <li key={`${bg.frase}-${idx}`} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                                <div className="text-sm text-slate-800">{bg.frase}</div>
+                                <div className="text-right text-xs text-slate-500">
+                                  <div className="font-semibold text-slate-900">{bg.total}</div>
+                                  <div>{(bg.porcentaje || 0).toFixed(1)}%</div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase text-slate-400">Palabras</p>
+                          <ul className="mt-2 space-y-2">
+                            {topChatKeywords.slice(0, 6).map((kw) => (
+                              <li key={kw.keyword} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-b-0 last:pb-0">
+                                <div className="text-sm font-semibold capitalize text-slate-800">{kw.keyword}</div>
+                                <div className="text-right text-xs text-slate-500">
+                                  <div className="font-semibold text-slate-900">{kw.total}</div>
+                                  <div>{(kw.porcentaje || 0).toFixed(1)}%</div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
         </>
       )}
     </div>

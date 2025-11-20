@@ -1,8 +1,8 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// Mock admin auth
 vi.mock('../../../auth/AdminAuthContext.jsx', () => ({
   useAdminAuth: () => ({ getAccessToken: async () => 'TOKEN', signOut: async () => {} }),
 }))
@@ -15,30 +15,58 @@ beforeEach(() => {
 
 describe('Dashboard page', () => {
   it('renders and loads bootstrap + metricas', async () => {
-    // bootstrap -> metricas: respond depending on URL to be robust to extra fetches
     global.fetch = vi.fn((url) => {
       if (String(url).includes('/admin/bootstrap')) {
-        return Promise.resolve({ status: 200, ok: true, json: async () => ({ usuario: { rol: 'ADMIN' }, hospitales: [{ nombre: 'H1' }], areas: [{ id_area: 1, nombre: 'Area1' }] }) });
+        return Promise.resolve({
+          status: 200,
+          ok: true,
+          json: async () => ({ usuario: { rol: 'ADMIN' }, hospitales: [{ nombre: 'H1' }], areas: [{ id_area: 1, nombre: 'Area1' }] }),
+        })
       }
       if (String(url).includes('/admin/metricas')) {
-        return Promise.resolve({ status: 200, ok: true, json: async () => ({ por_area: [{ nombre_area: 'Area1', total_solicitudes: 5 }], por_hospital_estado: [{ nombre_hospital: 'H1', estado: 'pendiente', total_solicitudes: 1 }], por_area_dia: [], promedio_resolucion_area: [], promedio_resolucion_hospital: [] }) });
+        return Promise.resolve({
+          status: 200,
+          ok: true,
+          json: async () => ({
+            por_area: [{ nombre_area: 'Area1', total_solicitudes: 5 }],
+            por_hospital_estado: [{ nombre_hospital: 'H1', estado: 'pendiente', total_solicitudes: 1 }],
+            por_area_dia: [],
+            promedio_resolucion_area: [],
+            promedio_resolucion_hospital: [],
+            portal_analytics: {
+              secciones_mas_visitadas: [{ seccion: '/inicio', label: 'Inicio', categoria: 'info', total_clicks: 3, porcentaje: 60 }],
+              camas_con_mas_sesiones: [{ id_cama: 7, cama: 'A', habitacion: 'H-101', institucion: 'H1', total_sesiones: 4 }],
+              chat_keywords: [{ keyword: 'visita', total: 2, porcentaje: 50 }],
+              chat_topics: [{ id: 'visitas', label: 'Visitas', total: 2, porcentaje: 40 }],
+              chat_bigrams: [{ frase: 'horario visitas', total: 2, porcentaje: 30 }],
+            },
+          }),
+        })
       }
-      return Promise.resolve({ status: 200, ok: true, json: async () => ({}) });
+      return Promise.resolve({ status: 200, ok: true, json: async () => ({}) })
     })
 
+    const user = userEvent.setup()
     render(<Dashboard />)
 
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument()
 
-    // wait for both fetch calls (bootstrap + metricas)
     await waitFor(() => expect(global.fetch).toHaveBeenCalled())
 
-  // ensure area card and totals render (use findAllByText because there's a similar longer heading)
-  const matches = await screen.findAllByText(/Totales por Área/i)
-  expect(matches.length).toBeGreaterThanOrEqual(1)
-  const areaMatches = await screen.findAllByText('Area1')
-  expect(areaMatches.length).toBeGreaterThanOrEqual(1)
-  const totalMatches = await screen.findAllByText('5')
-  expect(totalMatches.length).toBeGreaterThanOrEqual(1)
+    // Test default view (solicitudes)
+    const matches = await screen.findAllByText(/Totales por/i)
+    expect(matches.length).toBeGreaterThanOrEqual(1)
+    const areaMatches = await screen.findAllByText('Area1')
+    expect(areaMatches.length).toBeGreaterThanOrEqual(1)
+    const totalMatches = await screen.findAllByText('5')
+    expect(totalMatches.length).toBeGreaterThanOrEqual(1)
+
+    // Switch to sesiones tab to test QR portal usage
+    const sesionesTab = screen.getByRole('button', { name: /Métricas de sesiones QR/i })
+    await user.click(sesionesTab)
+
+    // Wait for the content to appear and test QR portal elements
+    expect(await screen.findByText(/Uso del portal QR/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Secciones m(?:\u00E1|a)s visitadas/i)).toBeInTheDocument()
   })
 })
