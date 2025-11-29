@@ -70,6 +70,12 @@
   color: #111;
 }
 
+.chat-link {
+  color: #0f172a;
+  text-decoration: underline;
+  word-break: break-all;
+}
+
 .bubble.typing-indicator {
   display: inline-flex;
   align-items: center;
