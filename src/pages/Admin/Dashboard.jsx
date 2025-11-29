@@ -393,7 +393,7 @@ function colorForPercentage(value) {
     return base.slice(0, 10);
   }, [portalSecciones, selectedCategoria]);
 
-  const topCamas = useMemo(() => portalCamas.slice(0, 10), [portalCamas]);
+  const topCamas = useMemo(() => portalCamas, [portalCamas]);
   const sesionesPorDiaData = useMemo(() => {
     if (!portalSesionesDia || portalSesionesDia.length === 0) return [];
     return portalSesionesDia
