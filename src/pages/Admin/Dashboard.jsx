@@ -25,6 +25,9 @@ const DASHBOARD_TABS = [
 export default function Dashboard() {
   const [hospitales, setHospitales] = useState([]);
   const [areas, setAreas] = useState([]);
+  const [habitaciones, setHabitaciones] = useState([]);
+  const [camas, setCamas] = useState([]);
+  const [servicios, setServicios] = useState([]);
   const [usuario, setUsuario] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
@@ -68,6 +71,8 @@ export default function Dashboard() {
   const [portalChatKeywords, setPortalChatKeywords] = useState([]);
   const [portalChatTopics, setPortalChatTopics] = useState([]);
   const [portalChatBigrams, setPortalChatBigrams] = useState([]);
+  const [selectedCamas, setSelectedCamas] = useState([]);
+  const [camasFilterOpen, setCamasFilterOpen] = useState(false);
   const [selectedCategoria, setSelectedCategoria] = useState("__all__");
   const [dashboardView, setDashboardView] = useState("solicitudes");
   const { getAccessToken, signOut } = useAdminAuth();
@@ -91,6 +96,9 @@ export default function Dashboard() {
         setUsuario(data.usuario || null);
         setHospitales(data.hospitales || []);
         setAreas(data.areas || []);
+        setHabitaciones(data.habitaciones || []);
+        setCamas(data.camas || []);
+        setServicios(data.servicios || []);
         setStatus("ok");
         // calcular pendientes de hoy
         try {
@@ -130,7 +138,8 @@ export default function Dashboard() {
       try {
         const token = await getAccessToken();
         if (!token) throw new Error("Sesión expirada. Vuelva a iniciar sesión.");
-        const response = await fetch(`${API}/admin/metricas?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`, {
+        const camasParams = (selectedCamas || []).map((id) => `&camas=${encodeURIComponent(id)}`).join("");
+        const response = await fetch(`${API}/admin/metricas?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}${camasParams}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.status === 401 || response.status === 403) { await signOut(); return; }
@@ -157,7 +166,7 @@ export default function Dashboard() {
     }
     fetchMetricas();
     return () => { active = false; };
-  }, [fechaFin, fechaInicio, getAccessToken, signOut]);
+  }, [fechaFin, fechaInicio, getAccessToken, selectedCamas, signOut]);
 
   useEffect(() => { setTmpStart(fechaInicio); setTmpEnd(fechaFin); }, [fechaInicio, fechaFin]);
 
@@ -299,6 +308,44 @@ function colorForPercentage(value) {
     return base;
   }, [chartDays, areaNames, metricasAreaDia]);
 
+  const camaOptions = useMemo(() => {
+    if (!camas || camas.length === 0) return [];
+    const hospitalMap = Object.fromEntries(hospitales.map((h) => [h.id_hospital, h.nombre]));
+    const servicioMap = Object.fromEntries(servicios.map((s) => [s.id_servicio, s.nombre]));
+    const habMap = Object.fromEntries(habitaciones.map((h) => [h.id_habitacion, h]));
+    return camas
+      .map((cama) => {
+        const hab = habMap[cama.id_habitacion] || {};
+        const hospitalName = hospitalMap[hab.id_hospital] || "Hospital N/D";
+        const servicioName = servicioMap[hab.id_servicio] || "Servicio N/D";
+        const habName = hab.nombre || hab.nombre_habitacion || "N/D";
+        const camaLabel = cama.letra || cama.id_cama;
+        return {
+          id: cama.id_cama,
+          label: `${hospitalName} | ${servicioName} | Hab. ${habName} | Cama ${camaLabel}`,
+        };
+      })
+      .sort((a, b) => a.label.localeCompare(b.label, "es"));
+  }, [camas, habitaciones, hospitales, servicios]);
+
+  const camaFilterLabel = useMemo(() => {
+    if (!selectedCamas || selectedCamas.length === 0) return "Todas las camas";
+    if (selectedCamas.length === 1) {
+      const match = camaOptions.find((c) => c.id === selectedCamas[0]);
+      return match ? match.label : "1 cama seleccionada";
+    }
+    return `${selectedCamas.length} camas seleccionadas`;
+  }, [camaOptions, selectedCamas]);
+
+  useEffect(() => {
+    if (!selectedCamas || selectedCamas.length === 0) return;
+    const validIds = new Set(camaOptions.map((c) => c.id));
+    const filtered = selectedCamas.filter((id) => validIds.has(id));
+    if (filtered.length !== selectedCamas.length) {
+      setSelectedCamas(filtered);
+    }
+  }, [camaOptions, selectedCamas]);
+
   const categoriaOptions = useMemo(() => {
     const available = new Set();
     for (const sec of portalSecciones) {
@@ -387,7 +434,58 @@ function colorForPercentage(value) {
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-lg font-semibold">Dashboard</h1>
 
-          <div className="relative ml-auto">
+          <div className="relative ml-auto flex flex-wrap items-center gap-3">
+            <div className="relative">
+              <button
+                onClick={() => setCamasFilterOpen((v) => !v)}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm hover:bg-slate-50"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10h18M3 14h18M6 10V7a3 3 0 013-3h6a3 3 0 013 3v3" /><path d="M7 18h10a2 2 0 002-2v-2H5v2a2 2 0 002 2Z" /></svg>
+                <span className="max-w-[220px] truncate text-left">{camaFilterLabel}</span>
+                <svg className="ml-auto h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd"/></svg>
+              </button>
+
+              {camasFilterOpen && (
+                <div className="absolute right-0 z-50 mt-2 w-[22rem] overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
+                  <div className="flex items-center justify-between border-b border-slate-200 px-3 py-2">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Filtrar por camas</span>
+                    <button className="text-xs font-semibold text-indigo-600 hover:text-indigo-700" onClick={() => setSelectedCamas([])}>
+                      Limpiar
+                    </button>
+                  </div>
+                  <div className="max-h-72 overflow-y-auto p-2">
+                    {camaOptions.length === 0 ? (
+                      <p className="px-2 py-1 text-sm text-slate-500">No hay camas disponibles.</p>
+                    ) : (
+                      camaOptions.map((opt) => (
+                        <label key={opt.id} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 hover:bg-slate-50">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            checked={selectedCamas.includes(opt.id)}
+                            onChange={() =>
+                              setSelectedCamas((prev) =>
+                                prev.includes(opt.id) ? prev.filter((c) => c !== opt.id) : [...prev, opt.id]
+                              )
+                            }
+                          />
+                          <span className="text-sm text-slate-800">{opt.label}</span>
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  <div className="flex items-center justify-end gap-2 border-t border-slate-200 px-3 py-2">
+                    <button
+                      className="rounded-md px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
+                      onClick={() => setCamasFilterOpen(false)}
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => setRangeOpen(v=>!v)}
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm hover:bg-slate-50"
