@@ -73,6 +73,8 @@ export default function Dashboard() {
   const [portalChatBigrams, setPortalChatBigrams] = useState([]);
   const [selectedCamas, setSelectedCamas] = useState([]);
   const [camasFilterOpen, setCamasFilterOpen] = useState(false);
+  const [camasSearch, setCamasSearch] = useState("");
+  const [camaFilterMode, setCamaFilterMode] = useState("all"); // all | none | custom
   const [selectedCategoria, setSelectedCategoria] = useState("__all__");
   const [dashboardView, setDashboardView] = useState("solicitudes");
   const { getAccessToken, signOut } = useAdminAuth();
@@ -138,7 +140,10 @@ export default function Dashboard() {
       try {
         const token = await getAccessToken();
         if (!token) throw new Error("Sesión expirada. Vuelva a iniciar sesión.");
-        const camasParams = (selectedCamas || []).map((id) => `&camas=${encodeURIComponent(id)}`).join("");
+        const camaFilterList =
+          camaFilterMode === "custom" ? selectedCamas :
+          camaFilterMode === "none" ? [-1] : [];
+        const camasParams = (camaFilterList || []).map((id) => `&camas=${encodeURIComponent(id)}`).join("");
         const response = await fetch(`${API}/admin/metricas?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}${camasParams}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -166,7 +171,7 @@ export default function Dashboard() {
     }
     fetchMetricas();
     return () => { active = false; };
-  }, [fechaFin, fechaInicio, getAccessToken, selectedCamas, signOut]);
+  }, [camaFilterMode, fechaFin, fechaInicio, getAccessToken, selectedCamas, signOut]);
 
   useEffect(() => { setTmpStart(fechaInicio); setTmpEnd(fechaFin); }, [fechaInicio, fechaFin]);
 
@@ -329,22 +334,39 @@ function colorForPercentage(value) {
   }, [camas, habitaciones, hospitales, servicios]);
 
   const camaFilterLabel = useMemo(() => {
-    if (!selectedCamas || selectedCamas.length === 0) return "Todas las camas";
+    if (camaFilterMode === "all") return "Todas las camas";
+    if (!selectedCamas || selectedCamas.length === 0) return "0 camas seleccionadas";
     if (selectedCamas.length === 1) {
       const match = camaOptions.find((c) => c.id === selectedCamas[0]);
       return match ? match.label : "1 cama seleccionada";
     }
     return `${selectedCamas.length} camas seleccionadas`;
-  }, [camaOptions, selectedCamas]);
+  }, [camaFilterMode, camaOptions, selectedCamas]);
+
+  const filteredCamaOptions = useMemo(() => {
+    const term = (camasSearch || "").trim().toLowerCase();
+    if (!term) return camaOptions;
+    return camaOptions.filter((opt) => opt.label.toLowerCase().includes(term));
+  }, [camaOptions, camasSearch]);
 
   useEffect(() => {
-    if (!selectedCamas || selectedCamas.length === 0) return;
     const validIds = new Set(camaOptions.map((c) => c.id));
+    if (camaFilterMode === "all") {
+      // mantén sincronizada la selección visible con todas las camas
+      const allIds = camaOptions.map((c) => c.id);
+      if (allIds.length !== selectedCamas.length || selectedCamas.some((id, i) => id !== allIds[i])) {
+        setSelectedCamas(allIds);
+      }
+      return;
+    }
     const filtered = selectedCamas.filter((id) => validIds.has(id));
     if (filtered.length !== selectedCamas.length) {
       setSelectedCamas(filtered);
+      if (filtered.length === 0 && camaFilterMode === "custom") {
+        setCamaFilterMode("none");
+      }
     }
-  }, [camaOptions, selectedCamas]);
+  }, [camaFilterMode, camaOptions, selectedCamas]);
 
   const categoriaOptions = useMemo(() => {
     const available = new Set();
@@ -447,27 +469,61 @@ function colorForPercentage(value) {
 
               {camasFilterOpen && (
                 <div className="absolute right-0 z-50 mt-2 w-[22rem] overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
-                  <div className="flex items-center justify-between border-b border-slate-200 px-3 py-2">
+                  <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-3 py-2">
                     <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Filtrar por camas</span>
-                    <button className="text-xs font-semibold text-indigo-600 hover:text-indigo-700" onClick={() => setSelectedCamas([])}>
-                      Limpiar
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                      className="rounded-md px-2 py-[5px] text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                        onClick={() => {
+                          setSelectedCamas(camaOptions.map((c) => c.id));
+                          setCamaFilterMode("all");
+                        }}
+                      >
+                        Todas
+                      </button>
+                      <button
+                      className="rounded-md px-2 py-[5px] text-xs font-semibold text-indigo-600 hover:bg-indigo-50"
+                        onClick={() => {
+                          setSelectedCamas([]);
+                          setCamaFilterMode("none");
+                        }}
+                      >
+                        Ninguna
+                      </button>
+                    </div>
+                  </div>
+                  <div className="border-b border-slate-200 px-3 py-2">
+                    <input
+                      type="text"
+                      value={camasSearch}
+                      onChange={(e) => setCamasSearch(e.target.value)}
+                      placeholder="Buscar cama, habitacion o hospital"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
                   </div>
                   <div className="max-h-72 overflow-y-auto p-2">
-                    {camaOptions.length === 0 ? (
+                    {filteredCamaOptions.length === 0 ? (
                       <p className="px-2 py-1 text-sm text-slate-500">No hay camas disponibles.</p>
                     ) : (
-                      camaOptions.map((opt) => (
+                      filteredCamaOptions.map((opt) => (
                         <label key={opt.id} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 hover:bg-slate-50">
                           <input
                             type="checkbox"
                             className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                             checked={selectedCamas.includes(opt.id)}
-                            onChange={() =>
-                              setSelectedCamas((prev) =>
-                                prev.includes(opt.id) ? prev.filter((c) => c !== opt.id) : [...prev, opt.id]
-                              )
-                            }
+                            onChange={() => {
+                              setSelectedCamas((prev) => {
+                                const next = prev.includes(opt.id) ? prev.filter((c) => c !== opt.id) : [...prev, opt.id];
+                                if (next.length === 0) {
+                                  setCamaFilterMode("none");
+                                } else if (next.length === camaOptions.length) {
+                                  setCamaFilterMode("all");
+                                } else {
+                                  setCamaFilterMode("custom");
+                                }
+                                return next;
+                              });
+                            }}
                           />
                           <span className="text-sm text-slate-800">{opt.label}</span>
                         </label>
