@@ -9,7 +9,7 @@ export default function RequireAdminAuth() {
   if (initializing) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-100 text-slate-600">
-        Cargandoâ€¦
+        Cargando...
       </main>
     );
   }

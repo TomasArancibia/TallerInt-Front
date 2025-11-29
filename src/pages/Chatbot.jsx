@@ -15,6 +15,60 @@ function Chatbot() {
   const [sending, setSending] = useState(false)
   const endRef = useRef(null)
 
+  function renderMessageContent(raw) {
+    const base = (raw || '')
+      // borra sufijos tipo [+source] o similares
+      .replace(/\s*\[[^\]]*source[^\]]*\]\s*$/gi, '')
+      .trim();
+
+    const mdRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/gi;
+    const plainUrlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+
+    const pieces = [];
+    let lastMdIndex = 0;
+    let mdMatch;
+
+    const pushPlainWithLinks = (text) => {
+      let lastIndex = 0;
+      let match;
+      while ((match = plainUrlRegex.exec(text)) !== null) {
+        const start = match.index;
+        if (start > lastIndex) pieces.push(text.slice(lastIndex, start));
+        const urlText = match[0];
+        const href = urlText.startsWith('http') ? urlText : `https://${urlText}`;
+        pieces.push(
+          <a key={`plain-${pieces.length}-${start}`} href={href} target="_blank" rel="noopener noreferrer" className="chat-link">
+            {urlText}
+          </a>
+        );
+        lastIndex = plainUrlRegex.lastIndex;
+      }
+      if (lastIndex < text.length) pieces.push(text.slice(lastIndex));
+    };
+
+    while ((mdMatch = mdRegex.exec(base)) !== null) {
+      const start = mdMatch.index;
+      if (start > lastMdIndex) {
+        pushPlainWithLinks(base.slice(lastMdIndex, start));
+      }
+      const label = mdMatch[1];
+      const href = mdMatch[2];
+      pieces.push(
+        <a key={`md-${pieces.length}-${start}`} href={href} target="_blank" rel="noopener noreferrer" className="chat-link">
+          {label}
+        </a>
+      );
+      lastMdIndex = mdRegex.lastIndex;
+    }
+
+    if (lastMdIndex < base.length) {
+      pushPlainWithLinks(base.slice(lastMdIndex));
+    }
+
+    if (pieces.length === 0) return base;
+    return pieces.map((p, idx) => (typeof p === 'string' ? <span key={`txt-${idx}`}>{p}</span> : p));
+  }
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
@@ -130,7 +184,7 @@ function Chatbot() {
         <div className="chat-messages">
           {messages.map((m, i) => (
             <div key={i} className={`msg-row ${m.role}`}>
-              <div className={`bubble ${m.role}`}>{m.content}</div>
+              <div className={`bubble ${m.role}`}>{renderMessageContent(m.content)}</div>
             </div>
           ))}
           {sending && (
