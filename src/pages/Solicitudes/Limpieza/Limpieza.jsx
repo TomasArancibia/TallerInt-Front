@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,12 +8,16 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function Limpieza() {
   const opciones = [
     "Despapelado (retiro basura)",
     "Limpieza diaria (falta aseo)",
     "Derrame de líquidos",
+    "Reposición de insumos (papel higiénico, jabón, etc)",
+    "Horario de aseo",
+    "Otro",
   ];
 
   const hasContext = typeof window !== "undefined" ? sessionStorage.getItem("id_cama") : null;
@@ -40,11 +43,13 @@ export default function Limpieza() {
           SOLICITUD DE LIMPIEZA
         </div>
 
-        {opciones.map((nombre) => (
-          <Link
+        {opciones.map((nombre, index) => (
+          <PortalTrackedLink
             key={nombre}
             className={`${actionWhite} border-purple-700 text-black`}
             to="/solicitudes/nueva"
+            trackingCategory="solicitud_limpieza"
+            trackingCode={`limpieza-${index + 1}`}
             state={{
               areaName: "Limpieza",
               apiAreaName: "Limpieza de habitación, baño o box",
@@ -55,7 +60,7 @@ export default function Limpieza() {
             }}
           >
             {nombre}
-          </Link>
+          </PortalTrackedLink>
         ))}
       </section>
     </main>

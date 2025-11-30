@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../../components/ui.jsx";
+import PortalTrackedLink from "../../../../components/PortalTrackedLink.jsx";
 
 export default function InfoServiciosVisitas() {
     return (
@@ -18,15 +18,30 @@ export default function InfoServiciosVisitas() {
             <p className={helperText}>Por favor indíquenos de qué área es su consulta</p>
             <section className={sectionStack}>
                 <div className={`${actionBlue} pointer-events-none`}>SERVICIOS PARA VISITAS</div>
-                <Link className={actionWhite} to="/info_comida">
+                <PortalTrackedLink
+                    className={actionWhite}
+                    to="/info_comida"
+                    trackingCategory="info_visitas_servicios"
+                    trackingCode="info-visitas-servicios-comida"
+                >
                     CAFETERÍAS, MARKETPLACES, MÁQUINAS EXPENDEDORAS, ETC
-                </Link>
-                <Link className={actionWhite} to="/info_reflexion">
+                </PortalTrackedLink>
+                <PortalTrackedLink
+                    className={actionWhite}
+                    to="/info_reflexion"
+                    trackingCategory="info_visitas_servicios"
+                    trackingCode="info-visitas-servicios-reflexion"
+                >
                     CAPILLAS O ESPACIOS DE REFLEXIÓN
-                </Link>
-                <Link className={actionWhite} to="/info_instalaciones">
+                </PortalTrackedLink>
+                <PortalTrackedLink
+                    className={actionWhite}
+                    to="/info_instalaciones"
+                    trackingCategory="info_visitas_servicios"
+                    trackingCode="info-visitas-servicios-instalaciones"
+                >
                     ESTACIONAMIENTO, CAJERO AUTOMÁTICO, WIFI
-                </Link>
+                </PortalTrackedLink>
             </section>
         </main>
     );

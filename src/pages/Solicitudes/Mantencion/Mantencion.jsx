@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function Mantencion() {
   const opciones = [
@@ -17,6 +17,8 @@ export default function Mantencion() {
     "CLIMATIZACIÓN",
     "TELEVISOR Y CONTROL REMOTO",
     "MOBILIARIO DENTRO DE LA HABITACIÓN",
+    "SUPERFICIES Y/O PARED",
+    "TIMBRE DEFECTUOSO",
     "OTRO TIPO DE MANTENCIÓN",
   ];
 
@@ -43,11 +45,13 @@ export default function Mantencion() {
           SOLICITUDES DE MANTENCIÓN - COMODIDAD
         </div>
 
-        {opciones.map((nombre) => (
-          <Link
+        {opciones.map((nombre, index) => (
+          <PortalTrackedLink
             key={nombre}
             className={`${actionWhite} border-purple-700 text-black`}
             to="/solicitudmantencion"
+            trackingCategory="solicitud_mantencion"
+            trackingCode={`mantencion-${index + 1}`}
             state={{
               areaName: "Mantención y Comodidad",
               apiAreaName: "Mantención",
@@ -58,7 +62,7 @@ export default function Mantencion() {
             }}
           >
             {nombre}
-          </Link>
+          </PortalTrackedLink>
         ))}
       </section>
     </main>

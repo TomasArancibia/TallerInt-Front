@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function NutricionAlimentacion() {
   const opciones = [
@@ -42,11 +42,13 @@ export default function NutricionAlimentacion() {
           NUTRICIÓN Y ALIMENTACIÓN A PACIENTES
         </div>
 
-        {opciones.map((nombre) => (
-          <Link
+        {opciones.map((nombre, index) => (
+          <PortalTrackedLink
             key={nombre}
             className={`${actionWhite} border-purple-700 text-black`}
             to="/solicitudes/nueva"
+            trackingCategory="solicitud_nutricion"
+            trackingCode={`nutricion-${index + 1}`}
             state={{
               areaName: "Nutrición",
               apiAreaName: "Nutrición y alimentación a pacientes",
@@ -57,7 +59,7 @@ export default function NutricionAlimentacion() {
             }}
           >
             {nombre}
-          </Link>
+          </PortalTrackedLink>
         ))}
       </section>
     </main>

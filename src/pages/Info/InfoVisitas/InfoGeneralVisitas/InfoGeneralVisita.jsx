@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../../components/ui.jsx";
+import PortalTrackedLink from "../../../../components/PortalTrackedLink.jsx";
 
 export default function InfoGeneralVisita() {
   return (
@@ -20,15 +20,54 @@ export default function InfoGeneralVisita() {
         <div className={`${actionBlue} pointer-events-none`}>
           INFORMACIÓN GENERAL DE ACOMPAÑANTES Y VISITAS
         </div>
-        <Link className={actionWhite} to="/info_dif_vis_aco">
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_dif_vis_aco"
+          trackingCategory="info_visitas_general"
+          trackingCode="info-visitas-general-diferencia"
+        >
           DIFERENCIA ENTRE ACOMPAÑANTE Y VISITA
-        </Link>
-        <Link className={actionWhite} to="/info_rol_resp">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_rol_resp"
+          trackingCategory="info_visitas_general"
+          trackingCode="info-visitas-general-rol-resp"
+        >
           ROL Y RESPONSABILIDADES DEL ACOMPAÑANTE RESPONSABLE
-        </Link>
-        <Link className={actionWhite} to="/info_rol_pagare">
-          DIFERENCIA ENTRE RESPONSABLE DE PAGARÉ Y ACOMPAÑANTE
-        </Link>
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_rol_pagare"
+          trackingCategory="info_visitas_general"
+          trackingCode="info-visitas-general-rol-pagare"
+        >
+          ROL DEL RESPONSABLE DEL PAGARÉ
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_visitas/cuidador-externo"
+          trackingCategory="info_visitas_general"
+          trackingCode="info-visitas-general-cuidador-externo"
+        >
+          CUIDADOR DE EMPRESA EXTERNA
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_visitas/ley-mila"
+          trackingCategory="info_visitas_general"
+          trackingCode="info-visitas-general-ley-mila"
+        >
+          LEY MILA N°21.372
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_visitas/perros-mascotas"
+          trackingCategory="info_visitas_general"
+          trackingCode="info-visitas-general-perros-mascotas"
+        >
+          INGRESO PERROS DE ASISTENCIA / MASCOTAS
+        </PortalTrackedLink>
       </section>
     </main>
   );

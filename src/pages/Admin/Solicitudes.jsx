@@ -19,6 +19,7 @@ export default function Solicitudes() {
   const [edificios, setEdificios] = useState([]);
   const [pisos, setPisos] = useState([]);
   const [habitaciones, setHabitaciones] = useState([]);
+  const [servicios, setServicios] = useState([]);
   const [camas, setCamas] = useState([]);
   const [changingId, setChangingId] = useState(null);
 
@@ -40,6 +41,7 @@ export default function Solicitudes() {
         setEdificios(data.edificios || []);
         setPisos(data.pisos || []);
         setHabitaciones(data.habitaciones || []);
+        setServicios(data.servicios || []);
         setCamas(data.camas || []);
         setSolicitudes(data.solicitudes || []);
         setStatus("ok");
@@ -151,6 +153,7 @@ export default function Solicitudes() {
   const [instSel, setInstSel] = useState([]);
   const [edifSel, setEdifSel] = useState([]);
   const [pisoSel, setPisoSel] = useState([]);
+  const [servSel, setServSel] = useState([]);
 
   function setPreset(preset) {
     const d = new Date(); const c = (x)=> new Date(x.getTime()); let a=c(d), b=c(d);
@@ -178,6 +181,7 @@ export default function Solicitudes() {
   const pisoById = useMemo(() => Object.fromEntries(pisos.map(p => [p.id_piso, p])), [pisos]);
   const edifById = useMemo(() => Object.fromEntries(edificios.map(e => [e.id_edificio, e])), [edificios]);
   const hospById = useMemo(() => Object.fromEntries(hospitales.map(h => [h.id_hospital, h])), [hospitales]);
+  const servById = useMemo(() => Object.fromEntries(servicios.map(s => [s.id_servicio, s])), [servicios]);
 
   // Filtro + orden por ID ascendente
   const filtradas = useMemo(() => {
@@ -191,29 +195,27 @@ export default function Solicitudes() {
       if (edifSel.includes(NONE)) return false;
       if (pisoSel.includes(NONE)) return false;
       if (estadosSel.length && !estadosSel.includes(s.estado)) return false;
-      const isAdmin = (usuario?.rol === 'ADMIN');
-      if (isAdmin) {
-        if (areasSel.length && !areasSel.includes(String(s.id_area))) return false;
-      } else {
-        if (usuario?.id_area && s.id_area !== usuario.id_area) return false;
-      }
+      // Todos los usuarios pueden ver/filtrar por cualquier área
+      if (areasSel.length && !areasSel.includes(String(s.id_area))) return false;
       const cama = camasById[s.id_cama];
       const hab = cama ? habitById[cama.id_habitacion] : null;
       const piso = hab ? pisoById[hab.id_piso] : null;
       const edif = piso ? edifById[piso.id_edificio] : null;
       const inst = edif ? edif.id_hospital : null;
+      const servId = hab ? hab.id_servicio : null;
       if (instSel.length && !instSel.includes(String(inst))) return false;
       if (edifSel.length && (!edif || !edifSel.includes(String(edif.id_edificio)))) return false;
       if (pisoSel.length && (!piso || !pisoSel.includes(String(piso.id_piso)))) return false;
+      if (servSel.length && !servSel.includes(String(servId))) return false;
       return true;
     });
     return res.slice().sort((a,b)=> (a.id ?? 0) - (b.id ?? 0));
-  }, [solicitudes, fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel, camasById, habitById, pisoById, edifById, usuario]);
+  }, [solicitudes, fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel, servSel, camasById, habitById, pisoById, edifById, usuario]);
 
   // Paginacion simple 10 por pagina
   const PAGE_SIZE = 10;
   const [page, setPage] = useState(1);
-  useEffect(() => { setPage(1); }, [fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel]);
+  useEffect(() => { setPage(1); }, [fechaInicio, fechaFin, estadosSel, areasSel, instSel, edifSel, pisoSel, servSel]);
   const totalPages = Math.max(1, Math.ceil(filtradas.length / PAGE_SIZE));
   const startIdx = (page - 1) * PAGE_SIZE;
   const endIdx = Math.min(filtradas.length, startIdx + PAGE_SIZE);
@@ -247,7 +249,7 @@ export default function Solicitudes() {
                   <svg className="ml-auto h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd"/></svg>
                 </button>
                 {rangeOpen && (
-                  <div className="absolute z-50 mt-2 w-64 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
+                  <div className="absolute right-4 z-50 mt-2 w-72 overflow-hidden rounded-lg bg-white text-slate-800 shadow-lg ring-1 ring-slate-200">
                     {!customMode ? (
                       <div className="py-1">
                         <button className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50" onClick={() => setPreset("today")}>Hoy</button>
@@ -261,14 +263,14 @@ export default function Solicitudes() {
                     ) : (
                       <div className="p-3">
                         <div className="flex items-center gap-2">
-                          <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpStart} onChange={(e) => setTmpStart(e.target.value)} />
+                          <input type="date" className="w-[9.5rem] rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpStart} onChange={(e) => setTmpStart(e.target.value)} />
                           <span className="text-sm text-slate-500">a</span>
-                          <input type="date" className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpEnd} onChange={(e) => setTmpEnd(e.target.value)} />
+                          <input type="date" className="w-[9.5rem] rounded-md border border-slate-300 px-2 py-1 text-sm" value={tmpEnd} onChange={(e) => setTmpEnd(e.target.value)} />
                         </div>
-                        <div className="mt-3 flex justify-end gap-2">
-                          <button className="rounded-md px-3 py-1 text-sm text-slate-600 hover:bg-slate-50" onClick={() => setCustomMode(false)}>Volver</button>
-                          <button className="rounded-md bg-slate-900 px-3 py-1 text-sm text-white hover:bg-slate-800" onClick={applyCustom}>Aplicar</button>
-                        </div>
+                      <div className="mt-3 flex justify-end gap-2">
+                        <button className="rounded-md px-3 py-1 text-sm text-slate-600 hover:bg-slate-50" onClick={() => setCustomMode(false)}>Volver</button>
+                        <button className="rounded-md bg-slate-900 px-3 py-1 text-sm text-white hover:bg-slate-800" onClick={applyCustom}>Aplicar</button>
+                      </div>
                       </div>
                     )}
                   </div>
@@ -276,9 +278,8 @@ export default function Solicitudes() {
               </div>
 
               <MultiSelect label="Estado" options={[{id:'pendiente',label:'Pendiente'},{id:'en_proceso',label:'En Proceso'},{id:'cerrada',label:'Cerrada'}]} selected={estadosSel} setSelected={setEstadosSel} />
-              {(usuario?.rol === 'ADMIN') && (
-                <MultiSelect label="Area" options={areas.map(a=>({id:a.id_area,label:a.nombre}))} selected={areasSel} setSelected={setAreasSel} />
-              )}
+              <MultiSelect label="Area" options={areas.map(a=>({id:a.id_area,label:a.nombre}))} selected={areasSel} setSelected={setAreasSel} />
+              <MultiSelect label="Servicio" options={servicios.map(s=>({id:s.id_servicio,label:s.nombre}))} selected={servSel} setSelected={setServSel} />
               <MultiSelect label="Institucion" options={hospitales.map(h=>({id:h.id_hospital,label:h.nombre}))} selected={instSel} setSelected={(vals)=>{ setInstSel(vals); setEdifSel([]); setPisoSel([]); }} />
               <MultiSelect label="Edificio" options={edificiosFiltrados.map(e=>({id:e.id_edificio,label:e.nombre}))} selected={edifSel} setSelected={(vals)=>{ setEdifSel(vals); setPisoSel([]); }} disabled={instSel.length===0} />
               <MultiSelect label="Piso" options={pisosFiltrados.map(p=>({id:p.id_piso,label:`${(edificios.find(e=>e.id_edificio===p.id_edificio)?.nombre)||('Edificio '+p.id_edificio)} - Piso ${p.numero}`}))} selected={pisoSel} setSelected={setPisoSel} disabled={edifSel.length===0} />
@@ -299,7 +300,9 @@ export default function Solicitudes() {
                     <th className={headerCell}>Institucion</th>
                     <th className={headerCell}>Solicitante</th>
                     <th className={headerCell}>Fecha de creacion</th>
+                    <th className={headerCell}>Servicio</th>
                     <th className={headerCell}>Estado</th>
+                    <th className={headerCell}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -326,30 +329,33 @@ export default function Solicitudes() {
                           <td className={dataCell}>{inst?.nombre || 'â€”'}</td>
                           <td className={dataCell}>{s.nombre_solicitante || 'â€”'}</td>
                           <td className={dataCell}>{s.fecha_creacion ? fmtDateTime.format(new Date(s.fecha_creacion)) : 'â€”'}</td>
+                          <td className={dataCell}>{(hab && servById[hab.id_servicio]?.nombre) || '-'}</td>
+                          <td className={dataCell}>
+                            <span className={estadoClass}>{(s.estado || '').replaceAll('_',' ')}</span>
+                          </td>
                           <td className={dataCell}>
                             <div className="flex items-center gap-2" onClick={(e)=> e.stopPropagation()}>
-                              <span className={estadoClass}>{(s.estado || '').replaceAll('_',' ')}</span>
-                              {usuario?.rol === 'JEFE_AREA' && (
-                                <select
-                                  value={s.estado || 'pendiente'}
-                                  disabled={changingId === s.id}
-                                  onChange={(e)=> handleCambiarEstado(s.id, e.target.value)}
-                                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700"
-                                >
-                                  <option value="pendiente">Pendiente</option>
-                                  <option value="en_proceso">En proceso</option>
-                                  <option value="cerrada">Cerrada</option>
-                                </select>
-                              )}
+                              <select
+                                aria-label="Cambiar estado"
+                                value={s.estado || 'pendiente'}
+                                disabled={changingId === s.id}
+                                onChange={(e)=> handleCambiarEstado(s.id, e.target.value)}
+                                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700"
+                              >
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en_proceso">En proceso</option>
+                                <option value="cerrada">Cerrada</option>
+                              </select>
                             </div>
                           </td>
                         </tr>
                         {isOpen && (
                           <tr>
-                            <td className={dataCell} colSpan={9}>
+                            <td className={dataCell} colSpan={11}>
                               <div className="rounded-md bg-slate-50 p-3 text-sm text-slate-700">
                                 <div><span className="font-semibold">Subarea:</span> {s.tipo || '-'}</div>
                                 <div className="mt-1"><span className="font-semibold">Descripcion:</span> {s.descripcion || '-'}</div>
+                                <div className="mt-1"><span className="font-semibold">Servicio:</span> {(hab && servById[hab.id_servicio]?.nombre) || '-'}</div>
                               </div>
                             </td>
                           </tr>

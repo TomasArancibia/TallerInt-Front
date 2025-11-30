@@ -54,9 +54,7 @@ export default function InfoHorariosEntrada() {
             </li>
           </ul>
           <h3 className="text-base font-semibold text-purple-700">Seguridad del paciente</h3>
-          <ul className="list-disc space-y-2 pl-5">
-            <li>El hospital puede restringir el ingreso si se incumplen estas condiciones.</li>
-          </ul>
+          <p>El hospital puede restringir el ingreso si se incumplen estas condiciones.</p>
         </div>
       </section>
     </main>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,8 +8,15 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function SegurosConvenios() {
+  const opciones = Array.from({ length: 7 }).map((_, index) => ({
+    label: "PONER TEXTO",
+    to: "/procesosclinicos",
+    code: `seguros-convenios-${index + 1}`,
+  }));
+
   return (
     <main className={pageContainer}>
       <PageNav backHref="/" className="mb-4" />
@@ -20,27 +26,17 @@ export default function SegurosConvenios() {
         <div className={`${actionBlue} pointer-events-none`}>
           SEGUROS UC CHRISTUS Y CONVENIOS COMERCIALES
         </div>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PONER TEXTO
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PONER TEXTO
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PONER TEXTO
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PONER TEXTO
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PONER TEXTO
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PONER TEXTO
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PONER TEXTO
-        </Link>
+        {opciones.map((opcion) => (
+          <PortalTrackedLink
+            key={opcion.code}
+            className={actionWhite}
+            to={opcion.to}
+            trackingCategory="info_administrativa"
+            trackingCode={opcion.code}
+          >
+            {opcion.label}
+          </PortalTrackedLink>
+        ))}
       </section>
     </main>
   );

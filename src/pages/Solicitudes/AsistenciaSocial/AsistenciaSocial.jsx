@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function AsistenciaSocial() {
   const opciones = [
@@ -39,11 +39,13 @@ export default function AsistenciaSocial() {
       <section className={sectionStack}>
         <div className={`${actionPurple} pointer-events-none`}>ASISTENCIA SOCIAL</div>
 
-        {opciones.map((nombre) => (
-          <Link
+        {opciones.map((nombre, index) => (
+          <PortalTrackedLink
             key={nombre}
             className={`${actionWhite} border-purple-700 text-black`}
             to="/solicitudes/nueva"
+            trackingCategory="solicitud_asistencia_social"
+            trackingCode={`asistencia-social-${index + 1}`}
             state={{
               areaName: "Asistencia social",
               apiAreaName: "Asistencia social",
@@ -54,7 +56,7 @@ export default function AsistenciaSocial() {
             }}
           >
             {nombre}
-          </Link>
+          </PortalTrackedLink>
         ))}
       </section>
     </main>

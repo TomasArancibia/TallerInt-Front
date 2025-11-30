@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -8,6 +7,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function InfoPresupuestosCuenta() {
   return (
@@ -18,7 +18,7 @@ export default function InfoPresupuestosCuenta() {
         backLabel="Menú información administrativa"
       />
       <Logo />
-      <div className="mt-4 inline-flex items-center justify-center rounded-full bg-slate-200 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 sm:text-sm">
+      <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border-2 border-[#3481E2] bg-[#3481E2] px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white sm:text-base">
         Presupuestos, cuenta hospitalaria, pagos
       </div>
       <p className={`${helperText} mt-4 text-center`}>
@@ -26,12 +26,22 @@ export default function InfoPresupuestosCuenta() {
       </p>
 
       <section className={sectionStack}>
-        <Link className={actionPurple} to="/info_administrativa/presupuestos">
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/presupuestos"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-presupuestos"
+        >
           Presupuestos
-        </Link>
-        <Link className={actionPurple} to="/info_administrativa/cuenta-hospitalaria-pagos">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/cuenta-hospitalaria-pagos"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-cuenta-hospitalaria"
+        >
           Cuenta hospitalaria y pagos
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

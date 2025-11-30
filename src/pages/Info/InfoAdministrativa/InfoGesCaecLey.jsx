@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -8,6 +7,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function InfoGesCaecLey() {
   return (
@@ -18,7 +18,7 @@ export default function InfoGesCaecLey() {
         backLabel="Menú información administrativa"
       />
       <Logo />
-      <div className="mt-4 inline-flex items-center justify-center rounded-full bg-slate-200 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 sm:text-sm">
+      <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border-2 border-[#3481E2] bg-[#3481E2] px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white sm:text-base">
         Información GES · CAEC · Ley de Urgencia
       </div>
       <p className={`${helperText} mt-4 text-center`}>
@@ -26,15 +26,30 @@ export default function InfoGesCaecLey() {
       </p>
 
       <section className={sectionStack}>
-        <Link className={actionPurple} to="/info_administrativa/ges">
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/ges"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-ges"
+        >
           GES
-        </Link>
-        <Link className={actionPurple} to="/info_administrativa/caec">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/caec"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-caec"
+        >
           CAEC
-        </Link>
-        <Link className={actionPurple} to="/info_administrativa/ley-de-urgencia">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionPurple}
+          to="/info_administrativa/ley-de-urgencia"
+          trackingCategory="info_administrativa"
+          trackingCode="info-admin-ley-urgencia"
+        >
           Ley de Urgencia
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

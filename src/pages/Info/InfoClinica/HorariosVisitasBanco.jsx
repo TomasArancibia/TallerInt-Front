@@ -10,10 +10,13 @@ import {
 import horarioVisitasImg from "../../../assets/HorarioAtencion.png";
 import horarioBancoImg from "../../../assets/HorarioBanco.png";
 
-export default function HorariosVisitasBanco() {
+export default function HorariosVisitasBanco({
+  backHref = "/procesosclinicos",
+  backLabel = "Menú procesos",
+} = {}) {
   return (
     <main className={pageContainer}>
-      <PageNav backHref="/procesosclinicos" className="mb-4" backLabel="Menú procesos" />
+      <PageNav backHref={backHref} className="mb-4" backLabel={backLabel} />
       <Logo />
       <div className="mx-auto mt-6 w-full max-w-3xl">
         <div className={`${actionBlue} pointer-events-none`}>

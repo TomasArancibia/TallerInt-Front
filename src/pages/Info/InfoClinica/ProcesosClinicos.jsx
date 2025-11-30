@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function ProcesosClinicos() {
   return (
@@ -20,24 +20,54 @@ export default function ProcesosClinicos() {
         <div className={`${actionBlue} pointer-events-none`}>
           INFORMACIÓN DE PROCESOS CLÍNICOS AL PACIENTE
         </div>
-        <Link className={actionWhite} to="/procesosclinicos/resultados">
-          RESULTADOS DE EXÁMENES (LABORATORIO E IMÁGENES)
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos/documentacion">
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/procesosclinicos/numero-episodio"
+          trackingCategory="info_procesos_clinicos"
+          trackingCode="info-procesos-numero-episodio"
+        >
+          NÚMERO DE EPISODIO
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/procesosclinicos/resultados"
+          trackingCategory="info_procesos_clinicos"
+          trackingCode="info-procesos-resultados"
+        >
+          RESULTADOS DE EXÁMENES, RECETAS, ÓRDENES MÉDICAS
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/procesosclinicos/documentacion"
+          trackingCategory="info_procesos_clinicos"
+          trackingCode="info-procesos-documentacion"
+        >
           DOCUMENTACIÓN CLINICA (FICHA CLÍNICA, EPICRISIS, PROTOCOLOS OPERATORIOS, ETC)
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos/info-diagnostico">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/procesosclinicos/info-diagnostico"
+          trackingCategory="info_procesos_clinicos"
+          trackingCode="info-procesos-info-diagnostico"
+        >
           INFORMACIÓN SOBRE DIÁGNOSTICO O DE TRATAMIENTO MÉDICO
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos/cita-post">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/procesosclinicos/cita-post"
+          trackingCategory="info_procesos_clinicos"
+          trackingCode="info-procesos-cita-post"
+        >
           ¿DÓNDE AGENDO UNA CITA POST HOSPITALIZACIÓN?
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos/horarios-banco">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/procesosclinicos/horarios-banco"
+          trackingCategory="info_procesos_clinicos"
+          trackingCode="info-procesos-horarios-banco"
+        >
           HORARIO VISITAS Y BANCO SANGRE
-        </Link>
-        <Link className={actionWhite} to="/procesosclinicos">
-          PROCESOS DE ALTA
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

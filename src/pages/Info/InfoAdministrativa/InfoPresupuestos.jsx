@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -19,20 +18,21 @@ export default function InfoPresupuestos() {
         backLabel="Volver a presupuestos y pagos"
       />
       <Logo />
-      <div className="mt-4 inline-flex items-center justify-center rounded-full bg-slate-200 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 sm:text-sm">
+      <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border-2 border-[#3481E2] bg-[#3481E2] px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white sm:text-base">
         Presupuestos
       </div>
 
       <section className={infoText}>
-        <h1 className="text-lg font-semibold text-purple-700 sm:text-xl">
-          ¿Dónde puedo obtener un presupuesto?
-        </h1>
-        <p className={`${helperText} sm:text-base`}>
-          Con el objetivo de facilitar la experiencia de nuestros pacientes, existen dos formas
-          para solicitar presupuestos médicos según el tipo de atención requerida.
-        </p>
-
         <div className={`${contentCard} space-y-6`}>
+          <div>
+            <h1 className="text-lg font-semibold text-purple-700 sm:text-xl">
+              ¿Dónde puedo obtener un presupuesto?
+            </h1>
+            <p className={`${helperText} sm:text-base`}>
+              Con el objetivo de facilitar la experiencia de nuestros pacientes, existen dos formas
+              para solicitar presupuestos médicos según el tipo de atención requerida.
+            </p>
+          </div>
           <article className="space-y-3">
             <h2 className="text-base font-semibold text-purple-700 sm:text-lg">
               Presupuesto de cirugía
@@ -43,9 +43,14 @@ export default function InfoPresupuestos() {
               datos necesarios y gestionar tu solicitud.
             </p>
             <div className="flex justify-start">
-              <Link className={inlineCta} to="/info_administrativa/presupuestos">
+              <a
+                className={inlineCta}
+                href="https://www.ucchristus.cl/presupuesto/presupuesto-cirugia"
+                target="_blank"
+                rel="noreferrer"
+              >
                 Cotiza aquí
-              </Link>
+              </a>
             </div>
           </article>
 
@@ -63,9 +68,9 @@ export default function InfoPresupuestos() {
               <li>Opción 4: Laboratorio clínico</li>
             </ul>
             <div className="flex justify-start">
-              <Link className={inlineCta} to="/info_administrativa/presupuestos">
+              <a className={inlineCta} href="tel:226767000">
                 Llamar aquí
-              </Link>
+              </a>
             </div>
           </article>
         </div>

@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import "./Chatbot.css";
 import { PageNav } from "../components/ui.jsx";
+import {
+  getPortalTrackingContext,
+  ensurePortalSessionId,
+  getApiBaseUrl,
+} from "../utils/portalTracking";
 
 function Chatbot() {
   const [messages, setMessages] = useState([
@@ -9,6 +14,60 @@ function Chatbot() {
   const [input, setInput] = useState("")
   const [sending, setSending] = useState(false)
   const endRef = useRef(null)
+
+  function renderMessageContent(raw) {
+    const base = (raw || '')
+      // borra sufijos tipo [+source] o similares
+      .replace(/\s*\[[^\]]*source[^\]]*\]\s*$/gi, '')
+      .trim();
+
+    const mdRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/gi;
+    const plainUrlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+
+    const pieces = [];
+    let lastMdIndex = 0;
+    let mdMatch;
+
+    const pushPlainWithLinks = (text) => {
+      let lastIndex = 0;
+      let match;
+      while ((match = plainUrlRegex.exec(text)) !== null) {
+        const start = match.index;
+        if (start > lastIndex) pieces.push(text.slice(lastIndex, start));
+        const urlText = match[0];
+        const href = urlText.startsWith('http') ? urlText : `https://${urlText}`;
+        pieces.push(
+          <a key={`plain-${pieces.length}-${start}`} href={href} target="_blank" rel="noopener noreferrer" className="chat-link">
+            {urlText}
+          </a>
+        );
+        lastIndex = plainUrlRegex.lastIndex;
+      }
+      if (lastIndex < text.length) pieces.push(text.slice(lastIndex));
+    };
+
+    while ((mdMatch = mdRegex.exec(base)) !== null) {
+      const start = mdMatch.index;
+      if (start > lastMdIndex) {
+        pushPlainWithLinks(base.slice(lastMdIndex, start));
+      }
+      const label = mdMatch[1];
+      const href = mdMatch[2];
+      pieces.push(
+        <a key={`md-${pieces.length}-${start}`} href={href} target="_blank" rel="noopener noreferrer" className="chat-link">
+          {label}
+        </a>
+      );
+      lastMdIndex = mdRegex.lastIndex;
+    }
+
+    if (lastMdIndex < base.length) {
+      pushPlainWithLinks(base.slice(lastMdIndex));
+    }
+
+    if (pieces.length === 0) return base;
+    return pieces.map((p, idx) => (typeof p === 'string' ? <span key={`txt-${idx}`}>{p}</span> : p));
+  }
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -20,7 +79,7 @@ function Chatbot() {
     setSending(true)
     try {
       // Construir base API desde variables de entorno (Vite) o usar origin
-      const BASE = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL ?? (typeof window !== 'undefined' ? window.location.origin : '')
+      const BASE = getApiBaseUrl() || (typeof window !== 'undefined' ? window.location.origin : '')
 
       // Candidate endpoints (probamos en orden hasta obtener respuesta OK)
       const candidates = []
@@ -35,13 +94,20 @@ function Chatbot() {
 
       let lastErr = null
       let res = null
+      const tracking = getPortalTrackingContext() ?? {}
+      const sessionId = tracking.portal_session_id ?? ensurePortalSessionId()
       for (const url of candidates) {
         try {
           console.debug('[Chatbot] intentando', url)
           res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: trimmed }),
+            body: JSON.stringify({
+              message: trimmed,
+              id_cama: typeof tracking.id_cama === 'number' ? tracking.id_cama : null,
+              qr_code: tracking.qr_code ?? null,
+              portal_session_id: sessionId ?? null,
+            }),
           })
           console.debug('[Chatbot] status', res.status, 'from', url)
           if (!res.ok) {
@@ -118,9 +184,21 @@ function Chatbot() {
         <div className="chat-messages">
           {messages.map((m, i) => (
             <div key={i} className={`msg-row ${m.role}`}>
-              <div className={`bubble ${m.role}`}>{m.content}</div>
+              <div className={`bubble ${m.role}`}>{renderMessageContent(m.content)}</div>
             </div>
           ))}
+          {sending && (
+            <div className="msg-row assistant">
+              <div className="bubble assistant typing-indicator">
+                El asistente está escribiendo
+                <span className="typing-dots" aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </span>
+              </div>
+            </div>
+          )}
           <div ref={endRef} />
         </div>
         <form className="chat-input" onSubmit={sendMessage}>
@@ -140,5 +218,3 @@ function Chatbot() {
 }
 
 export default Chatbot
-
-

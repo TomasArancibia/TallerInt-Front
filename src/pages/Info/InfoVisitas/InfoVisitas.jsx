@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   pageContainer,
   helperText,
@@ -9,6 +8,7 @@ import {
   PageNav,
   Logo,
 } from "../../../components/ui.jsx";
+import PortalTrackedLink from "../../../components/PortalTrackedLink.jsx";
 
 export default function InfoVisitas() {
   return (
@@ -20,15 +20,30 @@ export default function InfoVisitas() {
         <div className={`${actionBlue} pointer-events-none`}>
           INFORMACIÓN SOBRE ACOMPAÑANTES Y VISITAS
         </div>
-        <Link className={actionWhite} to="/info_general_visitas">
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_general_visitas"
+          trackingCategory="info_visitas"
+          trackingCode="info-visitas-general"
+        >
           INFORMACIÓN GENERAL DE ACOMPAÑANTES Y VISITAS
-        </Link>
-        <Link className={actionWhite} to="/info_horarios_condiciones">
-          HORARIOS Y CONDICIONES
-        </Link>
-        <Link className={actionWhite} to="/info_servicios_visitas">
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_horarios_condiciones"
+          trackingCategory="info_visitas"
+          trackingCode="info-visitas-horarios-condiciones"
+        >
+          HORARIOS, CONDICIONES, ELEMENTOS NO PERMITIDOS
+        </PortalTrackedLink>
+        <PortalTrackedLink
+          className={actionWhite}
+          to="/info_servicios_visitas"
+          trackingCategory="info_visitas"
+          trackingCode="info-visitas-servicios"
+        >
           SERVICIOS Y APOYO DISPONIBLES PARA VISITAS
-        </Link>
+        </PortalTrackedLink>
       </section>
     </main>
   );

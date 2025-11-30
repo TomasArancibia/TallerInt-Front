@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, it, expect } from 'vitest'
-import InfoHoriosEntrada from '../InfoHoriosEntrada.jsx'
+import InfoHoriosEntrada from '../InfoHorariosEntrada.jsx'
 
 describe('InfoHoriosEntrada', () => {
   it('renders horario entrada content and image', () => {

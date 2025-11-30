@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Homepage from "./Homepage.jsx";
+import { ensurePortalSessionId } from "../utils/portalTracking";
 
 const API = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 
@@ -27,6 +28,7 @@ export default function Landing() {
         // Guardar para uso en otras páginas (solicitudes)
         sessionStorage.setItem("qr_code", data.code);
         sessionStorage.setItem("id_cama", String(data.id_cama));
+        ensurePortalSessionId();
       })
       .catch(() => setError("network_error"))
       .finally(() => setLoading(false));
