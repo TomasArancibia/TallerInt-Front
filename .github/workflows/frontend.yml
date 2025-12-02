@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   build:
@@ -44,13 +45,18 @@ jobs:
             exit 1
           fi
 
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0.0
-        with:
-          publish-dir: ./dist
-          production-deploy: true
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "Deploying preview..."
+            netlify deploy --dir=dist --message="Preview deploy from PR #${{ github.event.pull_request.number }}"
+          else
+            echo "Deploying to production..."
+            netlify deploy --dir=dist --prod --message="Production deploy from commit ${{ github.sha }}"
+          fi
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          VITE_API_URL: https://tallerintegracion-back.onrender.com
-          VITE_WS_URL: wss://tallerintegracion-back.onrender.com
