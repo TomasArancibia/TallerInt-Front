@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   build:
@@ -48,9 +49,12 @@ jobs:
         uses: nwtgck/actions-netlify@v3.0.0
         with:
           publish-dir: ./dist
-          production-deploy: true
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          VITE_API_URL: https://tallerintegracion-back.onrender.com
-          VITE_WS_URL: wss://tallerintegracion-back.onrender.com
