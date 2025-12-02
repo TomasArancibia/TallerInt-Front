@@ -26,9 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-
       - name: Build project
         run: npm run build
+        env:
+          VITE_API_URL: https://tallerintegracion-back.onrender.com
+          VITE_WS_URL: wss://tallerintegracion-back.onrender.com
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0.0
