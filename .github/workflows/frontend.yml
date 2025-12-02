@@ -32,6 +32,18 @@ jobs:
           VITE_API_URL: https://tallerintegracion-back.onrender.com
           VITE_WS_URL: wss://tallerintegracion-back.onrender.com
 
+      - name: List dist contents
+        run: |
+          echo "Checking if dist folder exists..."
+          ls -la
+          if [ -d "dist" ]; then
+            echo "dist folder found:"
+            ls -la dist
+          else
+            echo "ERROR: dist folder not found!"
+            exit 1
+          fi
+
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0.0
         with:
@@ -40,3 +52,5 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          VITE_API_URL: https://tallerintegracion-back.onrender.com
+          VITE_WS_URL: wss://tallerintegracion-back.onrender.com
